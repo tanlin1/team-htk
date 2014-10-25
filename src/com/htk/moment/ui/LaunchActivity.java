@@ -93,7 +93,8 @@ public class LaunchActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				//连接到服务器找回密码
-				startActivity(new Intent().setClass(LaunchActivity.this, Index.class));
+				//startActivity(new Intent().setClass(LaunchActivity.this, Index.class));
+                startActivity(new Intent().setClass(LaunchActivity.this, NewMainActivity.class));
 			}
 		});
 

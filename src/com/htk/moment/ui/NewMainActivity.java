@@ -1,13 +1,10 @@
 package com.htk.moment.ui;
 
 import android.app.Activity;
-import android.graphics.Canvas;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.view.MotionEvent;
 import android.view.Window;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import utils.view.CircleView;
 
 public class NewMainActivity extends Activity {
     /**
@@ -18,12 +15,20 @@ public class NewMainActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.temp);
-        ImageView view = (ImageView) findViewById(R.id.test);
-        view.setBackgroundResource(R.drawable.menu);
+	    System.out.println("++++++++++++++++");
     }
-    public void test(View v){
-        CircleView circleView = new CircleView(this);
-        circleView.draw(new Canvas());
-        v.setBackgroundResource(R.drawable.menu_36);
-   }
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		int action = event.getAction();
+		switch (action){
+			case MotionEvent.ACTION_HOVER_MOVE:
+				System.out.println("*****************");
+				Intent intent = new Intent();
+				intent.setClass(this,TheLeftActivity.class);
+				break;
+		}
+
+		return false;
+	}
 }

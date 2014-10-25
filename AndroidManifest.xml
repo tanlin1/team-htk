@@ -96,6 +96,18 @@
 			</intent-filter>
 		</activity>
 
+		<activity android:name=".TheLeftActivity">
+			<intent-filter>
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+		<activity android:name=".TheRightActivity">
+			<intent-filter>
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+
+
 	</application>
 	<!--权限申请-->
 	<uses-permission android:name="android.permission.INTERNET"/>
