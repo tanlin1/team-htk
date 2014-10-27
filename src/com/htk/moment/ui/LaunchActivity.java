@@ -36,7 +36,7 @@ public class LaunchActivity extends Activity {
 	private String password;
 	private String email;
 	//public static String url = "http://192.168.1.102";
-	public static String url = "http://192.168.191.1";
+	public static String url = "http://120.24.68.64:8080/mks";
 	//public static String url = "http://10.10.117.120";
 
 	@Override
@@ -55,12 +55,13 @@ public class LaunchActivity extends Activity {
 		//当前Activity 是哪一个布局文件，以何种方式显示
 		setContentView(R.layout.main);
 		//检查网络
-		//checkInternet(this);
+		checkInternet(this);
 
 		//依次找到布局中的各个控件，并为之设置监听器，便于处理
-		ImageView imageView = (ImageView) findViewById(R.id.MainView);
-		imageView.setLayoutParams(new LinearLayout.LayoutParams(screenWidth,screenHeight*2/3));
-		imageView.setBackgroundDrawable(getWallpaper().getCurrent());
+		ImageView imageView = (ImageView) findViewById(R.id.HeadPhoto);
+		//imageView.setLayoutParams(new LinearLayout.LayoutParams(screenWidth,screenHeight*2/3));
+		//imageView.setBackgroundDrawable(getWallpaper().getCurrent());
+		imageView.setImageDrawable(getWallpaper().getCurrent());
 
 		//登录（注册）按钮
 		Button login = (Button) findViewById(R.id.button_login);
@@ -132,8 +133,10 @@ public class LaunchActivity extends Activity {
 			public void onClick(View v) {
 				if (email == null || password == null) {
 					Toast.makeText(getApplication(), R.string.login_warning, Toast.LENGTH_SHORT).show();
-				} else {
+				} else if(password.length() != 0 ) {
 					new LoginThread().start();
+				} else {
+					Toast.makeText(getApplication(), R.string.login_warning, Toast.LENGTH_SHORT).show();
 				}
 			}
 		});
@@ -164,12 +167,6 @@ public class LaunchActivity extends Activity {
 					dialog.dismiss();
 				}
 			});
-//			dialog.setMultiChoiceItems(items,itemsCheck,new DialogInterface.OnMultiChoiceClickListener() {
-//				@Override
-//				public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-//					System.out.println("null");
-//				}
-//			});
 			dialog.create().show();
 			return false;
 		}
@@ -262,13 +259,13 @@ public class LaunchActivity extends Activity {
 
 	private void login() {
 
-		String concreteUrl = ":8080/phone_login";
+		String concreteUrl = "/login";
 		HttpURLConnection connection = getUrlConnect(concreteUrl);
 
 		//构造json字符串，并发送
 		JSONStringer jsonStringer = new JSONStringer();
 		String transfer;
-		transfer = jsonStringer.object().key("email").value(email).key("password").value(password)
+		transfer = jsonStringer.object().key("account").value(email).key("password").value(password)
 				.endObject().toString();
 		System.out.println(transfer);
 		try {
@@ -280,14 +277,15 @@ public class LaunchActivity extends Activity {
 			writeToServer.close();
 
 			// 取得输入流，并使用Reader读取
-			JSONObject serverInformation = Read.read(connection.getInputStream());
-			if (serverInformation.getString("isPassed").equals("no")) {//|| serverInformation.getString("server").equals("error")) {
-				sendMessage("password", "false");
+			if(connection.getResponseCode() == 200) {
+				JSONObject serverInformation = Read.read(connection.getInputStream());
+				if (serverInformation.getString("accountResult").equals("success")) {//|| serverInformation.getString("server").equals("error")) {
+					sendMessage("password", "true");
+				} else {
+					sendMessage("password", "false");
+				}
+				connection.disconnect();
 			}
-			if (serverInformation.getString("isPassed").equals("yes")) {
-				sendMessage("password", "true");
-			}
-			connection.disconnect();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (SocketTimeoutException e) {

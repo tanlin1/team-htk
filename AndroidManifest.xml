@@ -96,12 +96,17 @@
 			</intent-filter>
 		</activity>
 
-		<activity android:name=".TheLeftActivity">
+		<activity android:name="test.TheLeftActivity">
 			<intent-filter>
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
-		<activity android:name=".TheRightActivity">
+		<activity android:name="test.TheRightActivity">
+			<intent-filter>
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+		<activity android:name="utils.SlideMenuActivity">
 			<intent-filter>
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>

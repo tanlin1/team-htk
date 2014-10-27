@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res/com.htk.moment.ui"
+
               android:orientation="vertical"
               android:layout_width="wrap_content"
               android:layout_height="fill_parent"
@@ -55,17 +55,20 @@
 	</RelativeLayout>
 	<RelativeLayout android:layout_width="fill_parent"
 	                android:layout_height="fill_parent">
+		<!--<ListView android:layout_width="fill_parent"-->
+		          <!--android:layout_height="fill_parent">-->
+	    <!--</ListView>-->
 		<!--搞个自定义控件就这么难！？-->
-		<utils.view.circle.CircleImageView android:layout_width="120dp"
-		                       android:layout_height="120dp"
-		                       android:src="@drawable/header_graphic"
-		                       android:layout_marginTop="20dp"
-		                       android:layout_centerVertical="true"
-		                       android:layout_centerHorizontal="true"
-		                       app:border_color="#000"
-		                       app:border_width="2dp"
+		<!--<utils.view.circle.CircleImageView android:layout_width="120dp"-->
+		                       <!--android:layout_height="120dp"-->
+		                       <!--android:src="@drawable/header_graphic"-->
+		                       <!--android:layout_marginTop="20dp"-->
+		                       <!--android:layout_centerVertical="true"-->
+		                       <!--android:layout_centerHorizontal="true"-->
+		                       <!--app:border_color="#000"-->
+		                       <!--app:border_width="2dp"-->
 
-				/>
+				<!--/>-->
 	</RelativeLayout>
 
 </LinearLayout>
