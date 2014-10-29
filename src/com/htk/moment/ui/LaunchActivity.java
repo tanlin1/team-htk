@@ -12,10 +12,10 @@ import android.provider.Settings;
 import android.view.*;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
-import utils.android.Read;
-import utils.android.Write;
-import utils.android.judgment.Login;
-import utils.internet.CheckInternetTool;
+import utils.android.sdcard.Read;
+import utils.android.sdcard.Write;
+import utils.android.check.Login;
+import utils.android.check.CheckInternetTool;
 import utils.json.JSONObject;
 import utils.json.JSONStringer;
 
@@ -94,8 +94,8 @@ public class LaunchActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				//连接到服务器找回密码
-				//startActivity(new Intent().setClass(LaunchActivity.this, Index.class));
-                startActivity(new Intent().setClass(LaunchActivity.this, NewMainActivity.class));
+				startActivity(new Intent().setClass(LaunchActivity.this, Index.class));
+                //startActivity(new Intent().setClass(LaunchActivity.this, NewMainActivity.class));
 			}
 		});
 

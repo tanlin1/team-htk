@@ -1,4 +1,4 @@
-package utils;
+package utils.other;
 
 import android.graphics.Point;
 import android.os.Bundle;

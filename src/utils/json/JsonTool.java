@@ -1,4 +1,4 @@
-package utils.makejson;
+package utils.json;
 
 import utils.json.JSONObject;
 

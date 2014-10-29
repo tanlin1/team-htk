@@ -1,4 +1,4 @@
-package utils.internet;
+package utils.android.check;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

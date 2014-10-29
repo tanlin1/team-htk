@@ -10,7 +10,7 @@ import android.view.*;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import utils.SlideMenuPanel;
+import utils.other.SlideMenuPanel;
 import utils.adapter.SlideMenuAdapter;
 
 public class NewMainActivity extends FragmentActivity {

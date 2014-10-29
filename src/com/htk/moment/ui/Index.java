@@ -8,8 +8,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.*;
 import android.widget.ImageButton;
-import utils.ImageLoader;
-import utils.android.CameraActivity;
+import utils.android.photo.ImageLoader;
+import utils.android.photo.CameraActivity;
 
 import java.util.ArrayList;
 import java.util.List;

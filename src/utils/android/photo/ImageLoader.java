@@ -1,4 +1,4 @@
-package utils;
+package utils.android.photo;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -6,8 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.provider.MediaStore;
 import com.htk.moment.ui.LaunchActivity;
-import utils.android.CameraActivity;
-import utils.android.photo.ImageCompressUtil;
 
 import java.io.*;
 import java.util.ArrayList;

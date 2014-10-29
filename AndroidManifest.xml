@@ -60,7 +60,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-				android:name="utils.android.CameraActivity"
+				android:name="utils.android.photo.CameraActivity"
 				android:configChanges="orientation|keyboardHidden"
 				android:launchMode="singleTask"
 				>
@@ -71,7 +71,7 @@
 		</activity>
 
 		<activity
-				android:name="utils.android.PictureSelect"
+				android:name="utils.android.photo.PictureSelect"
 				android:configChanges="orientation|keyboardHidden"
 				android:launchMode="singleTask"
 				>
@@ -106,7 +106,7 @@
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
-		<activity android:name="utils.SlideMenuActivity">
+		<activity android:name="utils.other.SlideMenuActivity">
 			<intent-filter>
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>

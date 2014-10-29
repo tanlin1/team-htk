@@ -1,4 +1,4 @@
-package utils.android;
+package utils.android.photo;
 
 import android.app.Activity;
 import android.content.Context;
@@ -19,8 +19,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.*;
 import com.htk.moment.ui.R;
-import utils.ImageLoader;
-import utils.android.photo.UploadPhoto;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;

@@ -1,4 +1,4 @@
-package utils.android;
+package utils.android.photo;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,7 +14,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import com.htk.moment.ui.R;
-import utils.android.photo.UploadPhoto;
 
 /**
  * Created by Administrator on 2014/8/21.
