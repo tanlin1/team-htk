@@ -85,7 +85,6 @@ public class SlideMenuActivity extends FragmentActivity {
 		setContentView(R.layout.__slide_menu);
 		init();
 	}
-
 	/**
 	 * Initialize variables.
 	 */
