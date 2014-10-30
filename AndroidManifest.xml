@@ -7,6 +7,7 @@
 	<application
 			android:label="@string/app_name"
 			android:icon="@drawable/ic_launcher">
+		<!--启动时候加载到屏幕上-->
 		<activity
 				android:name=".LaunchActivity"
 				android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
@@ -17,7 +18,7 @@
 				<category android:name="android.intent.category.LAUNCHER"/>
 			</intent-filter>
 		</activity>
-
+		<!--用户注册Activity-->
 		<activity
 				android:name=".RegisterActivity"
 				android:launchMode="singleTask"
@@ -28,7 +29,7 @@
 
 			</intent-filter>
 		</activity>
-
+		<!-- 用户主页-->
 		<activity
 				android:name=".Index"
 				android:theme="@android:style/Animation.Dialog"
@@ -41,6 +42,7 @@
 			</intent-filter>
 
 		</activity>
+		<!--用户个人中心-->
 		<activity
 				android:name=".UserHome"
 				android:launchMode="singleTask"
@@ -48,7 +50,7 @@
 			<intent-filter android:label="test">
 			</intent-filter>
 		</activity>
-
+		<!--热门话题-->
 		<activity
 				android:name=".HotActivity"
 				android:launchMode="singleTask"
@@ -59,6 +61,7 @@
 				<!--<data android:mimeType="image/*"/>-->
 			</intent-filter>
 		</activity>
+		<!--10.29号之前的照相机，通过双指下滑，获得照相功能-->
 		<activity
 				android:name="utils.android.photo.CameraActivity"
 				android:configChanges="orientation|keyboardHidden"
@@ -69,7 +72,7 @@
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
-
+		<!--10.29号之前为了获取本地相册-->
 		<activity
 				android:name="utils.android.photo.PictureSelect"
 				android:configChanges="orientation|keyboardHidden"
@@ -80,7 +83,7 @@
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
-
+		<!--上传图片-->
 		<activity
 				android:name="utils.android.photo.UploadPhoto"
 				android:configChanges="keyboard"
@@ -90,29 +93,29 @@
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
+		<!--第二次修改后的双侧边栏菜单-->
 		<activity android:name=".NewMainActivity">
 			<intent-filter>
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
-
-		<activity android:name="test.TheLeftActivity">
-			<intent-filter>
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity android:name="test.TheRightActivity">
-			<intent-filter>
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
+		<!--侧边栏-->
 		<activity android:name="utils.other.SlideMenuActivity">
 			<intent-filter>
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
+		<activity android:name="utils.test.MainTestActivity">
+			<intent-filter>
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
 
-
+		<activity android:name="utils.test.CameraActivity">
+			<intent-filter>
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
 	</application>
 	<!--权限申请-->
 	<uses-permission android:name="android.permission.INTERNET"/>
