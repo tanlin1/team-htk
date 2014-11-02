@@ -9,19 +9,24 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
-import android.view.*;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import utils.android.sdcard.Read;
-import utils.android.sdcard.Write;
-import utils.android.check.Login;
-import utils.android.check.CheckInternetTool;
+import utils.check.Check;
+import utils.internet.GetConnection;
 import utils.json.JSONObject;
 import utils.json.JSONStringer;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 public class LaunchActivity extends Activity {
 
@@ -72,30 +77,30 @@ public class LaunchActivity extends Activity {
 		passwordEdit = (EditText) findViewById(R.id.set_password);
 
 		//记住密码
-		CheckBox checkBox = (CheckBox) findViewById(R.id.checkbox);
+		//CheckBox checkBox = (CheckBox) findViewById(R.id.checkbox);
 		TextView toFindPassword = (TextView) findViewById(R.id.find_password);
 
-		checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-				if (isChecked) {
-					try {
-						Write.write(LaunchActivity.this, "test.txt", "yes\r\n你好吗？");
-					} catch (IOException e) {
-						System.out.println("写入文件出错！");
-						e.printStackTrace();
-					}
-				}
-
-			}
-		});
+//		checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//			@Override
+//			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//
+//				if (isChecked) {
+//					try {
+//						Write.write(LaunchActivity.this, "test.txt", "yes\r\n你好吗？");
+//					} catch (IOException e) {
+//						System.out.println("写入文件出错！");
+//						e.printStackTrace();
+//					}
+//				}
+//
+//			}
+//		});
 		toFindPassword.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				//连接到服务器找回密码
 				startActivity(new Intent().setClass(LaunchActivity.this, Index.class));
-                //startActivity(new Intent().setClass(LaunchActivity.this, NewMainActivity.class));
+				//startActivity(new Intent().setClass(LaunchActivity.this, NewMainActivity.class));
 			}
 		});
 
@@ -133,7 +138,7 @@ public class LaunchActivity extends Activity {
 			public void onClick(View v) {
 				if (email == null || password == null) {
 					Toast.makeText(getApplication(), R.string.login_warning, Toast.LENGTH_SHORT).show();
-				} else if(password.length() != 0 ) {
+				} else if (password.length() != 0) {
 					new LoginThread().start();
 				} else {
 					Toast.makeText(getApplication(), R.string.login_warning, Toast.LENGTH_SHORT).show();
@@ -143,13 +148,12 @@ public class LaunchActivity extends Activity {
 	}
 
 	/**
-	 *
 	 * @param context 上下文
-	 * @return  true: 已经接入网络，不管是Internet 还是移动网络
-	 *          false: 当前没有网络连接
+	 * @return true: 已经接入网络，不管是Internet 还是移动网络
+	 * false: 当前没有网络连接
 	 */
 	private boolean checkInternet(Context context) {
-		if(!CheckInternetTool.checkInternet(context)){
+		if (!Check.internetIsEnable(context)) {
 			AlertDialog.Builder dialog = new AlertDialog.Builder(LaunchActivity.this);
 
 			dialog.setTitle(R.string.login_dialog_title);
@@ -180,8 +184,8 @@ public class LaunchActivity extends Activity {
 		public void onFocusChange(View v, boolean hasFocus) {
 			if (!hasFocus) {
 				email = emailEdit.getText().toString();
-				if (!Login.isEmail(email)) {
-					Toast.makeText(getApplicationContext(), R.string.email_wrong, Toast.LENGTH_SHORT).show();
+				if (!Check.isEmail(email) && !Check.isPhoneNumber(email)) {
+					Toast.makeText(getApplicationContext(), R.string.format_wrong, Toast.LENGTH_SHORT).show();
 					emailEdit.setText("");
 					email = null;
 				}
@@ -224,43 +228,10 @@ public class LaunchActivity extends Activity {
 		}
 	}
 
-	/**
-	 * @param url 具体的url
-	 *
-	 * @return 此URL的HttpURLConnection连接
-	 */
-	private HttpURLConnection getUrlConnect(String url) {
-		URL loginUrl;
-		HttpURLConnection connection = null;
-		try {
-			loginUrl = new URL(LaunchActivity.url + url);
-			connection = (HttpURLConnection) loginUrl.openConnection();
-			connection.setRequestMethod("POST");
-			connection.setDoInput(true);
-			connection.setDoOutput(true);
-			connection.setUseCaches(false);
-			connection.setConnectTimeout(5000);
-			//设置请求头字段
-			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-//          这个属性将被用于大文件传输，有效的提高效率
-//			connection.setRequestProperty("Content-Type","multipart/form-data");
-			//有相同的属性则覆盖
-			connection.setRequestProperty("user-agent", "Android 4.0.1");
-
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (ProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return connection;
-	}
-
 	private void login() {
 
 		String concreteUrl = "/login";
-		HttpURLConnection connection = getUrlConnect(concreteUrl);
+		HttpURLConnection connection = GetConnection.getConnect(concreteUrl);
 
 		//构造json字符串，并发送
 		JSONStringer jsonStringer = new JSONStringer();
@@ -277,12 +248,23 @@ public class LaunchActivity extends Activity {
 			writeToServer.close();
 
 			// 取得输入流，并使用Reader读取
-			if(connection.getResponseCode() == 200) {
+			if (connection.getResponseCode() == 200) {
 				JSONObject serverInformation = Read.read(connection.getInputStream());
-				if (serverInformation.getString("accountResult").equals("success")) {//|| serverInformation.getString("server").equals("error")) {
+				String result = serverInformation.getString("accountResult");
+
+				if (result.equals("success")) {
+					// 登录成功
 					sendMessage("password", "true");
+				} else if (result.equals("dataWrong")) {
+					// 密码错误/此用户名不存在，报告给用户处理
+					sendMessage("password", "false");
+				} else if (result.equals("formatError")) {
+					// 数据格式错误，由程序员处理
+					sendMessage("password", "false");
+					System.out.println("格式错误!");
 				} else {
 					sendMessage("password", "false");
+					System.out.println("服务器没有响应");
 				}
 				connection.disconnect();
 			}
@@ -292,7 +274,7 @@ public class LaunchActivity extends Activity {
 			sendMessage("timeout", "yes");
 			//startActivity(new Intent(this, HomeActivity.class));
 		} catch (SocketException e) {
-			System.out.println("服务器没有打开！");
+			System.out.println("你没有接入网络还。");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

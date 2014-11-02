@@ -6,15 +6,15 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.method.ScrollingMovementMethod;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.*;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.Toast;
 import utils.android.sdcard.Read;
-import utils.android.check.Login;
+import utils.check.Check;
+import utils.internet.GetConnection;
 import utils.json.JSONObject;
 
 import java.io.*;
@@ -59,7 +59,7 @@ public class RegisterActivity extends Activity {
 		emailAddressFind = ((EditText) findViewById(R.id.register_email_edit));
 		passwordConfirmFind = (EditText) findViewById(R.id.register_password_confirm_edit);
 
-		checkBox = (CheckBox) findViewById(R.id.checkbox);
+		//checkBox = (CheckBox) findViewById(R.id.checkbox);
 		name = nameFind.getText().toString();
 		password = passwordFind.getText().toString();
 		passwordConfirm = passwordConfirmFind.getText().toString();
@@ -71,23 +71,23 @@ public class RegisterActivity extends Activity {
 		register.setOnClickListener(new ButtonOnClickListener());
 
 
-		checkBox.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				/**
-				 * 打开新窗口用户协议给用户浏览
-				 */
-				TextView protocol = (TextView) findViewById(R.id.protocol);
-				protocol.getScrollBarStyle();
-				if (!checkBox.isChecked()) {
-					String s = getProtocolMessage(getResources().openRawResource(R.raw.test));
-					protocol.setMovementMethod(new ScrollingMovementMethod());
-					protocol.setText(s);
-				} else {
-					protocol.setText("");
-				}
-			}
-		});
+//		checkBox.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				/**
+//				 * 打开新窗口用户协议给用户浏览
+//				 */
+//				TextView protocol = (TextView) findViewById(R.id.protocol);
+//				protocol.getScrollBarStyle();
+//				if (!checkBox.isChecked()) {
+//					String s = getProtocolMessage(getResources().openRawResource(R.raw.test));
+//					protocol.setMovementMethod(new ScrollingMovementMethod());
+//					protocol.setText(s);
+//				} else {
+//					protocol.setText("");
+//				}
+//			}
+//		});
 		nameFind.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
@@ -122,7 +122,7 @@ public class RegisterActivity extends Activity {
 				}
 			}
 		});
-		//在填写邮箱的时候会连接服务器并检测此邮箱是否已经注册过本网站
+		//在填写邮箱的完毕会连接服务器并检测此邮箱是否已经注册过本网站
 		emailAddressFind.setOnKeyListener(new View.OnKeyListener() {
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -133,8 +133,8 @@ public class RegisterActivity extends Activity {
 					if (imm.isActive()) {
 						imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
 					}
-					if (!Login.isEmail(emailAddress)) {
-						Toast.makeText(getApplication(), R.string.email_wrong, Toast.LENGTH_SHORT).show();
+					if (!Check.isEmail(emailAddress) || !Check.isPhoneNumber(emailAddress)) {
+						Toast.makeText(getApplication(), R.string.format_wrong, Toast.LENGTH_SHORT).show();
 						emailAddressFind.setText("");
 					} else {
 						new emailCheckThread().start();
@@ -182,56 +182,33 @@ public class RegisterActivity extends Activity {
 			emailCheck();
 		}
 	}
-
-	/**
-	 * @param url 具体的url
-	 *
-	 * @return 此URL的HttpURLConnection连接
-	 */
-	private HttpURLConnection getUrlConnect(String url) {
-		URL concreteUrl;
-		HttpURLConnection connection = null;
-		try {
-			concreteUrl = new URL(url);
-			connection = (HttpURLConnection) concreteUrl.openConnection();
-			connection.setRequestMethod("POST");
-			connection.setDoInput(true);
-			connection.setDoOutput(true);
-			connection.setUseCaches(false);
-			connection.setConnectTimeout(3000);
-			//设置请求头字段
-			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-//          这个属性将被用于大文件传输，有效的提高效率
-//			connection.setRequestProperty("Content-Type","multipart/form-data");
-			//有相同的属性则覆盖
-			connection.setRequestProperty("user-agent", "Android 4.0.1");
-
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (ProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return connection;
-	}
-
 	private void emailCheck() {
-		String emailCheckUrl = ":8080/phone_isEmailUsed";
+		String emailCheckUrl = "/checkEmail";
 		HttpURLConnection connection;
 		try {
-			connection = getUrlConnect(emailCheckUrl);
+			connection = GetConnection.getConnect(emailCheckUrl);
 			connection.connect();
 			JSONObject object = new JSONObject();
-			object.put("email", emailAddress);
+			object.put("account", emailAddress);
 			connection.getOutputStream().write(object.toString().getBytes());
 			//读取服务器返回的消息
 			JSONObject jsonObject = new JSONObject(Read.read(connection.getInputStream()));
-
-			if (jsonObject.getString("isUsed").equals("yes")) {
+			String accountResult = jsonObject.getString("accountResult");
+			if (accountResult.equals("exist")) {
 				sendMessage("emailIsUsed", "yes");
 				connection.disconnect();
+			} else if(accountResult.equals("formatError")) {
+				System.out.println("格式错误");
+			} else if(accountResult.equals("error")) {
+				System.out.println("服务器错误");
+			} else if(accountResult.equals("not_exist")) {
+				System.out.println("可以注册");
+			}else {
+				System.out.println("服务器 404 错误");
 			}
+
+
+
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -244,29 +221,29 @@ public class RegisterActivity extends Activity {
 	 * @param inputStream 一个输入流
 	 * @return 从该输入流读取的内容
 	 */
-	private String getProtocolMessage(InputStream inputStream) {
-
-		InputStreamReader inputStreamReader;
-		String content = null;
-		try {
-			inputStreamReader = new InputStreamReader(inputStream, "utf-8");
-
-			BufferedReader reader = new BufferedReader(inputStreamReader);
-			StringBuilder sb = new StringBuilder();
-			String line;
-
-			while ((line = reader.readLine()) != null) {
-				sb.append(line);
-				sb.append("\n");
-			}
-			content = sb.toString();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return content;
-	}
+//	private String getProtocolMessage(InputStream inputStream) {
+//
+//		InputStreamReader inputStreamReader;
+//		String content = null;
+//		try {
+//			inputStreamReader = new InputStreamReader(inputStream, "utf-8");
+//
+//			BufferedReader reader = new BufferedReader(inputStreamReader);
+//			StringBuilder sb = new StringBuilder();
+//			String line;
+//
+//			while ((line = reader.readLine()) != null) {
+//				sb.append(line);
+//				sb.append("\n");
+//			}
+//			content = sb.toString();
+//		} catch (UnsupportedEncodingException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		return content;
+//	}
 
 	/**
 	 * 点击注册按钮
@@ -275,53 +252,67 @@ public class RegisterActivity extends Activity {
 
 		@Override
 		public void onClick(View v) {
+			/** 当所有项目都填写完毕之后，
+			 * 点击注册就直接发送响应的数据给服务器就好
+			 */
+
 			if (canRegister()) {
 				new registerThread().start();
 			}
 		}
 	}
 
-	private void Register() {
-		HttpURLConnection connection;
-		JSONObject info = new JSONObject();
-
-		String registerUrl = ":8080/phone_register";
-
-		connection = getUrlConnect(registerUrl);
-
-		userInformation.put("name", name);
-		userInformation.put("email", emailAddress);
-		userInformation.put("password", password);
-
-		info.put("register", userInformation);
-		try {
-			connection.connect();
-			OutputStream writeToServer = connection.getOutputStream();
-			writeToServer.write(info.toString().getBytes());
-
-			// 取得输入流，并使用Reader读取
-			JSONObject object = Read.read(connection.getInputStream());
-			if (null != object.getString("JSESSIONID")) {
-				SESSIONID = object.getString("JSESSIONID");
-				sendMessage("register", "ok");
-			}
-			System.out.println(object);
-			// 断开连接
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (SocketTimeoutException e) {
-			sendMessage("timeout", "yes");
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			connection.disconnect();
-		}
-	}
-
 	private class registerThread extends Thread {
 		@Override
 		public void run() {
-			Register();
+			//Register();
+
+			HttpURLConnection connection;
+			JSONObject info = new JSONObject();
+
+			String registerUrl = "/sign_up";
+
+			connection = GetConnection.getConnect(registerUrl);
+
+			userInformation.put("name", name);
+			userInformation.put("userAccount", emailAddress);
+			userInformation.put("password", password);
+
+			info.put("register", userInformation);
+			try {
+				connection.connect();
+				OutputStream writeToServer = connection.getOutputStream();
+				writeToServer.write(info.toString().getBytes());
+
+				// 取得输入流，并使用Reader读取
+				JSONObject object = Read.read(connection.getInputStream());
+				String result = object.getString("accountResult");
+
+				if (null == result) {
+					SESSIONID = object.getString("JSESSIONID");
+					sendMessage("register", "ok");
+				} else if(result.equals("exist")){
+					System.out.println("");
+				} else if(result.equals("formatError")){
+					System.out.println("");
+				} else if(result.equals("error")){
+					System.out.println("");
+				} else if(result.equals("success")){
+					sendMessage("register", "ok");
+					System.out.println("you can run now !");
+				} else {
+					System.out.println(object + "\n这里出错了？？");
+				}
+				// 断开连接
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (SocketTimeoutException e) {
+				sendMessage("timeout", "yes");
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				connection.disconnect();
+			}
 		}
 	}
 

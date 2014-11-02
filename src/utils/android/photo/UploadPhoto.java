@@ -14,8 +14,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import com.htk.moment.ui.Index;
 import com.htk.moment.ui.R;
+import utils.check.Check;
 import utils.createrequest.PartFactory;
-import utils.android.check.CheckInternetTool;
 import utils.json.JsonTool;
 
 import java.io.ByteArrayOutputStream;
@@ -114,7 +114,7 @@ public class UploadPhoto extends Activity {
 			@Override
 			public void onClick(View v) {
 				//如果用户已连接上Internet，就开启上传线程，并进入主界面（返回至登录时候的界面）
-				if(CheckInternetTool.checkInternet(UploadPhoto.this)){
+				if(Check.internetIsEnable(UploadPhoto.this)){
 					System.out.println("用户在线");
 					new UploadPhotoThread().start();
 				}else {

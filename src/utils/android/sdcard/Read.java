@@ -16,7 +16,7 @@ public class Read {
 			sb.append(temp);
 		}
 		br.close();
-		JSONObject obj = new JSONObject("{" + sb.toString() + "}");
+		JSONObject obj = new JSONObject(sb.toString());
 		return obj;
 	}
 }

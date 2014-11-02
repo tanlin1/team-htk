@@ -3,6 +3,8 @@ package utils.android.photo;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -23,10 +25,7 @@ import com.htk.moment.ui.R;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Locale;
+import java.util.*;
 
 
 /**
@@ -80,15 +79,32 @@ public class CameraActivity extends Activity {
                             directory.mkdirs();
                         }
                         File photo = new File(directory, photoName);
+//
+//                        // 意图（调用相机）
+//                        Intent takePhoto = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                        takePhoto.addCategory(Intent.CATEGORY_DEFAULT);
+//
+//                        //指定你保存路径，不会在系统默认路径下（当然可以指定）
+//                        takePhoto.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
+//                        //调用系统相机
+//                        startActivityForResult(takePhoto, CAMERA_ASK);
 
-                        // 意图（调用相机）
-                        Intent takePhoto = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        takePhoto.addCategory(Intent.CATEGORY_DEFAULT);
+	                    PackageManager pm = this.getPackageManager();
+	                    List<PackageInfo> packs = pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
+	                    String packageName;
+	                    for (PackageInfo pi : packs) {
+		                    packageName = pi.packageName.toLowerCase();
+		                    // 有的手机名字不一样
+		                    if((packageName.contains("gallery") || packageName.contains("camera"))
+				                    && packageName.contains("android") ){ //Android 表示系统的相机
 
-                        //指定你保存路径，不会在系统默认路径下（当然可以指定）
-                        takePhoto.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
-                        //调用系统相机
-                        startActivityForResult(takePhoto, CAMERA_ASK);
+			                    Intent takePhoto = pm.getLaunchIntentForPackage(pi.packageName);
+			                    if (takePhoto != null) {
+				                    takePhoto.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
+				                    startActivityForResult(takePhoto, CAMERA_ASK);
+			                    }
+		                    }
+	                    }
 
                     } catch (NoSuchMethodException e) {
                         e.printStackTrace();
