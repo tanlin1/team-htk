@@ -36,8 +36,8 @@
 			          android:layout_height="wrap_content"
 			          android:id="@+id/add"
 			          android:text="+"
-			          android:textSize="20sp"
-			          android:gravity="center"
+			          android:textSize="40sp"
+			          android:gravity="bottom|center_horizontal"
 			          android:layout_weight="4"
 					/>
 

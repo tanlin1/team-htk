@@ -45,6 +45,7 @@ public class NewIndex extends Activity{
 		me = (TextView) findViewById(R.id.me);
 
 		initViewPager();
+		jump();
 
 	}
 	private void jump(){

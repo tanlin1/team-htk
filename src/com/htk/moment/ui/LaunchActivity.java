@@ -100,8 +100,8 @@ public class LaunchActivity extends Activity {
 			public void onClick(View v) {
 				//连接到服务器找回密码
 				Toast.makeText(getApplication(), "服务器暂时不能处理找回密码", Toast.LENGTH_SHORT).show();
-				startActivity(new Intent().setClass(LaunchActivity.this, Index.class));
-				//startActivity(new Intent().setClass(LaunchActivity.this, NewIndex.class));
+				//startActivity(new Intent().setClass(LaunchActivity.this, Index.class));
+				startActivity(new Intent().setClass(LaunchActivity.this, NewIndex.class));
 			}
 		});
 
