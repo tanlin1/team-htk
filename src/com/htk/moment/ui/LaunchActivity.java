@@ -63,7 +63,7 @@ public class LaunchActivity extends Activity {
 		checkInternet(this);
 
 		//依次找到布局中的各个控件，并为之设置监听器，便于处理
-		ImageView imageView = (ImageView) findViewById(R.id.HeadPhoto);
+		ImageView imageView = (ImageView) findViewById(R.id.headPhotoMain);
 		//imageView.setLayoutParams(new LinearLayout.LayoutParams(screenWidth,screenHeight*2/3));
 		//imageView.setBackgroundDrawable(getWallpaper().getCurrent());
 		imageView.setImageDrawable(getWallpaper().getCurrent());
@@ -99,15 +99,35 @@ public class LaunchActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				//连接到服务器找回密码
+				Toast.makeText(getApplication(), "服务器暂时不能处理找回密码", Toast.LENGTH_SHORT).show();
 				startActivity(new Intent().setClass(LaunchActivity.this, Index.class));
-				//startActivity(new Intent().setClass(LaunchActivity.this, NewMainActivity.class));
+				//startActivity(new Intent().setClass(LaunchActivity.this, NewIndex.class));
 			}
 		});
 
-		//获取昵称编辑框的数据（通过焦点转移）
-		emailEdit.setOnFocusChangeListener(new emailFocus());
-		passwordEdit.setOnFocusChangeListener(new passwordFocus());
-		//为编辑框设置回车键检测
+		// 获取昵称编辑框的数据（通过焦点转移）
+		emailEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				if (!hasFocus) {
+					email = emailEdit.getText().toString();
+					if (!Check.isEmail(email) && !Check.isPhoneNumber(email)) {
+						Toast.makeText(getApplicationContext(), R.string.format_wrong, Toast.LENGTH_SHORT).show();
+						emailEdit.setText("");
+						email = null;
+					}
+				}
+			}
+		});
+		passwordEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				if (!hasFocus) {
+					password = passwordEdit.getText().toString();
+				}
+			}
+		});
+		// 编辑框设置回车隐藏
 		passwordEdit.setOnKeyListener(new View.OnKeyListener() {
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -129,7 +149,7 @@ public class LaunchActivity extends Activity {
 		register.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				startActivity(new Intent().setClass(LaunchActivity.this, RegisterActivity.class));
+				startActivity(new Intent(LaunchActivity.this, RegisterActivity.class));
 			}
 		});
 		//点击登录，进行验证用户名以及密码。
@@ -177,33 +197,6 @@ public class LaunchActivity extends Activity {
 		return true;
 	}
 
-	//昵称编辑框焦点侦听
-	private class emailFocus implements View.OnFocusChangeListener {
-
-		@Override
-		public void onFocusChange(View v, boolean hasFocus) {
-			if (!hasFocus) {
-				email = emailEdit.getText().toString();
-				if (!Check.isEmail(email) && !Check.isPhoneNumber(email)) {
-					Toast.makeText(getApplicationContext(), R.string.format_wrong, Toast.LENGTH_SHORT).show();
-					emailEdit.setText("");
-					email = null;
-				}
-			}
-		}
-	}
-
-	//密码编辑框焦点侦听
-	private class passwordFocus implements View.OnFocusChangeListener {
-
-		@Override
-		public void onFocusChange(View v, boolean hasFocus) {
-			if (!hasFocus) {
-				password = passwordEdit.getText().toString();
-			}
-		}
-	}
-
 	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -227,7 +220,6 @@ public class LaunchActivity extends Activity {
 			login();
 		}
 	}
-
 	private void login() {
 
 		String concreteUrl = "/login";
@@ -251,7 +243,6 @@ public class LaunchActivity extends Activity {
 			if (connection.getResponseCode() == 200) {
 				JSONObject serverInformation = Read.read(connection.getInputStream());
 				String result = serverInformation.getString("accountResult");
-
 				if (result.equals("success")) {
 					// 登录成功
 					sendMessage("password", "true");

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/white"
+		>
+	<RelativeLayout android:layout_width="fill_parent"
+	                android:layout_height="60dp"
+	                android:id="@+id/rel"
+	                android:layout_alignParentBottom="true"
+			>
+		<LinearLayout android:layout_width="fill_parent"
+		              android:layout_height="wrap_content"
+		              android:orientation="horizontal"
+		              android:layout_centerVertical="true"
+				>
+			<TextView android:layout_width="0dp"
+			          android:layout_height="wrap_content"
+			          android:id="@+id/index"
+			          android:text="首页"
+			          android:textSize="20sp"
+			          android:gravity="center"
+			          android:layout_weight="3"
+					/>
+			<TextView android:layout_width="0dp"
+			          android:layout_height="wrap_content"
+			          android:id="@+id/message"
+			          android:text="消息"
+			          android:textSize="20sp"
+			          android:gravity="center"
+			          android:layout_weight="3"
+					/>
+			<TextView android:layout_width="0dp"
+			          android:layout_height="wrap_content"
+			          android:id="@+id/add"
+			          android:text="+"
+			          android:textSize="20sp"
+			          android:gravity="center"
+			          android:layout_weight="4"
+					/>
+
+			<TextView android:layout_width="0dp"
+			          android:layout_height="wrap_content"
+			          android:id="@+id/search"
+			          android:text="发现"
+			          android:textSize="20sp"
+			          android:gravity="center"
+			          android:layout_weight="3"
+					/>
+			<TextView android:layout_width="0dp"
+			          android:layout_height="wrap_content"
+			          android:id="@+id/me"
+			          android:text="我"
+			          android:textSize="20sp"
+			          android:gravity="center"
+			          android:layout_weight="3"
+					/>
+		</LinearLayout>
+	</RelativeLayout>
+	<!--多页面水平滑动-->
+	<android.support.v4.view.ViewPager
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_above="@id/rel"
+			android:flipInterval="30"
+			android:id="@+id/view_pager"
+			android:background="#aed"
+			android:persistentDrawingCache="animation">
+		<!--<android.support.v4.view.PagerTabStrip-->
+				<!--android:id="@+id/pager_tab"-->
+				<!--android:layout_width="fill_parent"-->
+				<!--android:layout_height="9dp"-->
+				<!--android:layout_gravity="bottom" />-->
+	</android.support.v4.view.ViewPager>
+</RelativeLayout>

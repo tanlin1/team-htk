@@ -93,25 +93,9 @@
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
-		<!--第二次修改后的双侧边栏菜单-->
-		<activity android:name=".NewMainActivity">
-			<intent-filter>
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<!--侧边栏-->
-		<activity android:name="utils.other.SlideMenuActivity">
-			<intent-filter>
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-		<activity android:name="utils.test.MainTestActivity">
-			<intent-filter>
-				<category android:name="android.intent.category.DEFAULT"/>
-			</intent-filter>
-		</activity>
-
-		<activity android:name="utils.test.CameraActivity">
+		<activity android:name=".NewIndex"
+		          android:launchMode="singleTask"
+				>
 			<intent-filter>
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>

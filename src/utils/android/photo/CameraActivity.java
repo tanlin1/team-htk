@@ -9,10 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
+import android.os.*;
 import android.os.storage.StorageManager;
 import android.provider.MediaStore;
 import android.text.format.DateFormat;
@@ -194,8 +191,9 @@ public class CameraActivity extends Activity {
 	// 直接装入传递map中，发送给另一个Activity
 	private boolean refresh = false;
 	private void handleSendMultipleImages() {
+		ImageLoader imageLoader = ImageLoader.getInstance(this);
+		imageLoader.enable();
 		ArrayList<String> imageUris = ImageLoader.photoPath;
-
 		if (imageUris != null) {
 			gridAdapter = new GridAdapter(this, imageUris);
 			final View addLocalPhoto = View.inflate(this, R.layout.multyimage, null);
@@ -361,7 +359,6 @@ public class CameraActivity extends Activity {
 			ImageView image;
 			boolean select;
 			view = View.inflate(context, R.layout.items, null);
-
 			image = (ImageView) view.findViewById(R.id.image);
 			select = ImageLoader.selected.get(position);
 

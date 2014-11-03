@@ -3,24 +3,25 @@ package com.htk.moment.ui;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.view.*;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.*;
 import utils.android.sdcard.Read;
 import utils.check.Check;
 import utils.internet.GetConnection;
 import utils.json.JSONObject;
 
-import java.io.*;
-import java.net.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 
 /**
  * Created by HP on 2014/7/18.
@@ -39,9 +40,6 @@ public class RegisterActivity extends Activity {
 	private EditText emailAddressFind;
 	private EditText passwordConfirmFind;
 
-	private Map<String, String> userInformation = new HashMap<String, String>();
-
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -49,15 +47,18 @@ public class RegisterActivity extends Activity {
 		 * 设置无标题，全屏幕显示
 		 */
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.register);
+
+		ImageView back1 = (ImageView) findViewById(R.id.backImage);
+		TextView back2 = (TextView) findViewById(R.id.backText);
+
 		/**
 		 * 找到各个编辑框
 		 */
 		nameFind = ((EditText) findViewById(R.id.register_name_edit));
 		passwordFind = ((EditText) findViewById(R.id.register_password_edit));
-		emailAddressFind = ((EditText) findViewById(R.id.register_email_edit));
 		passwordConfirmFind = (EditText) findViewById(R.id.register_password_confirm_edit);
+		emailAddressFind = ((EditText) findViewById(R.id.register_email_edit));
 
 		//checkBox = (CheckBox) findViewById(R.id.checkbox);
 		name = nameFind.getText().toString();
@@ -67,9 +68,34 @@ public class RegisterActivity extends Activity {
 		/**
 		 * 获取注册按钮
 		 */
-		Button register = (Button) findViewById(R.id.app_register);
-		register.setOnClickListener(new ButtonOnClickListener());
+		Button register = (Button) findViewById(R.id.button_register);
+		Button reset = (Button) findViewById(R.id.reset);
 
+		back1.setOnClickListener(new BackOnClickListener());
+		back2.setOnClickListener(new BackOnClickListener());
+
+		register.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				/** 当所有项目都填写完毕之后，
+				 * 点击注册就直接发送响应的数据给服务器就好
+				 */
+				if (canRegister()) {
+					new registerThread().start();
+				}
+			}
+		});
+
+
+		reset.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				nameFind.setText("");
+				passwordFind.setText("");
+				emailAddressFind.setText("");
+				passwordConfirmFind.setText("");
+			}
+		});
 
 //		checkBox.setOnClickListener(new View.OnClickListener() {
 //			@Override
@@ -133,7 +159,7 @@ public class RegisterActivity extends Activity {
 					if (imm.isActive()) {
 						imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
 					}
-					if (!Check.isEmail(emailAddress) || !Check.isPhoneNumber(emailAddress)) {
+					if (!Check.isEmail(emailAddress) && !Check.isPhoneNumber(emailAddress)) {
 						Toast.makeText(getApplication(), R.string.format_wrong, Toast.LENGTH_SHORT).show();
 						emailAddressFind.setText("");
 					} else {
@@ -206,9 +232,6 @@ public class RegisterActivity extends Activity {
 			}else {
 				System.out.println("服务器 404 错误");
 			}
-
-
-
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -216,7 +239,7 @@ public class RegisterActivity extends Activity {
 		}
 	}
 
-	/**
+	/*
 	 *
 	 * @param inputStream 一个输入流
 	 * @return 从该输入流读取的内容
@@ -245,23 +268,6 @@ public class RegisterActivity extends Activity {
 //		return content;
 //	}
 
-	/**
-	 * 点击注册按钮
-	 */
-	private class ButtonOnClickListener implements View.OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-			/** 当所有项目都填写完毕之后，
-			 * 点击注册就直接发送响应的数据给服务器就好
-			 */
-
-			if (canRegister()) {
-				new registerThread().start();
-			}
-		}
-	}
-
 	private class registerThread extends Thread {
 		@Override
 		public void run() {
@@ -273,33 +279,25 @@ public class RegisterActivity extends Activity {
 			String registerUrl = "/sign_up";
 
 			connection = GetConnection.getConnect(registerUrl);
-
-			userInformation.put("name", name);
-			userInformation.put("userAccount", emailAddress);
-			userInformation.put("password", password);
-
-			info.put("register", userInformation);
+			info.put("name", name);
+			info.put("userAccount", emailAddress);
+			info.put("password", password);
 			try {
 				connection.connect();
 				OutputStream writeToServer = connection.getOutputStream();
 				writeToServer.write(info.toString().getBytes());
-
 				// 取得输入流，并使用Reader读取
 				JSONObject object = Read.read(connection.getInputStream());
 				String result = object.getString("accountResult");
-
-				if (null == result) {
-					SESSIONID = object.getString("JSESSIONID");
+				System.out.println(object.toString());
+				if(result.equals("success")){
 					sendMessage("register", "ok");
-				} else if(result.equals("exist")){
-					System.out.println("");
 				} else if(result.equals("formatError")){
-					System.out.println("");
+					System.out.println("格式错误");
 				} else if(result.equals("error")){
-					System.out.println("");
-				} else if(result.equals("success")){
-					sendMessage("register", "ok");
-					System.out.println("you can run now !");
+					System.out.println("服务器错了");
+				} else if(result.equals("exist")){
+					System.out.println("用户名存在！");
 				} else {
 					System.out.println(object + "\n这里出错了？？");
 				}
@@ -317,7 +315,7 @@ public class RegisterActivity extends Activity {
 	}
 
 	private boolean canRegister() {
-		if (name.length() == 0 || password.length() == 0 || emailAddress.length() == 0 || (!checkBox.isChecked())) {
+		if (name.length() == 0 || password.length() == 0 || emailAddress.length() == 0) {
 			sendMessage("edited", "false");
 			return false;
 		}
@@ -330,5 +328,12 @@ public class RegisterActivity extends Activity {
 		data.putString(key, value);
 		msg.setData(data);
 		handler.sendMessage(msg);
+	}
+
+	private class BackOnClickListener implements View.OnClickListener {
+		@Override
+		public void onClick(View v) {
+			startActivity(new Intent(RegisterActivity.this, LaunchActivity.class));
+		}
 	}
 }

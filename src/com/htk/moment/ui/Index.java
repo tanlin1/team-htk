@@ -37,8 +37,6 @@ public class Index extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.index_interface);
-		imageLoader = ImageLoader.getInstance(this);
-
 		// 初始化ViewPager
 		initViewPager();
 		// 初始化按钮（face布局中的按钮）
@@ -52,7 +50,7 @@ public class Index extends Activity {
 		LayoutInflater mInflater = LayoutInflater.from(this);
 		//null：将所添加的页面不放入任何一个ViewGroup
 		face = mInflater.inflate(R.layout.face, null);
-		notice = mInflater.inflate(R.layout.notice, null);
+		notice = mInflater.inflate(R.layout.face, null);
 		contact = mInflater.inflate(R.layout.contact, null);
 
 		// 添加布局到当前布局
@@ -133,7 +131,6 @@ public class Index extends Activity {
 		if (firstY - lastPositionY_1 > 20 && secondY - lastPositionY_2 > 20) {
 			//打开图库
 			open.putExtra("what", "picture");
-			imageLoader.enable();
 		}
 		//开启线程（读取图片）
 		startActivity(open);
@@ -213,20 +210,20 @@ public class Index extends Activity {
 		public void onPageSelected(final int arg0) {
 			// 用户当前在 ViewPager 首页（ 或者 末页)
 			if (arg0 == 0 || arg0 == 2) {
-				ImageButton back_from_notice = (ImageButton) notice.findViewById(R.id.back_home_from_notice);
-				ImageButton back_from_contact = (ImageButton) contact.findViewById(R.id.back_home_from_contact);
-				back_from_contact.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						viewPager.setCurrentItem(1);
-					}
-				});
-				back_from_notice.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						viewPager.setCurrentItem(1);
-					}
-				});
+//				ImageButton back_from_notice = (ImageButton) notice.findViewById(R.id.back_home_from_notice);
+//				ImageButton back_from_contact = (ImageButton) contact.findViewById(R.id.back_home_from_contact);
+//				back_from_contact.setOnClickListener(new View.OnClickListener() {
+//					@Override
+//					public void onClick(View v) {
+//						viewPager.setCurrentItem(1);
+//					}
+//				});
+//				back_from_notice.setOnClickListener(new View.OnClickListener() {
+//					@Override
+//					public void onClick(View v) {
+//						viewPager.setCurrentItem(1);
+//					}
+//				});
 			}
 		}
 	}

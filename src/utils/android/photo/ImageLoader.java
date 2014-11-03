@@ -64,7 +64,6 @@ public class ImageLoader {
 		map.put("start", 0);
 		map.put("end", 20);
 		FlagQueue.add(map);
-
 		hashBitmaps = new HashMap<Integer, Bitmap>(hashBitmapMaxSize);
 		photoEachWidth = (LaunchActivity.screenWidth - 8 * 3) / 3;
 		photoPath = getImagePath();
@@ -80,7 +79,6 @@ public class ImageLoader {
 		// 零时图片路径
 		String templePhotoPath;
 		Bitmap templeBitmap;
-
 		@Override
 		public void run() {
 			while (true) {
