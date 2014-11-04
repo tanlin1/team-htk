@@ -203,13 +203,13 @@ public class LaunchActivity extends Activity {
 			Bundle data = msg.getData();
 			if ("true".equals(data.getString("password"))) {
 				//Toast.makeText(getApplicationContext(), "登录成功！", Toast.LENGTH_SHORT).show();
-				startActivity(new Intent(LaunchActivity.this, Index.class));
+				startActivity(new Intent(LaunchActivity.this, NewIndex.class));
 			} else if ("false".equals(data.getString("password"))) {
 				Toast.makeText(LaunchActivity.this, R.string.login_error, Toast.LENGTH_SHORT).show();
 			} else if ("yes".equals(data.getString("timeout"))) {
 				Toast.makeText(LaunchActivity.this, R.string.timeout, Toast.LENGTH_SHORT).show();
 			} else {
-				startActivity(new Intent(LaunchActivity.this, Index.class));
+				startActivity(new Intent(LaunchActivity.this, NewIndex.class));
 			}
 		}
 	};
@@ -255,7 +255,7 @@ public class LaunchActivity extends Activity {
 					System.out.println("格式错误!");
 				} else {
 					sendMessage("password", "false");
-					System.out.println("服务器没有响应");
+					System.out.println("服务器没有响应" + result);
 				}
 				connection.disconnect();
 			}

@@ -1,30 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@android:color/white"
 		>
-	<RelativeLayout android:layout_width="wrap_content"
-	                android:layout_height="wrap_content">
-		<TextView android:layout_width="fill_parent"
-		          android:layout_height="48dp"
-		          android:gravity="center"
-		          android:id="@+id/moment"
-		          android:text="@string/app_name"
-		          android:textSize="28sp"
-				/>
-		<View android:layout_width="fill_parent"
-		      android:layout_height="1dp"
-		      android:layout_alignBottom="@id/moment"
-		      android:background="@android:color/darker_gray"
-		      android:id="@+id/view"
-				/>
-	</RelativeLayout>
+	<TextView android:layout_width="fill_parent"
+	          android:layout_height="48dp"
+	          android:gravity="center"
+	          android:id="@+id/momentHome"
+	          android:text="@string/app_name"
+	          android:textSize="28sp"
+			/>
 	<RelativeLayout android:layout_width="fill_parent"
 	                android:layout_height="75dp"
-	                android:id="@+id/relative"
+	                android:id="@+id/relative1"
+	                android:layout_below="@id/momentHome"
+	                android:layout_marginTop="1dp"
 			>
 		<ImageView android:layout_width="80dp"
 		           android:layout_height="60dp"
@@ -69,14 +62,11 @@
 		          android:textSize="16sp"
 				/>
 	</RelativeLayout>
-	<View android:layout_width="fill_parent"
-	      android:layout_height="1dp"
-	      android:background="@android:color/darker_gray"
-	      android:id="@+id/view1"
-			/>
 	<LinearLayout android:layout_width="fill_parent"
 	              android:layout_height="48dp"
 	              android:gravity="center"
+	              android:id="@+id/HomeFLFF"
+	              android:layout_below="@id/relative1"
 			>
 		<TextView android:layout_width="0dp"
 		          android:layout_height="wrap_content"
@@ -115,6 +105,8 @@
 	<RelativeLayout android:layout_width="fill_parent"
 	                android:layout_height="22dp"
 	                android:gravity="center"
+	                android:id="@+id/relative2"
+	                android:layout_below="@id/HomeFLFF"
 			>
 		<TextView android:layout_width="60sp"
 		          android:layout_height="wrap_content"
@@ -150,4 +142,73 @@
 		          android:id="@+id/footPrint"
 				/>
 	</RelativeLayout>
-</LinearLayout>
+
+	<RelativeLayout android:layout_width="fill_parent"
+	                android:layout_height="50dp"
+	                android:id="@+id/relative3"
+	                android:layout_alignParentBottom="true"
+			>
+		<LinearLayout android:layout_width="fill_parent"
+		              android:layout_height="fill_parent"
+		              android:orientation="horizontal"
+		              android:layout_centerVertical="true"
+		              android:layout_alignParentBottom="true"
+				>
+			<TextView android:layout_width="0dp"
+			          android:layout_height="wrap_content"
+			          android:id="@+id/index"
+			          android:text="首页"
+			          android:textSize="20sp"
+			          android:textColor="@android:color/background_dark"
+			          android:gravity="center"
+			          android:layout_weight="3"
+					/>
+			<TextView android:layout_width="0dp"
+			          android:layout_height="wrap_content"
+			          android:id="@+id/message"
+			          android:text="消息"
+			          android:textSize="20sp"
+			          android:gravity="center"
+			          android:textColor="@android:color/background_dark"
+			          android:layout_weight="3"
+					/>
+			<TextView android:layout_width="0dp"
+			          android:layout_height="wrap_content"
+			          android:id="@+id/add"
+			          android:text="+"
+			          android:textSize="35sp"
+			          android:gravity="bottom|center_horizontal"
+			          android:textColor="@android:color/background_dark"
+			          android:layout_weight="4"
+					/>
+
+			<TextView android:layout_width="0dp"
+			          android:layout_height="wrap_content"
+			          android:id="@+id/search"
+			          android:text="发现"
+			          android:textSize="20sp"
+			          android:gravity="center"
+			          android:textColor="@android:color/background_dark"
+			          android:layout_weight="3"
+					/>
+			<TextView android:layout_width="0dp"
+			          android:layout_height="wrap_content"
+			          android:id="@+id/me"
+			          android:text="我"
+			          android:textSize="20sp"
+			          android:gravity="center"
+			          android:textColor="@android:color/background_dark"
+			          android:layout_weight="3"
+					/>
+		</LinearLayout>
+	</RelativeLayout>
+
+	<ListView android:layout_width="fill_parent"
+	          android:layout_height="wrap_content"
+	          android:id="@+id/homeListView"
+	          android:layout_below="@id/relative2"
+	          android:layout_above="@id/relative3"
+			>
+
+	</ListView>
+</RelativeLayout>

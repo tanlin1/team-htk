@@ -6,21 +6,34 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/white"
 		>
+	<TextView android:layout_width="fill_parent"
+	          android:layout_height="50dp"
+	          android:id="@+id/moment"
+	          android:gravity="center_horizontal|center_vertical"
+	          android:textColor="@android:color/background_dark"
+	          android:layout_centerHorizontal="true"
+	          android:text="@string/app_name"
+	          android:textSize="28sp"
+			/>
+
 	<RelativeLayout android:layout_width="fill_parent"
-	                android:layout_height="60dp"
+	                android:layout_height="50dp"
 	                android:id="@+id/rel"
 	                android:layout_alignParentBottom="true"
 			>
 		<LinearLayout android:layout_width="fill_parent"
-		              android:layout_height="wrap_content"
+		              android:layout_height="fill_parent"
 		              android:orientation="horizontal"
 		              android:layout_centerVertical="true"
+		              android:layout_alignParentBottom="true"
+		              android:gravity="center_vertical"
 				>
 			<TextView android:layout_width="0dp"
 			          android:layout_height="wrap_content"
 			          android:id="@+id/index"
 			          android:text="首页"
 			          android:textSize="20sp"
+			          android:textColor="@android:color/background_dark"
 			          android:gravity="center"
 			          android:layout_weight="3"
 					/>
@@ -30,23 +43,41 @@
 			          android:text="消息"
 			          android:textSize="20sp"
 			          android:gravity="center"
+			          android:textColor="@android:color/background_dark"
 			          android:layout_weight="3"
 					/>
-			<TextView android:layout_width="0dp"
-			          android:layout_height="wrap_content"
-			          android:id="@+id/add"
-			          android:text="+"
-			          android:textSize="40sp"
-			          android:gravity="bottom|center_horizontal"
-			          android:layout_weight="4"
-					/>
 
+			<utils.view.layout.InOutLayout
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:id="@+id/composer_buttons_show_hide_button"
+					android:background="@drawable/composer_button_center"
+					android:layout_weight="4"
+					>
+				<ImageView
+						android:id="@+id/composer_buttons_show_hide_button_icon"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerInParent="true"
+						android:src="@drawable/composer_icn_plus" />
+
+				<!--<TextView android:layout_width="0dp"-->
+				<!--android:layout_height="wrap_content"-->
+				<!--android:id="@+id/add"-->
+				<!--android:text="+"-->
+				<!--android:textSize="35sp"-->
+				<!--android:layout_centerInParent="true"-->
+				<!--android:gravity="bottom|center_horizontal"-->
+				<!--android:textColor="@android:color/background_dark"-->
+				<!--/>-->
+			</utils.view.layout.InOutLayout>
 			<TextView android:layout_width="0dp"
 			          android:layout_height="wrap_content"
 			          android:id="@+id/search"
 			          android:text="发现"
 			          android:textSize="20sp"
 			          android:gravity="center"
+			          android:textColor="@android:color/background_dark"
 			          android:layout_weight="3"
 					/>
 			<TextView android:layout_width="0dp"
@@ -55,23 +86,47 @@
 			          android:text="我"
 			          android:textSize="20sp"
 			          android:gravity="center"
+			          android:textColor="@android:color/background_dark"
 			          android:layout_weight="3"
 					/>
 		</LinearLayout>
+
 	</RelativeLayout>
-	<!--多页面水平滑动-->
-	<android.support.v4.view.ViewPager
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:layout_above="@id/rel"
-			android:flipInterval="30"
-			android:id="@+id/view_pager"
-			android:background="#aed"
-			android:persistentDrawingCache="animation">
-		<!--<android.support.v4.view.PagerTabStrip-->
-				<!--android:id="@+id/pager_tab"-->
-				<!--android:layout_width="fill_parent"-->
-				<!--android:layout_height="9dp"-->
-				<!--android:layout_gravity="bottom" />-->
-	</android.support.v4.view.ViewPager>
+	<RelativeLayout android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:id="@+id/relative3"
+	                android:layout_above="@id/rel"
+			>
+			<utils.view.layout.InOutLayout
+					android:id="@+id/composer_buttons_wrapper"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:gravity="bottom|center"
+					android:clipChildren="false"
+					android:clipToPadding="false"
+					>
+				<utils.view.view.HideImageButton
+						android:id="@+id/composer_button_photo"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:background="@drawable/composer_camera"
+						android:visibility="invisible"
+						/>
+				<utils.view.view.HideImageButton
+						android:id="@+id/composer_button_people"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:background="@drawable/composer_with"
+						android:visibility="invisible"
+						/>
+			</utils.view.layout.InOutLayout>
+	</RelativeLayout>
+
+	<ListView android:layout_width="fill_parent"
+	          android:layout_height="fill_parent"
+	          android:layout_below="@id/moment"
+	          android:layout_above="@id/rel"
+	          android:id="@+id/indexListView"
+			>
+	</ListView>
 </RelativeLayout>

@@ -12,7 +12,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import com.htk.moment.ui.Index;
+import com.htk.moment.ui.NewIndex;
 import com.htk.moment.ui.R;
 import utils.check.Check;
 import utils.createrequest.PartFactory;
@@ -121,7 +121,7 @@ public class UploadPhoto extends Activity {
 					System.out.println("用户不在线");
 					//保存至本地，等到下次用户连接上internet的时候上传图片
 				}
-				startActivity(new Intent(UploadPhoto.this, Index.class));
+				startActivity(new Intent(UploadPhoto.this, NewIndex.class));
 			}
 		});
 	}
