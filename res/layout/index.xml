@@ -4,7 +4,7 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/white"
+                android:background="@android:color/holo_blue_bright"
 		>
 	<TextView android:layout_width="fill_parent"
 	          android:layout_height="50dp"
@@ -17,7 +17,7 @@
 			/>
 
 	<RelativeLayout android:layout_width="fill_parent"
-	                android:layout_height="50dp"
+	                android:layout_height="60dp"
 	                android:id="@+id/rel"
 	                android:layout_alignParentBottom="true"
 			>
@@ -61,15 +61,6 @@
 						android:layout_centerInParent="true"
 						android:src="@drawable/composer_icn_plus" />
 
-				<!--<TextView android:layout_width="0dp"-->
-				<!--android:layout_height="wrap_content"-->
-				<!--android:id="@+id/add"-->
-				<!--android:text="+"-->
-				<!--android:textSize="35sp"-->
-				<!--android:layout_centerInParent="true"-->
-				<!--android:gravity="bottom|center_horizontal"-->
-				<!--android:textColor="@android:color/background_dark"-->
-				<!--/>-->
 			</utils.view.layout.InOutLayout>
 			<TextView android:layout_width="0dp"
 			          android:layout_height="wrap_content"
@@ -93,39 +84,45 @@
 
 	</RelativeLayout>
 	<RelativeLayout android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
+	                android:layout_height="80dp"
 	                android:id="@+id/relative3"
-	                android:layout_above="@id/rel"
+	                android:layout_alignParentBottom="true"
+	                android:layout_marginBottom="35dp"
+	                android:gravity="center_horizontal|center_vertical"
+	                android:clipChildren="false"
+	                android:clipToPadding="false"
 			>
-			<utils.view.layout.InOutLayout
-					android:id="@+id/composer_buttons_wrapper"
-					android:layout_width="fill_parent"
-					android:layout_height="fill_parent"
-					android:gravity="bottom|center"
-					android:clipChildren="false"
-					android:clipToPadding="false"
-					>
-				<utils.view.view.HideImageButton
-						android:id="@+id/composer_button_photo"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:background="@drawable/composer_camera"
-						android:visibility="invisible"
-						/>
-				<utils.view.view.HideImageButton
-						android:id="@+id/composer_button_people"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:background="@drawable/composer_with"
-						android:visibility="invisible"
-						/>
-			</utils.view.layout.InOutLayout>
+		<utils.view.layout.InOutLayout
+				android:id="@+id/composer_buttons_wrapper"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:gravity="center|top"
+				android:clipChildren="false"
+				android:clipToPadding="false"
+				>
+			<utils.view.view.HideImageButton
+					android:id="@+id/composer_button_photo"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:background="@drawable/c"
+					android:visibility="invisible"
+					/>
+			<utils.view.view.HideImageButton
+					android:id="@+id/composer_button_people"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:background="@drawable/p"
+					android:layout_toRightOf="@id/composer_button_photo"
+					android:layout_marginLeft="26dp"
+					android:visibility="invisible"
+					/>
+		</utils.view.layout.InOutLayout>
 	</RelativeLayout>
 
 	<ListView android:layout_width="fill_parent"
 	          android:layout_height="fill_parent"
 	          android:layout_below="@id/moment"
-	          android:layout_above="@id/rel"
+	          android:layout_above="@id/relative3"
 	          android:id="@+id/indexListView"
 			>
 	</ListView>

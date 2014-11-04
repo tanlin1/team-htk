@@ -9,7 +9,7 @@ import utils.view.animation.InOutAnimation;
 
 public class HideImageButton extends ImageButton {
 
-	private Animation	animation;
+	private Animation animation;
 
 	public HideImageButton(Context context) {
 		super(context);
@@ -28,7 +28,7 @@ public class HideImageButton extends ImageButton {
 		super.onAnimationEnd();
 		if ((this.animation instanceof InOutAnimation)) {
 			setVisibility(((InOutAnimation) this.animation).direction ==
-					InOutAnimation.Direction.IN ?	View.VISIBLE : View.GONE);
+					InOutAnimation.Direction.IN ? View.VISIBLE : View.GONE);
 		}
 	}
 

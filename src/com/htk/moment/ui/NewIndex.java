@@ -11,6 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import utils.view.animation.ComposerButtonAnimationSet;
 import utils.view.animation.InOutAnimation;
+import utils.view.view.HideImageButton;
 
 /**
  * Created by Administrator on 2014/11/2.
@@ -53,29 +54,15 @@ public class NewIndex extends Activity {
 
 		rotateStoryAddButtonIn = AnimationUtils.loadAnimation(this, R.anim.rotate_story_add_button_in);
 		rotateStoryAddButtonOut = AnimationUtils.loadAnimation(this, R.anim.rotate_story_add_button_out);
-
+		//setPosition();
 		button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				toggleComposerButtons();
 			}
 		});
-		for (int i = 0; i < composerButtonsWrapper.getChildCount(); i++) {
-			composerButtonsWrapper.getChildAt(i).setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					if(v.getId() == R.id.composer_button_photo){
-						System.out.println("点击了照相机--");
-					}else if(v.getId() == R.id.composer_button_people){
-						System.out.println("点击了 相册");
-					}else {
-						System.out.println("this block can not appear ！");
-					}
-				}
-			});
-		}
-		//
-		//add = (TextView) findViewById(R.id.add);
+
+		//	add = (TextView) findViewById(R.id.add);
 		search = (TextView) findViewById(R.id.search);
 		me = (TextView) findViewById(R.id.me);
 
@@ -128,6 +115,21 @@ public class NewIndex extends Activity {
 		});
 	}
 
+	private void setPosition() {
+		int[] location = new int[2];
+		button.getLocationOnScreen(location);
+		System.out.println(location[0] + "  " + location[1]);
+
+		ViewGroup.MarginLayoutParams paramsc = (ViewGroup.MarginLayoutParams)
+				findViewById(R.id.composer_button_photo).getLayoutParams();
+		paramsc.setMargins(240-50, 0, 0, 50);
+
+		ViewGroup.MarginLayoutParams paramsp = (ViewGroup.MarginLayoutParams)
+				findViewById(R.id.composer_button_people).getLayoutParams();
+		paramsp.setMargins(240+50, 0, 0, 50);
+
+	}
+
 	private void toggleComposerButtons() {
 		if (!areButtonsShowing) {
 			ComposerButtonAnimationSet.startAnimations(composerButtonsWrapper, InOutAnimation.Direction.IN);
@@ -137,5 +139,38 @@ public class NewIndex extends Activity {
 			icon.startAnimation(rotateStoryAddButtonOut);
 		}
 		areButtonsShowing = !areButtonsShowing;
+
+
+
+		int count = composerButtonsWrapper.getChildCount();
+		for (int i = 0; i < count; i++) {
+
+
+			if (composerButtonsWrapper.getChildAt(i) instanceof HideImageButton) {
+				HideImageButton hide = (HideImageButton) composerButtonsWrapper.getChildAt(i);
+
+
+				if (hide.getId() == R.id.composer_button_photo) {
+
+					hide.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							System.out.println("camera");
+						}
+					});
+
+				} else if (hide.getId() == R.id.composer_button_people) {
+
+					hide.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							System.out.println("PEOPLE");
+						}
+					});
+				} else {
+					System.out.println("what's wrong ?");
+				}
+			}
+		}
 	}
 }
