@@ -80,26 +80,11 @@ public class LaunchActivity extends Activity {
 		//CheckBox checkBox = (CheckBox) findViewById(R.id.checkbox);
 		TextView toFindPassword = (TextView) findViewById(R.id.find_password);
 
-//		checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//			@Override
-//			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//
-//				if (isChecked) {
-//					try {
-//						Write.write(LaunchActivity.this, "test.txt", "yes\r\n你好吗？");
-//					} catch (IOException e) {
-//						System.out.println("写入文件出错！");
-//						e.printStackTrace();
-//					}
-//				}
-//
-//			}
-//		});
 		toFindPassword.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				//连接到服务器找回密码
-				Toast.makeText(getApplication(), "服务器暂时不能处理找回密码", Toast.LENGTH_SHORT).show();
+				//Toast.makeText(getApplication(), "服务器暂时不能处理找回密码", Toast.LENGTH_SHORT).show();
 				//startActivity(new Intent().setClass(LaunchActivity.this, Index.class));
 				startActivity(new Intent().setClass(LaunchActivity.this, NewIndex.class));
 			}
@@ -202,14 +187,14 @@ public class LaunchActivity extends Activity {
 		public void handleMessage(Message msg) {
 			Bundle data = msg.getData();
 			if ("true".equals(data.getString("password"))) {
-				//Toast.makeText(getApplicationContext(), "登录成功！", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "登录成功！", Toast.LENGTH_SHORT).show();
 				startActivity(new Intent(LaunchActivity.this, NewIndex.class));
 			} else if ("false".equals(data.getString("password"))) {
 				Toast.makeText(LaunchActivity.this, R.string.login_error, Toast.LENGTH_SHORT).show();
 			} else if ("yes".equals(data.getString("timeout"))) {
 				Toast.makeText(LaunchActivity.this, R.string.timeout, Toast.LENGTH_SHORT).show();
 			} else {
-				startActivity(new Intent(LaunchActivity.this, NewIndex.class));
+				//startActivity(new Intent(LaunchActivity.this, NewIndex.class));
 			}
 		}
 	};

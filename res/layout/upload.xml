@@ -38,7 +38,7 @@
 				android:layout_height="wrap_content"
 				android:layout_centerInParent="true"
 				android:text="@string/app_name"
-				android:textSize="20sp"
+				android:textSize="25sp"
 				android:textColor="@android:color/white"
 				/>
 
@@ -63,35 +63,36 @@
 	</RelativeLayout>
 
 	<HorizontalScrollView
-			android:layout_width="wrap_content"
-			android:layout_height="100dp"
-			android:id="@+id/HorizontalScrollView"
+			android:layout_width="fill_parent"
+			android:layout_height="60dp"
 			android:background="@android:color/white"
 			android:scrollbars="none"
-			android:layout_marginTop="4dp"
+			android:layout_marginTop="2dp"
+	        android:layout_gravity="center|bottom"
 			>
-
 		<LinearLayout
 				android:layout_width="wrap_content"
 				android:layout_height="fill_parent"
 				android:orientation="horizontal"
-				android:gravity="center_vertical"
+				android:gravity="fill"
 				android:id="@+id/liner"
-				android:layout_gravity="center_vertical"
+				android:layout_gravity="fill"
+		        android:background="@android:color/white"
 				>
-
 		</LinearLayout>
-
 	</HorizontalScrollView>
 
 	<FrameLayout
 			android:layout_width="fill_parent"
-			android:layout_height="wrap_content">
+			android:layout_height="wrap_content"
+	        android:layout_gravity="top"
+			>
 
 		<EditText
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:hint="@string/dynamic"
+				android:textColorHighlight="@android:color/background_dark"
 				android:minHeight="100dp"
 				android:maxLines="5"
 				android:id="@+id/UploadPhotoInformationEdit"

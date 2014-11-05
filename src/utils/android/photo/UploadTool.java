@@ -10,7 +10,7 @@ import java.net.URL;
  * Created by Administrator on 2014/8/27.
  */
 public class UploadTool {
-	private static String url = LaunchActivity.url + ":8080/UploadPhoto";
+	private static String url = LaunchActivity.url + "/UploadPhoto";
 
 	public static HttpURLConnection getUrlConnection() throws IOException {
 

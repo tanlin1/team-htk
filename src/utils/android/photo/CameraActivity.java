@@ -3,26 +3,32 @@ package utils.android.photo;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.*;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.os.storage.StorageManager;
 import android.provider.MediaStore;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.*;
+import com.htk.moment.ui.NewIndex;
 import com.htk.moment.ui.R;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Locale;
 
 
 /**
@@ -46,6 +52,10 @@ public class CameraActivity extends Activity {
 
 	private static GridAdapter gridAdapter;
 
+
+	// 已被选中的 图片（此时应该叫做缩略图） <图片位置，该图片所对应的路径>
+	public static HashMap<Integer, String> photoSelectFlagMap = new HashMap<Integer, String>();
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -55,77 +65,13 @@ public class CameraActivity extends Activity {
 
 		//判断将要执行什么操作
 		String select = getIntent().getStringExtra("what");
-		if(select != null) {
-            //拍照
-            if (select.equals("camera")) {
-                //以日期命名jpg格式
-                photoName = DateFormat.format("yyyy-MM-dd-hh-mm-ss",
-                        Calendar.getInstance(Locale.CHINA)).toString() + ".jpg";
-                // SD 卡存在
-                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                    //
-                    StorageManager manager = (StorageManager) getSystemService(Context.STORAGE_SERVICE);
-                    try {
-                        // 利用反射， 调用系统（主机）有几张 SD 卡
-                        Method methodMnt = manager.getClass().getMethod("getVolumePaths");
-                        String[] path = (String[]) methodMnt.invoke(manager);
-                        // 在SD card0 （内置）中创建目录
-                        directory = new File(path[0] + "/moment/photo/");
-                        if (!directory.exists()) {
-                            // 创建多级目录
-                            directory.mkdirs();
-                        }
-                        File photo = new File(directory, photoName);
-//
-//                        // 意图（调用相机）
-//                        Intent takePhoto = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                        takePhoto.addCategory(Intent.CATEGORY_DEFAULT);
-//
-//                        //指定你保存路径，不会在系统默认路径下（当然可以指定）
-//                        takePhoto.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
-//                        //调用系统相机
-//                        startActivityForResult(takePhoto, CAMERA_ASK);
-
-	                    PackageManager pm = this.getPackageManager();
-	                    List<PackageInfo> packs = pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
-	                    String packageName;
-	                    for (PackageInfo pi : packs) {
-		                    packageName = pi.packageName.toLowerCase();
-		                    // 有的手机名字不一样
-		                    if((packageName.contains("gallery") || packageName.contains("camera"))
-				                    && packageName.contains("android") ){ //Android 表示系统的相机
-
-			                    Intent takePhoto = pm.getLaunchIntentForPackage(pi.packageName);
-			                    if (takePhoto != null) {
-				                    takePhoto.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
-				                    startActivityForResult(takePhoto, CAMERA_ASK);
-			                    }
-		                    }
-	                    }
-
-                    } catch (NoSuchMethodException e) {
-                        e.printStackTrace();
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-            } else if (select.equals("picture")) {
-                //选择图片上传
-
-//			Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//			intent.setType("image/*");
-//			startActivityForResult(Intent.createChooser(intent, "Pick any photo"), PICTURE_ASK);
-
-//			Intent picture = new Intent();
-//			picture.setType("image/*");
-//			picture.setAction(Intent.ACTION_GET_CONTENT);
-//			startActivityForResult(picture, PICTURE_ASK);
-                handleSendMultipleImages();
-            }
-        }
+		//拍照
+		if (select.equals("camera")) {
+			handleCameraPicture();
+		} else if (select.equals("picture")) {
+			//选择图片上传
+			handleSendMultipleImages();
+		}
 	}
 
 	@Override
@@ -141,37 +87,30 @@ public class CameraActivity extends Activity {
 		if (resultCode == Activity.RESULT_OK && requestCode == CAMERA_ASK) {
 			//提交原图
 			path = directory + "/" + photoName;
-			System.out.println(path + "-------------------------------");
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inSampleSize = 2;
 			bitmap = BitmapFactory.decodeFile(path, options);
-			while (bitmap == null || imageView == null){
-				System.out.println("************ null ********");
+			while (bitmap == null || imageView == null) {
+				Log.w("TAG", "请等待图片加载！");
+				System.out.println("请等待图片加载");
 			}
 			imageView.setImageBitmap(bitmap);
-			System.out.println("this is running");
-		}
-		if (resultCode == Activity.RESULT_OK && requestCode == PICTURE_ASK) {
-			sendMessage("selected", "yes");
-			System.out.println("I'm In the pro");
-		}
-		final String sendPath = path;
-		post.setOnClickListener(new View.OnClickListener() {
-			//点击上传原图，就开启上传线程
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(CameraActivity.this, UploadPhoto.class);
-				if (requestCode == CAMERA_ASK) {
+
+			final String sendPath = path;
+			post.setOnClickListener(new View.OnClickListener() {
+				//点击上传原图，就开启上传线程
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(CameraActivity.this, UploadPhoto.class);
 					intent.putExtra("photo_path", sendPath);
-					intent.putExtra("way","CAMERA_ASK");
+					intent.putExtra("way", "CAMERA_ASK");
+					startActivity(intent);
 				}
-				else if (requestCode == PICTURE_ASK) {
-					intent.putExtra("photo_path", sendPath);
-					intent.putExtra("way","PICTURE_ASK");
-				}
-				startActivity(intent);
-			}
-		});
+			});
+		}else {
+			// 返回主页
+			startActivity(new Intent(CameraActivity.this, NewIndex.class));
+		}
 		//美化图片
 		beauty.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -181,8 +120,6 @@ public class CameraActivity extends Activity {
 		});
 	}
 
-	// 已被选中的 图片（此时应该叫做缩略图） <图片位置，该图片所对应的路径>
-	public static HashMap<Integer, String> photoSelectFlagMap = new HashMap<Integer, String>();
 
 	/**
 	 * 用GridView显示多张图片
@@ -190,27 +127,88 @@ public class CameraActivity extends Activity {
 	// 全选之后，就不用通过每张图片去获取了，直接遍历整个标志ImageLoader.selected Map
 	// 直接装入传递map中，发送给另一个Activity
 	private boolean refresh = false;
+
+	private void handleCameraPicture() {
+		//以日期命名jpg格式
+		photoName = DateFormat.format("yyyy-MM-dd-hh-mm-ss",
+				Calendar.getInstance(Locale.CHINA)).toString() + ".jpg";
+		// SD 卡存在
+		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+			//
+			StorageManager manager = (StorageManager) getSystemService(Context.STORAGE_SERVICE);
+			try {
+				// 利用反射， 调用系统（主机）有几张 SD 卡
+				Method methodMnt = manager.getClass().getMethod("getVolumePaths");
+				String[] path = (String[]) methodMnt.invoke(manager);
+				// 在SD card0 （内置）中创建目录
+				directory = new File(path[0] + "/moment/photo/");
+				if (!directory.exists()) {
+					// 创建多级目录
+					directory.mkdirs();
+				}
+				File photo = new File(directory, photoName);
+				// 意图（调用相机）
+				Intent takePhoto = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+				takePhoto.addCategory(Intent.CATEGORY_DEFAULT);
+
+				//指定你保存路径，不会在系统默认路径下（当然可以指定）
+				takePhoto.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
+				//调用系统相机
+				startActivityForResult(takePhoto, CAMERA_ASK);
+
+//				PackageManager pm = this.getPackageManager();
+//				List<PackageInfo> packs = pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
+//				String packageName;
+//				for (PackageInfo pi : packs) {
+//					packageName = pi.packageName.toLowerCase();
+//					// 有的手机名字不一样
+//					if ((packageName.contains("gallery") || packageName.contains("camera"))
+//							&& packageName.contains("android")) { //Android 表示系统的相机
+//
+//						Intent takePhoto = pm.getLaunchIntentForPackage(pi.packageName);
+//						if (takePhoto != null) {
+//							takePhoto.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
+//							startActivityForResult(takePhoto, CAMERA_ASK);
+//						}
+//					}
+//				}
+//
+
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	private void handleSendMultipleImages() {
 		ImageLoader imageLoader = ImageLoader.getInstance(this);
 		imageLoader.enable();
 		ArrayList<String> imageUris = ImageLoader.photoPath;
-		if (imageUris != null) {
+		if (imageUris == null) {
+			System.out.println("图片读取异常");
+			return;
+		} else {
 			gridAdapter = new GridAdapter(this, imageUris);
 			final View addLocalPhoto = View.inflate(this, R.layout.multyimage, null);
 			final GridView gridView = (GridView) addLocalPhoto.findViewById(R.id.gridView);
-
+			// 两个按钮
 			Button selectAll = (Button) addLocalPhoto.findViewById(R.id.photo_select_all);
 			Button confirm = (Button) addLocalPhoto.findViewById(R.id.add_photo_confirm);
 
 			selectAll.setOnClickListener(new Button.OnClickListener() {
 				int buttonOnClick = 0;
 				boolean all = true;
+
 				@Override
 				public void onClick(View v) {
 					refresh = true;
-					if(buttonOnClick % 2 == 0){
+					if (buttonOnClick % 2 == 0) {
 						all = true;
-					}else {
+					} else {
 						all = false;
 					}
 					ImageLoader.initPhotoSelect(all);
@@ -223,21 +221,23 @@ public class CameraActivity extends Activity {
 				public void onClick(View v) {
 					Intent confirmUpload = new Intent(CameraActivity.this, UploadPhoto.class);
 					// 只要全选按钮被点击，就应该刷新一遍
-					if(refresh){
+					if (refresh) {
 						// 这样的目的是：在for循环中，不需要每次都获取map的长度，相对提高效率
 						int length = ImageLoader.selected.size();
-						for(int i = 0; i < length; i++){
+						for (int i = 0; i < length; i++) {
 							boolean shouldPut = ImageLoader.selected.get(i);
 							// 全选
-							if(shouldPut){
-								photoSelectFlagMap.put(i,ImageLoader.photoPath.get(i));
-							}else {
-							//取消全选
+							if (shouldPut) {
+								photoSelectFlagMap.put(i, ImageLoader.photoPath.get(i));
+							} else {
+								//取消全选
 								photoSelectFlagMap.remove(i);
 							}
 						}
 					}
+					// 一定不能直接写 PICTURE_ASK 传过去
 					confirmUpload.putExtra("selectMessage", photoSelectFlagMap);
+					confirmUpload.putExtra("way", "PICTURE_ASK");
 					startActivity(confirmUpload);
 				}
 			});
@@ -256,14 +256,12 @@ public class CameraActivity extends Activity {
 						view.setBackgroundColor(Color.DKGRAY);
 						// 添加
 						photoSelectFlagMap.put(position, ImageLoader.photoPath.get(position));
-						System.out.println("put already---" + position);
 					} else {
 						ImageLoader.selected.put(position, false);
 						view.setBackgroundColor(Color.WHITE);
 						// 从HashMap 中移除响应项
 						photoSelectFlagMap.remove(position);
 					}
-					System.out.println("第" + position + "现在处于选中状态？" + ImageLoader.selected.get(position));
 				}
 			});
 
@@ -317,8 +315,6 @@ public class CameraActivity extends Activity {
 					end = start + visibleItemCount;
 				}
 			});
-		} else {
-			System.out.println("图片内读取异常");
 		}
 	}
 
@@ -360,12 +356,13 @@ public class CameraActivity extends Activity {
 			boolean select;
 			view = View.inflate(context, R.layout.items, null);
 			image = (ImageView) view.findViewById(R.id.image);
+			image.setLayoutParams(new FrameLayout.LayoutParams(width, width));
 			select = ImageLoader.selected.get(position);
 
 			image.setMinimumHeight(width);
 			image.setMinimumWidth(width);
 			// 图片间距
-			image.setPadding(3, 2, 3, 2);
+			image.setPadding(2, 1, 0, 1);
 			// 为新建的image 添加图片资源
 			image.setImageBitmap(ImageLoader.hashBitmaps.get(position));
 			// 被选中的状态

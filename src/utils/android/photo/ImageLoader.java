@@ -27,11 +27,9 @@ public class ImageLoader {
 	public static ArrayList<String> photoPath;
 	// 提供 Bitmap 资源
 	public static HashMap<Integer, Bitmap> hashBitmaps;
-
 	// gridView 中每个Image 的宽度，根据MainActivity中的屏幕宽度确定后
 	public static int photoEachWidth = 0;
-
-	//
+	//照片目录
 	public static String photoParentDirectory = "/storage/sdcard0/";
 
 	public static HashMap<Integer, Boolean> selected;

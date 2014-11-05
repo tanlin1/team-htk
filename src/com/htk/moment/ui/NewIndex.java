@@ -3,15 +3,23 @@ package com.htk.moment.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
-import utils.view.animation.ComposerButtonAnimationSet;
+import utils.android.photo.CameraActivity;
+import utils.view.animation.ButtonAnimationSet;
 import utils.view.animation.InOutAnimation;
 import utils.view.view.HideImageButton;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Administrator on 2014/11/2.
@@ -31,19 +39,23 @@ public class NewIndex extends Activity {
 	private View button;
 	private View icon;
 
-	//private TextView add;
 	private TextView search;
 	private TextView me;
 
 	// 动画
-	private Animation rotateStoryAddButtonIn;
-	private Animation rotateStoryAddButtonOut;
+	private Animation addButtonIn;
+	private Animation addButtonOut;
+
+	private ListView content;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.index);
+		LayoutInflater listInflater = getLayoutInflater();
+
 		index = (TextView) findViewById(R.id.index);
 		message = (TextView) findViewById(R.id.message);
 
@@ -52,9 +64,8 @@ public class NewIndex extends Activity {
 		button = findViewById(R.id.composer_buttons_show_hide_button);
 		icon = findViewById(R.id.composer_buttons_show_hide_button_icon);
 
-		rotateStoryAddButtonIn = AnimationUtils.loadAnimation(this, R.anim.rotate_story_add_button_in);
-		rotateStoryAddButtonOut = AnimationUtils.loadAnimation(this, R.anim.rotate_story_add_button_out);
-		//setPosition();
+		addButtonIn = AnimationUtils.loadAnimation(this, R.anim.rotate_story_add_button_in);
+		addButtonOut = AnimationUtils.loadAnimation(this, R.anim.rotate_story_add_button_out);
 		button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -62,15 +73,22 @@ public class NewIndex extends Activity {
 			}
 		});
 
-		//	add = (TextView) findViewById(R.id.add);
 		search = (TextView) findViewById(R.id.search);
 		me = (TextView) findViewById(R.id.me);
+//		content = (ListView) findViewById(R.id.indexListView);
+//		listInflater.inflate(R.layout.indexcontent, null);
+//
+//		System.out.println("----------");
+//		ImageView imageView = (ImageView) content.findViewById(R.id.headPhotoIndex);
+//		imageView.setImageResource(R.drawable.image_default);
+//		System.out.println("----------");
 
-		jump();
-
+		toOtherMenu();
+		startListener();
+		test();
 	}
 
-	private void jump() {
+	private void toOtherMenu() {
 		// 进入首页
 		index.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -91,13 +109,6 @@ public class NewIndex extends Activity {
 		 * 添加动画，扇形选项
 		 */
 
-//		add.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				//startActivity(new Intent());
-//			}
-//		});
-
 		// 搜索联系人、热门动态
 		search.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -115,62 +126,77 @@ public class NewIndex extends Activity {
 		});
 	}
 
-	private void setPosition() {
-		int[] location = new int[2];
-		button.getLocationOnScreen(location);
-		System.out.println(location[0] + "  " + location[1]);
-
-		ViewGroup.MarginLayoutParams paramsc = (ViewGroup.MarginLayoutParams)
-				findViewById(R.id.composer_button_photo).getLayoutParams();
-		paramsc.setMargins(240-50, 0, 0, 50);
-
-		ViewGroup.MarginLayoutParams paramsp = (ViewGroup.MarginLayoutParams)
-				findViewById(R.id.composer_button_people).getLayoutParams();
-		paramsp.setMargins(240+50, 0, 0, 50);
-
+	private void startListener() {
+		int count = composerButtonsWrapper.getChildCount();
+		final Intent intentToCamera = new Intent(NewIndex.this, CameraActivity.class);
+		for (int i = 0; i < count; i++) {
+			HideImageButton hide = (HideImageButton) composerButtonsWrapper.getChildAt(i);
+			switch (hide.getId()) {
+				case R.id.composer_button_photo: //照相机
+					hide.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							intentToCamera.putExtra("what", "camera");
+							startActivity(intentToCamera);
+							toggleComposerButtons();
+						}
+					});
+					break;
+				case R.id.composer_button_people: // 打开图库
+					hide.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							intentToCamera.putExtra("what", "picture");
+							startActivity(intentToCamera);
+							toggleComposerButtons();
+						}
+					});
+					break;
+			}
+		}
 	}
 
 	private void toggleComposerButtons() {
 		if (!areButtonsShowing) {
-			ComposerButtonAnimationSet.startAnimations(composerButtonsWrapper, InOutAnimation.Direction.IN);
-			icon.startAnimation(rotateStoryAddButtonIn);
+			ButtonAnimationSet.startAnimations(composerButtonsWrapper, InOutAnimation.Direction.IN);
+			icon.startAnimation(addButtonIn);
 		} else {
-			ComposerButtonAnimationSet.startAnimations(composerButtonsWrapper, InOutAnimation.Direction.OUT);
-			icon.startAnimation(rotateStoryAddButtonOut);
+			ButtonAnimationSet.startAnimations(composerButtonsWrapper, InOutAnimation.Direction.OUT);
+			icon.startAnimation(addButtonOut);
 		}
 		areButtonsShowing = !areButtonsShowing;
+	}
 
+	public void test(){
 
+		List<HashMap<String, Object>> list = new ArrayList<HashMap<String, Object>>();
+		HashMap<String, Object> contentMap = new HashMap<String, Object>();
+		contentMap.put("text","test 中文");
+		contentMap.put("detail","");
+		list.add(contentMap);
+	}
+	private class MyContentListViewAdaper extends BaseAdapter{
+		public MyContentListViewAdaper(){
+		}
 
-		int count = composerButtonsWrapper.getChildCount();
-		for (int i = 0; i < count; i++) {
+		@Override
+		public int getCount() {
+			return 0;
+		}
 
+		@Override
+		public Object getItem(int position) {
+			return null;
+		}
 
-			if (composerButtonsWrapper.getChildAt(i) instanceof HideImageButton) {
-				HideImageButton hide = (HideImageButton) composerButtonsWrapper.getChildAt(i);
+		@Override
+		public long getItemId(int position) {
+			return 0;
+		}
 
-
-				if (hide.getId() == R.id.composer_button_photo) {
-
-					hide.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							System.out.println("camera");
-						}
-					});
-
-				} else if (hide.getId() == R.id.composer_button_people) {
-
-					hide.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							System.out.println("PEOPLE");
-						}
-					});
-				} else {
-					System.out.println("what's wrong ?");
-				}
-			}
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			return null;
 		}
 	}
 }

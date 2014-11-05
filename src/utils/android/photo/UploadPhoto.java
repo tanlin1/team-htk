@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -16,6 +15,7 @@ import com.htk.moment.ui.NewIndex;
 import com.htk.moment.ui.R;
 import utils.check.Check;
 import utils.createrequest.PartFactory;
+import utils.internet.GetConnection;
 import utils.json.JsonTool;
 
 import java.io.ByteArrayOutputStream;
@@ -32,67 +32,78 @@ public class UploadPhoto extends Activity {
 	public static String BOUNDARY = "---------------------------7de8c1a80910";
 
 	private HttpURLConnection connection = null;
-	private HorizontalScrollView theChoosedImage;
 	private LinearLayout liner;
-
 	private String photoPath = null;
+
+	ImageButton back;
+	ImageButton uploadButton;
 
 	private byte[] start;
 	private byte[] first;
 	private byte[] end;
 	private Intent intent;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.upload);
+		back = (ImageButton) findViewById(R.id.back_to_camera);
+		uploadButton = (ImageButton) findViewById(R.id.UploadPhoto);
 		intent = getIntent();
+		liner = (LinearLayout) findViewById(R.id.liner);
 		String way = intent.getStringExtra("way");
 
 		// 得到照片的路径
-		photoPath = intent.getStringExtra("photo_path");
-		if("PICTURE_ASK".equals(way)) {
-
-			// 得到从 本地获取到的所有图片路径
-			// 注意：本HashMap中的key为图片在屏幕上的位置0-size，
-			// 因此在找路径的时候可能或混淆
-			HashMap<Integer, String> hashMap = (HashMap<Integer, String>) intent.getSerializableExtra("selectMessage");
-			// 目前这样处理起来好像很费时间，算法有待改进
-			int length = ImageLoader.selected.size();
-			for (int i = 0; i < length; i++) {
-				if (hashMap.containsKey(i)) {
-					// 此方法将得到图片的绝对路径，不包含由程序生成缩略图文件夹
-					System.out.println("----  " + hashMap.get(i));
-				}
-			}
-		}else if("CAMERA_ASK".equals(way)) {
+		if ("PICTURE_ASK".equals(way)) {
+			displayTheSelectedPhoto();
+		} else if ("CAMERA_ASK".equals(way)) {
+			photoPath = intent.getStringExtra("photo_path");
 			System.out.println("路径是: " + photoPath);
 			if (photoPath != null) {
-				try {
-					test();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				camera();
 			}
+		}else {
+			System.out.println("what is wrong ??????");
 		}
+		listen();
 	}
 
-	private void test() throws IOException {
-
-		theChoosedImage = (HorizontalScrollView) findViewById(R.id.HorizontalScrollView);
-		liner = (LinearLayout) findViewById(R.id.liner);
+	private void displayTheSelectedPhoto() {
+		Bitmap bitmap;
+		ImageView image;
+		String path;
 		ViewGroup.LayoutParams pq = liner.getLayoutParams();
+		ImageView im = new ImageView(this);
+		im.setLayoutParams(pq);
+		ViewGroup.LayoutParams params = im.getLayoutParams();
+		params.width = 120;
+		params.height = 90;
+		// 得到从 本地获取到的所有图片路径
+		// 注意：本HashMap中的key为图片在屏幕上的位置0-size，
+		// 因此在找路径的时候可能或混淆
+		HashMap<Integer, String> hashMap = (HashMap<Integer, String>) intent.getSerializableExtra("selectMessage");
+		// 目前这样处理起来好像很费时间，算法有待改进
 
-		Bitmap bm = ImageCompressUtil.zoomImage(BitmapFactory.decodeFile(photoPath),120,90);
-
-		for(int i = 0; i < 20; i++)
-		{
-			ImageView v = new ImageView(this);
-
-			v.setImageBitmap(bm);
-			v.setPadding(3, 1, 3, 1);
-			liner.addView(v);
+		for(int temp : hashMap.keySet()){
+			image = new ImageView(this);
+			//
+			if(ImageLoader.hashBitmaps.containsKey(temp)) {
+				image.setImageBitmap(ImageLoader.hashBitmaps.get(temp));
+			} else {
+				path = hashMap.get(temp);
+				// 此方法将得到图片的绝对路径，不包含由程序生成缩略图文件夹
+				bitmap = BitmapFactory.decodeFile(path);
+				image.setImageBitmap(ImageCompressUtil.zoomImage(bitmap, 120, 90));
+				image.setPadding(2, 0, 2, 1);
+			}
+			liner.addView(image);
 		}
+		liner.addView(im);
+	}
+
+	private void camera() {
+		ViewGroup.LayoutParams pq = liner.getLayoutParams();
 		//在这些图片后面添加一个空白区域，后续有用
 		ImageView im = new ImageView(this);
 		im.setLayoutParams(pq);
@@ -100,10 +111,9 @@ public class UploadPhoto extends Activity {
 		params.width = 120;
 		params.height = 90;
 		liner.addView(im);
+	}
 
-		ImageButton back = (ImageButton) findViewById(R.id.back_to_camera);
-		ImageButton uploadButton = (ImageButton) findViewById(R.id.UploadPhoto);
-
+	private void listen(){
 		back.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -114,10 +124,10 @@ public class UploadPhoto extends Activity {
 			@Override
 			public void onClick(View v) {
 				//如果用户已连接上Internet，就开启上传线程，并进入主界面（返回至登录时候的界面）
-				if(Check.internetIsEnable(UploadPhoto.this)){
+				if (Check.internetIsEnable(UploadPhoto.this)) {
 					System.out.println("用户在线");
 					new UploadPhotoThread().start();
-				}else {
+				} else {
 					System.out.println("用户不在线");
 					//保存至本地，等到下次用户连接上internet的时候上传图片
 				}
@@ -130,16 +140,17 @@ public class UploadPhoto extends Activity {
 		@Override
 		public void run() {
 			//是不是可以直接加代码在这个地方
-			handlePhoto();
+			upLoadPhoto();
 		}
 	}
+
 	//处理拍摄好的照片
-	private void handlePhoto() {
+	private void upLoadPhoto() {
 
 		Bitmap bitmap = BitmapFactory.decodeFile(photoPath);
-
 		try {
-			connection = UploadTool.getUrlConnection();
+			// 取得一个连接connection
+			connection = GetConnection.getConnect("/upload_photo");
 			//设置连接状态（属性）
 			connection.setDoOutput(true);
 			connection.setDoInput(true);
@@ -179,4 +190,5 @@ public class UploadPhoto extends Activity {
 			}
 		}
 	}
+	// handler 处理子线程完成状态消息
 }

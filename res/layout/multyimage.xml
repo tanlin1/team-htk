@@ -14,7 +14,6 @@
 		<LinearLayout
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
-		        android:weightSum="2"
 		        android:id="@+id/inline"
 		        android:orientation="horizontal"
 		        android:layout_alignParentBottom="true"
@@ -24,8 +23,8 @@
 				android:layout_height="wrap_content"
 		        android:id="@+id/photo_select_all"
 		        android:text="全选"
-				android:layout_gravity="center_vertical|center_horizontal"
-				android:textSize="25sp"
+				android:gravity="center_vertical|center_horizontal"
+				android:textSize="20sp"
 				android:background="@android:color/holo_green_light"
 		        android:layout_weight="1"
 				/>
@@ -33,9 +32,9 @@
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
 				android:id="@+id/add_photo_confirm"
-				android:layout_gravity="center_vertical|center_horizontal"
+				android:gravity="center_vertical|center_horizontal"
 				android:text="确认添加"
-				android:textSize="25sp"
+				android:textSize="20sp"
 				android:background="@android:color/holo_green_light"
 		        android:layout_weight="1"
 				/>

@@ -8,11 +8,11 @@ import android.view.animation.TranslateAnimation;
 import com.htk.moment.ui.R;
 import utils.view.view.HideImageButton;
 
-public class ComposerButtonAnimationSet extends InOutAnimation {
+public class ButtonAnimationSet extends InOutAnimation {
 
-	public static final int DURATION = 200;
+	public static final int DURATION = 150;
 
-	public ComposerButtonAnimationSet(Direction direction, long l, View views) {
+	public ButtonAnimationSet(Direction direction, long l, View views) {
 		super(direction, l, new View[]{views});
 	}
 
@@ -31,8 +31,8 @@ public class ComposerButtonAnimationSet extends InOutAnimation {
 		for (int i = 0; i < viewgroup.getChildCount(); i++) {
 			if (viewgroup.getChildAt(i) instanceof HideImageButton) {
 				HideImageButton hideImageButton = (HideImageButton) viewgroup.getChildAt(i);
-				ComposerButtonAnimationSet animation =
-						new ComposerButtonAnimationSet(InOutAnimation.Direction.IN, DURATION, hideImageButton);
+				ButtonAnimationSet animation =
+						new ButtonAnimationSet(InOutAnimation.Direction.IN, DURATION, hideImageButton);
 				// 根据需要 添加开始动画延时
 				animation.setFillAfter(true);
 				animation.setInterpolator(new OvershootInterpolator(3F));
@@ -45,29 +45,24 @@ public class ComposerButtonAnimationSet extends InOutAnimation {
 		for (int i = 0; i < viewgroup.getChildCount(); i++) {
 			if (viewgroup.getChildAt(i) instanceof HideImageButton) {
 				HideImageButton hideImageButton = (HideImageButton) viewgroup.getChildAt(i);
-				ComposerButtonAnimationSet animation =
-						new ComposerButtonAnimationSet(InOutAnimation.Direction.OUT, DURATION, hideImageButton);
+				ButtonAnimationSet animation =
+						new ButtonAnimationSet(InOutAnimation.Direction.OUT, DURATION, hideImageButton);
 				// 从哪里消失
 				animation.setInterpolator(new AnticipateInterpolator(2F));
 				hideImageButton.startAnimation(animation);
 			}
 		}
 	}
+
 	@Override
 	protected void addInAnimation(View[] views) {
 
 		if (views[0].getId() == R.id.composer_button_photo) {
 
-			addAnimation(new TranslateAnimation(33, 0, 110, 0));
-//			addAnimation(new TranslateAnimation(Animation.RELATIVE_TO_SELF, fxA, Animation.RELATIVE_TO_SELF, txA,
-//					Animation.RELATIVE_TO_SELF, fyA, Animation.RELATIVE_TO_SELF, tyA));
+			addAnimation(new TranslateAnimation(45, 0, 90, 0));
 
 		} else if (views[0].getId() == R.id.composer_button_people) {
-			addAnimation(new TranslateAnimation(-33, 0, 110, 0));
-//			addAnimation(new TranslateAnimation(Animation.RELATIVE_TO_SELF, fxB, Animation.RELATIVE_TO_SELF, txB,
-//					Animation.RELATIVE_TO_SELF, fyB, Animation.RELATIVE_TO_SELF, tyB));
-		} else {
-			System.out.println("wrong--------------");
+			addAnimation(new TranslateAnimation(-45, 0, 90, 0));
 		}
 		this.setFillAfter(true);
 	}
@@ -75,17 +70,9 @@ public class ComposerButtonAnimationSet extends InOutAnimation {
 	@Override
 	protected void addOutAnimation(View[] views) {
 		if (views[0].getId() == R.id.composer_button_photo) {
-			addAnimation(new TranslateAnimation(0, 33, 0, 110));
-
-//			addAnimation(new TranslateAnimation(Animation.RELATIVE_TO_SELF, txA, Animation.RELATIVE_TO_SELF, fxA,
-//					Animation.RELATIVE_TO_SELF, tyA, Animation.RELATIVE_TO_SELF, -fyA));
+			addAnimation(new TranslateAnimation(0, 45, 0, 90));
 		} else if (views[0].getId() == R.id.composer_button_people) {
-			addAnimation(new TranslateAnimation(0, -33, 0, 110));
-
-//			addAnimation(new TranslateAnimation(Animation.RELATIVE_TO_SELF, txB, Animation.RELATIVE_TO_SELF, fxB,
-//					Animation.RELATIVE_TO_SELF, tyB, Animation.RELATIVE_TO_SELF, -fyB));
-		} else {
-			System.out.println("wrong--------------");
+			addAnimation(new TranslateAnimation(0, -45, 0, 90));
 		}
 	}
 }
