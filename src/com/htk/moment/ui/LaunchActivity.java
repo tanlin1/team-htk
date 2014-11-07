@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -44,13 +45,15 @@ public class LaunchActivity extends Activity {
 	public static String url = "http://120.24.68.64:8080/mks";
 	//public static String url = "http://10.10.117.120";
 
+	public static String JSESSIONID = "";
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		//全屏模式，无标题
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		//getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		//得到屏幕的尺寸，方便后续使用
 		WindowManager vm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
@@ -59,18 +62,16 @@ public class LaunchActivity extends Activity {
 
 		//当前Activity 是哪一个布局文件，以何种方式显示
 		setContentView(R.layout.main);
-		//检查网络
-		checkInternet(this);
 
 		//依次找到布局中的各个控件，并为之设置监听器，便于处理
 		ImageView imageView = (ImageView) findViewById(R.id.headPhotoMain);
 		//imageView.setLayoutParams(new LinearLayout.LayoutParams(screenWidth,screenHeight*2/3));
 		//imageView.setBackgroundDrawable(getWallpaper().getCurrent());
-		imageView.setImageDrawable(getWallpaper().getCurrent());
+		//imageView.setImageDrawable(getWallpaper().getCurrent());
 
 		//登录（注册）按钮
 		Button login = (Button) findViewById(R.id.button_login);
-		Button register = (Button) findViewById(R.id.button_register);
+		TextView register = (TextView) findViewById(R.id.button_register);
 
 		//登录填写的邮箱，密码编辑框
 		emailEdit = (EditText) findViewById(R.id.set_name);
@@ -141,45 +142,42 @@ public class LaunchActivity extends Activity {
 		login.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (email == null || password == null) {
+				if (email == null || password == null || password.length() == 0 || email.length() == 0) {
 					Toast.makeText(getApplication(), R.string.login_warning, Toast.LENGTH_SHORT).show();
-				} else if (password.length() != 0) {
-					new LoginThread().start();
 				} else {
-					Toast.makeText(getApplication(), R.string.login_warning, Toast.LENGTH_SHORT).show();
+					if (!Check.internetIsEnable(LaunchActivity.this)) {
+						//Toast.makeText(getApplication(), "网络没有打开，无法使用。", Toast.LENGTH_SHORT).show();
+						goSetting();
+					} else {
+						new LoginThread().start();
+					}
 				}
 			}
 		});
 	}
 
 	/**
-	 * @param context 上下文
-	 * @return true: 已经接入网络，不管是Internet 还是移动网络
-	 * false: 当前没有网络连接
+	 * 当检测到用户没哟连入互联网的时候，提示重新设置网络
 	 */
-	private boolean checkInternet(Context context) {
-		if (!Check.internetIsEnable(context)) {
-			AlertDialog.Builder dialog = new AlertDialog.Builder(LaunchActivity.this);
+	private void goSetting() {
+		AlertDialog.Builder dialog = new AlertDialog.Builder(LaunchActivity.this);
 
-			dialog.setTitle(R.string.login_dialog_title);
-			dialog.setMessage(R.string.net_warning);
-			dialog.setPositiveButton(R.string.login_dialog_ok, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-					startActivity(new Intent(Settings.ACTION_SETTINGS));
-				}
-			});
-			dialog.setNegativeButton(R.string.login_dialog_cancel, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-				}
-			});
-			dialog.create().show();
-			return false;
-		}
-		return true;
+		dialog.setTitle(R.string.login_dialog_title);
+		dialog.setMessage(R.string.net_warning);
+		dialog.setPositiveButton(R.string.login_dialog_ok, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				startActivity(new Intent(Settings.ACTION_SETTINGS));
+			}
+		});
+		dialog.setNegativeButton(R.string.login_dialog_cancel, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+		dialog.create().show();
 	}
 
 	private Handler handler = new Handler() {
@@ -187,13 +185,14 @@ public class LaunchActivity extends Activity {
 		public void handleMessage(Message msg) {
 			Bundle data = msg.getData();
 			if ("true".equals(data.getString("password"))) {
-				Toast.makeText(getApplicationContext(), "登录成功！", Toast.LENGTH_SHORT).show();
+				//Toast.makeText(getApplicationContext(), "登录成功！", Toast.LENGTH_SHORT).show();
 				startActivity(new Intent(LaunchActivity.this, NewIndex.class));
-			} else if ("false".equals(data.getString("password"))) {
+			} else if ("passwordWrong".equals(data.getString("result"))) {
 				Toast.makeText(LaunchActivity.this, R.string.login_error, Toast.LENGTH_SHORT).show();
-			} else if ("yes".equals(data.getString("timeout"))) {
+			} else if ("timeOut".equals(data.getString("result"))) {
 				Toast.makeText(LaunchActivity.this, R.string.timeout, Toast.LENGTH_SHORT).show();
-			} else {
+			} else if ("formatError".equals(data.getString("result"))) {
+				Log.e("CLIENT", "格式错误！");
 				//startActivity(new Intent(LaunchActivity.this, NewIndex.class));
 			}
 		}
@@ -202,64 +201,50 @@ public class LaunchActivity extends Activity {
 	private class LoginThread extends Thread {
 		@Override
 		public void run() {
-			login();
-		}
-	}
-	private void login() {
+			String concreteUrl = "/login";
+			HttpURLConnection connection = GetConnection.getConnect(concreteUrl);
+			//构造json字符串，并发送
+			JSONStringer jsonStringer = new JSONStringer();
+			String transfer;
+			transfer = jsonStringer.object().key("account").value(email).key("password").value(password)
+					.endObject().toString();
+			System.out.println(transfer);
+			try {
+				connection.connect();
 
-		String concreteUrl = "/login";
-		HttpURLConnection connection = GetConnection.getConnect(concreteUrl);
+				OutputStream writeToServer = connection.getOutputStream();
+				writeToServer.write(transfer.getBytes());
+				writeToServer.flush();
+				writeToServer.close();
 
-		//构造json字符串，并发送
-		JSONStringer jsonStringer = new JSONStringer();
-		String transfer;
-		transfer = jsonStringer.object().key("account").value(email).key("password").value(password)
-				.endObject().toString();
-		System.out.println(transfer);
-		try {
-			connection.connect();
-
-			OutputStream writeToServer = connection.getOutputStream();
-			writeToServer.write(transfer.getBytes());
-			writeToServer.flush();
-			writeToServer.close();
-
-			// 取得输入流，并使用Reader读取
-			if (connection.getResponseCode() == 200) {
+				// 取得输入流，并使用Reader读取
 				JSONObject serverInformation = Read.read(connection.getInputStream());
 				String result = serverInformation.getString("accountResult");
 				if (result.equals("success")) {
 					// 登录成功
 					sendMessage("password", "true");
+					JSESSIONID = serverInformation.getString("JSESSIONID");
 				} else if (result.equals("dataWrong")) {
 					// 密码错误/此用户名不存在，报告给用户处理
-					sendMessage("password", "false");
+					sendMessage("result", "passwordWrong");
 				} else if (result.equals("formatError")) {
 					// 数据格式错误，由程序员处理
-					sendMessage("password", "false");
-					System.out.println("格式错误!");
+					sendMessage("result", "formatError");
 				} else {
-					sendMessage("password", "false");
+					sendMessage("result", "timeOut");
 					System.out.println("服务器没有响应" + result);
 				}
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (SocketTimeoutException e) {
+				sendMessage("result", "timeOut");
+			} catch (SocketException e) {
+				Toast.makeText(getApplication(), "网络没有打开，无法使用。", Toast.LENGTH_SHORT).show();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
 				connection.disconnect();
 			}
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (SocketTimeoutException e) {
-			sendMessage("timeout", "yes");
-			//startActivity(new Intent(this, HomeActivity.class));
-		} catch (SocketException e) {
-			System.out.println("你没有接入网络还。");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == 0 && resultCode == 0) {
-			Toast.makeText(this, data.getStringExtra("key"), Toast.LENGTH_LONG).show();
 		}
 	}
 

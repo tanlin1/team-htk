@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 /**
@@ -28,7 +29,7 @@ import java.net.SocketTimeoutException;
  */
 public class RegisterActivity extends Activity {
 
-	public static String SESSIONID = null;
+	private String SESSIONID = null;
 	private String name;
 	private String password;
 	private String passwordConfirm;
@@ -81,7 +82,7 @@ public class RegisterActivity extends Activity {
 				 * 点击注册就直接发送响应的数据给服务器就好
 				 */
 				if (canRegister()) {
-					new registerThread().start();
+					new RegisterThread().start();
 				}
 			}
 		});
@@ -175,15 +176,15 @@ public class RegisterActivity extends Activity {
 	//处理子线程传回的数据（消息）
 	Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
-			Bundle data = msg.getData();
+			String result = msg.getData().getString("result");
 			//注册成功
-			if ("ok".equals(data.getString("register"))) {
+			if ("allRight".equals(result)) {
 				Toast.makeText(getApplicationContext(), "注册成功", Toast.LENGTH_SHORT).show();
 				//进入个人主页（设置）
 				//或者进入动态页
 				System.out.println("正在尝试进入主页，敬请期待！");
-
-			} else if ("yes".equals(data.getString("emailIsUsed"))) {
+				new LoginThread().start();
+			} else if ("theThemeName".equals(result) ) {
 				//邮箱被注册过
 				AlertDialog.Builder dialog = new AlertDialog.Builder(RegisterActivity.this);
 				dialog.setMessage(R.string.email_used);
@@ -191,10 +192,14 @@ public class RegisterActivity extends Activity {
 				dialog.setTitle(R.string.register_error);
 				emailAddressFind.setText("");
 				dialog.create().show();
-			} else if ("false".equals(data.getString("edited"))) {
+			} else if ("null".equals(result)) {
 				Toast.makeText(RegisterActivity.this, R.string.name_null, Toast.LENGTH_SHORT).show();
-			} else if ("yes".equals(data.getString("timeout"))) {
+			} else if ("timeOut".equals(result)) {
 				Toast.makeText(RegisterActivity.this, R.string.timeout, Toast.LENGTH_SHORT).show();
+			} else if("login".equals(result)) {
+				// 给全局的静态变量 JSESSIONID 赋值，后续要使用。
+				LaunchActivity.JSESSIONID = SESSIONID;
+				startActivity(new Intent(RegisterActivity.this, NewIndex.class));
 			}
 		}
 	};
@@ -204,82 +209,52 @@ public class RegisterActivity extends Activity {
 	 * 必须在子线程中执行
 	 */
 	private class emailCheckThread extends Thread {
-		public void run() {
-			emailCheck();
-		}
-	}
-	private void emailCheck() {
-		String emailCheckUrl = "/checkEmail";
 		HttpURLConnection connection;
-		try {
-			connection = GetConnection.getConnect(emailCheckUrl);
-			connection.connect();
-			JSONObject object = new JSONObject();
-			object.put("account", emailAddress);
-			connection.getOutputStream().write(object.toString().getBytes());
-			//读取服务器返回的消息
-			JSONObject jsonObject = new JSONObject(Read.read(connection.getInputStream()));
-			String accountResult = jsonObject.getString("accountResult");
-			if (accountResult.equals("exist")) {
-				sendMessage("emailIsUsed", "yes");
+		String emailCheckUrl = "/checkEmail";
+		public void run() {
+			try {
+				connection = GetConnection.getConnect(emailCheckUrl);
+				connection.connect();
+				JSONObject object = new JSONObject();
+				object.put("account", emailAddress);
+				connection.getOutputStream().write(object.toString().getBytes());
+				//读取服务器返回的消息
+				JSONObject jsonObject = new JSONObject(Read.read(connection.getInputStream()));
+				String accountResult = jsonObject.getString("accountResult");
+				if (accountResult.equals("exist")) {
+					sendMessage("result", "theThemeName");
+				} else if (accountResult.equals("formatError")) {
+					sendMessage("result", "formatError");
+				} else if (accountResult.equals("error")) {
+					sendMessage("result", "serverError");
+				} else if (accountResult.equals("exist")) {
+					sendMessage("result", "theThemeName");
+				} else {
+					sendMessage("result", "messageWrong");
+				}
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (SocketException e) {
+				sendMessage("result","timeOut");
+				e.printStackTrace();
+			} catch (IOException e){
+				e.printStackTrace();
+			}finally {
 				connection.disconnect();
-			} else if(accountResult.equals("formatError")) {
-				System.out.println("格式错误");
-			} else if(accountResult.equals("error")) {
-				System.out.println("服务器错误");
-			} else if(accountResult.equals("not_exist")) {
-				System.out.println("可以注册");
-			}else {
-				System.out.println("服务器 404 错误");
 			}
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
-	/*
-	 *
-	 * @param inputStream 一个输入流
-	 * @return 从该输入流读取的内容
-	 */
-//	private String getProtocolMessage(InputStream inputStream) {
-//
-//		InputStreamReader inputStreamReader;
-//		String content = null;
-//		try {
-//			inputStreamReader = new InputStreamReader(inputStream, "utf-8");
-//
-//			BufferedReader reader = new BufferedReader(inputStreamReader);
-//			StringBuilder sb = new StringBuilder();
-//			String line;
-//
-//			while ((line = reader.readLine()) != null) {
-//				sb.append(line);
-//				sb.append("\n");
-//			}
-//			content = sb.toString();
-//		} catch (UnsupportedEncodingException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		return content;
-//	}
-
-	private class registerThread extends Thread {
+	private class RegisterThread extends Thread {
+		String registerUrl = "/sign_up";
 		@Override
 		public void run() {
-			//Register();
-
 			HttpURLConnection connection;
 			JSONObject info = new JSONObject();
-
-			String registerUrl = "/sign_up";
-
 			connection = GetConnection.getConnect(registerUrl);
 			info.put("name", name);
+
+			// 这点流量就不要计较了
 			info.put("userAccount", emailAddress);
 			info.put("password", password);
 			try {
@@ -289,23 +264,24 @@ public class RegisterActivity extends Activity {
 				// 取得输入流，并使用Reader读取
 				JSONObject object = Read.read(connection.getInputStream());
 				String result = object.getString("accountResult");
-				System.out.println(object.toString());
-				if(result.equals("success")){
-					sendMessage("register", "ok");
-				} else if(result.equals("formatError")){
-					System.out.println("格式错误");
-				} else if(result.equals("error")){
-					System.out.println("服务器错了");
-				} else if(result.equals("exist")){
-					System.out.println("用户名存在！");
+				if (result.equals("success")) {
+					sendMessage("result", "allRight");
+				} else if (result.equals("formatError")) {
+					sendMessage("result", "formatError");
+				} else if (result.equals("error")) {
+					sendMessage("result", "serverError");
+				} else if (result.equals("exist")) {
+					sendMessage("result", "theThemeName");
 				} else {
-					System.out.println(object + "\n这里出错了？？");
+					sendMessage("result", "messageWrong");
 				}
 				// 断开连接
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			} catch (SocketTimeoutException e) {
-				sendMessage("timeout", "yes");
+				sendMessage("result", "timeOut");
+			} catch (SocketException e) {
+				Toast.makeText(getApplication(), "网络没有打开，无法使用。", Toast.LENGTH_SHORT).show();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
@@ -314,9 +290,55 @@ public class RegisterActivity extends Activity {
 		}
 	}
 
+
+	private class LoginThread extends Thread {
+		String newUrl = "/login";
+		@Override
+		public void run() {
+			HttpURLConnection connection;
+			JSONObject info = new JSONObject();
+			connection = GetConnection.getConnect(newUrl);
+			// 这点流量就不要计较了
+			info.put("account", emailAddress);
+			info.put("password", password);
+			try {
+				connection.connect();
+				OutputStream writeToServer = connection.getOutputStream();
+				writeToServer.write(info.toString().getBytes());
+				// 取得输入流，并使用Reader读取
+				JSONObject object = Read.read(connection.getInputStream());
+				String result = object.getString("accountResult");
+
+				if (result.equals("success")) {
+					sendMessage("result", "login");  // 成功
+				} else if (result.equals("formatError")) {
+					sendMessage("result", "formatError");  //格式错误
+				} else if (result.equals("error")) {
+					sendMessage("result", "serverError"); // 服务器错误
+				} else if (result.equals("exist")) {
+					sendMessage("result", "theThemeName"); //存在相同名字
+				} else {
+					sendMessage("result", "messageWrong"); // 数据异常
+				}
+				// 断开连接
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (SocketTimeoutException e) {
+				sendMessage("result", "timeOut");
+			} catch (SocketException e) {
+				Toast.makeText(getApplication(), "网络没有打开，无法使用。", Toast.LENGTH_SHORT).show();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				connection.disconnect();
+			}
+		}
+	}
+
+
 	private boolean canRegister() {
 		if (name.length() == 0 || password.length() == 0 || emailAddress.length() == 0) {
-			sendMessage("edited", "false");
+			sendMessage("result", "null");
 			return false;
 		}
 		return true;

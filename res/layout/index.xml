@@ -1,128 +1,216 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/white"
-		>
-	<TextView android:layout_width="fill_parent"
-	          android:layout_height="50dp"
-	          android:id="@+id/moment"
-	          android:gravity="center_horizontal|center_vertical"
-	          android:textColor="@android:color/background_dark"
-	          android:layout_centerHorizontal="true"
-	          android:text="@string/app_name"
-	          android:textSize="28sp"
+                android:background="#fafff2"
+                tools:context=".NewIndex">
+
+		<TextView android:layout_width="fill_parent"
+		          android:layout_height="56dp"
+		          android:id="@+id/moment"
+		          android:gravity="center_horizontal|center_vertical"
+		          android:textColor="@android:color/background_dark"
+		          android:layout_centerHorizontal="true"
+		          android:text="@string/app_name"
+		          android:textSize="40sp"
+		          android:textStyle="bold"
+		          android:textScaleX="1"
+		          android:background="#f5fffe"
+				/>
+
+	<utils.view.BottomTabBar android:layout_width="fill_parent"
+	                         android:layout_height="100dp"
+	                         android:id="@+id/bottomTarBar"
+	                         android:layout_alignParentBottom="true"
+	                         android:gravity="bottom"
+	                         android:background="#f5fffe"
+	                         android:clipChildren="false"
 			/>
 
-	<RelativeLayout android:layout_width="fill_parent"
-	                android:layout_height="60dp"
-	                android:id="@+id/rel"
-	                android:layout_alignParentBottom="true"
-			>
-		<LinearLayout android:layout_width="fill_parent"
-		              android:layout_height="fill_parent"
-		              android:orientation="horizontal"
-		              android:layout_centerVertical="true"
-		              android:layout_alignParentBottom="true"
-		              android:gravity="center_vertical"
-				>
-			<TextView android:layout_width="0dp"
-			          android:layout_height="wrap_content"
-			          android:id="@+id/index"
-			          android:text="首页"
-			          android:textSize="20sp"
-			          android:textColor="@android:color/background_dark"
-			          android:gravity="center"
-			          android:layout_weight="3"
-					/>
-			<TextView android:layout_width="0dp"
-			          android:layout_height="wrap_content"
-			          android:id="@+id/message"
-			          android:text="消息"
-			          android:textSize="20sp"
-			          android:gravity="center"
-			          android:textColor="@android:color/background_dark"
-			          android:layout_weight="3"
-					/>
 
-			<utils.view.layout.InOutLayout
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:id="@+id/composer_buttons_show_hide_button"
-					android:background="@drawable/composer_button_center"
-					android:layout_weight="4"
-					>
-				<ImageView
-						android:id="@+id/composer_buttons_show_hide_button_icon"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_centerInParent="true"
-						android:src="@drawable/composer_icn_plus" />
+	<!--<RelativeLayout android:layout_width="fill_parent"-->
+	                <!--android:layout_height="fill_parent"-->
+	                <!--android:id="@+id/relative1"-->
+	                <!--android:layout_below="@id/moment"-->
+	                <!--android:layout_marginTop="1dp"-->
+	                <!--android:layout_above="@id/bottomTarBar"-->
+	                <!--android:layout_marginBottom="2dp"-->
+			<!-->-->
 
-			</utils.view.layout.InOutLayout>
-			<TextView android:layout_width="0dp"
-			          android:layout_height="wrap_content"
-			          android:id="@+id/search"
-			          android:text="发现"
-			          android:textSize="20sp"
-			          android:gravity="center"
-			          android:textColor="@android:color/background_dark"
-			          android:layout_weight="3"
-					/>
-			<TextView android:layout_width="0dp"
-			          android:layout_height="wrap_content"
-			          android:id="@+id/me"
-			          android:text="我"
-			          android:textSize="20sp"
-			          android:gravity="center"
-			          android:textColor="@android:color/background_dark"
-			          android:layout_weight="3"
-					/>
-		</LinearLayout>
+		<!--<utils.view.view.CircleImageView android:layout_width="48dp"-->
+		                                 <!--android:layout_height="48dp"-->
+		                                 <!--android:layout_marginTop="4dp"-->
+		                                 <!--android:src="@drawable/head2"-->
+		                                 <!--android:id="@+id/headPhotoIndex"-->
+		                                 <!--android:layout_marginLeft="12dp"-->
+				<!--/>-->
+		<!--&lt;!&ndash;<ImageView android:layout_width="48dp"&ndash;&gt;-->
+		           <!--&lt;!&ndash;android:layout_height="48dp"&ndash;&gt;-->
+		           <!--&lt;!&ndash;android:scaleType="fitXY"&ndash;&gt;-->
+		           <!--&lt;!&ndash;android:layout_marginTop="4dp"&ndash;&gt;-->
+		           <!--&lt;!&ndash;android:src="@drawable/head2"&ndash;&gt;-->
+		           <!--&lt;!&ndash;android:id="@+id/headPhotoIndex"&ndash;&gt;-->
+		           <!--&lt;!&ndash;android:layout_marginLeft="16dp"/>&ndash;&gt;-->
+		<!--<TextView android:layout_width="wrap_content"-->
+		          <!--android:layout_height="29sp"-->
+		          <!--android:text="流动的心"-->
+		          <!--android:layout_alignTop="@id/headPhotoIndex"-->
+		          <!--android:layout_toRightOf="@id/headPhotoIndex"-->
+		          <!--android:layout_marginLeft="16dp"-->
+		          <!--android:id="@+id/userNameIndex"-->
+		          <!--android:gravity="center"-->
+		          <!--android:textColor="@android:color/background_dark"-->
+		          <!--android:textSize="15sp"-->
+				<!--/>-->
+		<!--<ImageView android:layout_width="15dp"-->
+		           <!--android:layout_height="15dp"-->
+		           <!--android:src="@drawable/location"-->
+		           <!--android:id="@+id/location"-->
+		           <!--android:layout_below="@id/userNameIndex"-->
+		           <!--android:layout_alignLeft="@id/userNameIndex"-->
+		           <!--android:layout_alignBottom="@id/headPhotoIndex"-->
+				<!--/>-->
+		<!--<TextView android:layout_width="wrap_content"-->
+		          <!--android:layout_height="wrap_content"-->
+		          <!--android:layout_below="@id/userNameIndex"-->
+		          <!--android:layout_alignLeft="@id/location"-->
+		          <!--android:layout_marginLeft="20sp"-->
+		          <!--android:layout_alignBottom="@id/headPhotoIndex"-->
+		          <!--android:singleLine="true"-->
+		          <!--android:gravity="center|bottom"-->
+		          <!--android:id="@+id/address"-->
+		          <!--android:text="好望角"-->
+		          <!--android:textSize="12sp"-->
+		          <!--android:textColor="@android:color/background_dark"-->
+				<!--/>-->
 
-	</RelativeLayout>
-	<RelativeLayout android:layout_width="wrap_content"
-	                android:layout_height="80dp"
-	                android:id="@+id/relative3"
-	                android:layout_alignParentBottom="true"
-	                android:layout_marginBottom="35dp"
-	                android:gravity="center_horizontal|center_vertical"
-	                android:clipChildren="false"
-	                android:clipToPadding="false"
-			>
-		<utils.view.layout.InOutLayout
-				android:id="@+id/composer_buttons_wrapper"
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
-				android:gravity="center|top"
-				android:clipChildren="false"
-				android:clipToPadding="false"
-				>
-			<utils.view.view.HideImageButton
-					android:id="@+id/composer_button_photo"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:background="@drawable/c"
-					android:visibility="invisible"
-					/>
-			<utils.view.view.HideImageButton
-					android:id="@+id/composer_button_people"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:background="@drawable/p"
-					android:layout_toRightOf="@id/composer_button_photo"
-					android:layout_marginLeft="26dp"
-					android:visibility="invisible"
-					/>
-		</utils.view.layout.InOutLayout>
-	</RelativeLayout>
+		<!--<TextView android:layout_width="wrap_content"-->
+		          <!--android:layout_height="wrap_content"-->
+		          <!--android:text="4day"-->
+		          <!--android:id="@+id/daysAgo"-->
+
+		          <!--android:layout_alignParentRight="true"-->
+		          <!--android:layout_marginRight="16dp"-->
+		          <!--android:layout_alignBottom="@id/address"-->
+		          <!--android:layout_marginBottom="10dp"-->
+
+				<!--/>-->
+		<!--<ImageView android:layout_width="20dp"-->
+		           <!--android:layout_height="20dp"-->
+		           <!--android:id="@+id/time"-->
+		           <!--android:src="@drawable/clock_24"-->
+		           <!--android:layout_toLeftOf="@id/daysAgo"-->
+		           <!--android:layout_marginRight="5dp"-->
+		           <!--android:layout_alignBottom="@id/address"-->
+		           <!--android:layout_marginBottom="10dp"-->
+				<!--/>-->
+
+		<!--<ImageView-->
+				<!--android:layout_width="fill_parent"-->
+				<!--android:layout_height="200dp"-->
+				<!--android:id="@+id/userPicture"-->
+				<!--android:layout_below="@id/address"-->
+				<!--android:layout_alignParentLeft="true"-->
+				<!--android:layout_marginTop="7dp"-->
+				<!--android:layout_gravity="center_horizontal"-->
+		        <!--android:src="@drawable/head"-->
+		        <!--android:background="#f5f5f5"-->
+
+				<!--/>-->
+		<!--<TextView android:layout_width="fill_parent"-->
+		          <!--android:layout_height="32sp"-->
+		          <!--android:id="@+id/thePictureExplain"-->
+		          <!--android:layout_below="@id/userPicture"-->
+		          <!--android:text="在好望角看到的日出，动人心魄……"-->
+		          <!--android:layout_alignParentLeft="true"-->
+		          <!--android:layout_marginLeft="10dp"-->
+		          <!--android:layout_marginTop="16dp"-->
+		          <!--android:textColor="@android:color/background_dark"-->
+				<!--/>-->
+
+
+		<!--<ImageView style="@style/bottom_tabs_image"-->
+		           <!--android:src="@drawable/like"-->
+		           <!--android:id="@+id/like"-->
+		           <!--android:layout_below="@id/thePictureExplain"-->
+		           <!--android:layout_alignParentLeft="true"-->
+		           <!--android:layout_marginLeft="16dp"-->
+				<!--/>-->
+		<!--<ImageView style="@style/bottom_tabs_image"-->
+		           <!--android:src="@drawable/response"-->
+		           <!--android:id="@+id/comment"-->
+		           <!--android:layout_below="@id/thePictureExplain"-->
+		           <!--android:layout_alignLeft="@id/like"-->
+		           <!--android:layout_alignBottom="@id/like"-->
+
+		           <!--android:layout_marginLeft="60dp"-->
+
+				<!--/>-->
+		<!--<ImageView style="@style/bottom_tabs_image"-->
+		           <!--android:src="@drawable/share"-->
+		           <!--android:id="@+id/share"-->
+		           <!--android:layout_below="@id/thePictureExplain"-->
+		           <!--android:layout_alignLeft="@id/comment"-->
+		           <!--android:layout_alignBottom="@id/comment"-->
+		           <!--android:layout_marginLeft="60dp"-->
+		           <!--/>-->
+
+		<!--&lt;!&ndash;<LinearLayout android:layout_width="fill_parent"&ndash;&gt;-->
+		              <!--&lt;!&ndash;android:layout_height="29dp"&ndash;&gt;-->
+		              <!--&lt;!&ndash;android:layout_below="@id/thePictureExplain"&ndash;&gt;-->
+		              <!--&lt;!&ndash;android:orientation="horizontal"&ndash;&gt;-->
+		              <!--&lt;!&ndash;android:id="@+id/theContentTool"&ndash;&gt;-->
+				<!--&lt;!&ndash;>&ndash;&gt;-->
+			<!--&lt;!&ndash;<TextView android:layout_width="0dp"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:id="@+id/share"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:layout_gravity="center_vertical"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:gravity="center"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:text="分享"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:textColor="@android:color/background_dark"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:layout_weight="1"&ndash;&gt;-->
+					<!--&lt;!&ndash;/>&ndash;&gt;-->
+			<!--&lt;!&ndash;<TextView android:layout_width="0dp"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:id="@+id/comment"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:layout_gravity="center_vertical"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:gravity="center"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:text="评论"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:textColor="@android:color/background_dark"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:layout_weight="1"&ndash;&gt;-->
+					<!--&lt;!&ndash;/>&ndash;&gt;-->
+			<!--&lt;!&ndash;<TextView android:layout_width="0dp"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:id="@+id/good"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:layout_gravity="center_vertical"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:gravity="center"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:text="赞"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:textColor="@android:color/background_dark"&ndash;&gt;-->
+			          <!--&lt;!&ndash;android:layout_weight="1"&ndash;&gt;-->
+					<!--&lt;!&ndash;/>&ndash;&gt;-->
+		<!--&lt;!&ndash;</LinearLayout>&ndash;&gt;-->
+	<!--</RelativeLayout>-->
+
+
+
+
+
+
+
+	<!--<utils.view.MyImageView-->
+	<!--android:id="@+id/im_change"-->
+	<!--android:layout_width="60dp"-->
+	<!--android:layout_height="45dp"-->
+	<!--android:layout_gravity="center_horizontal|bottom"-->
+	<!--/>-->
 
 	<ListView android:layout_width="fill_parent"
 	          android:layout_height="fill_parent"
 	          android:layout_below="@id/moment"
-	          android:layout_above="@id/relative3"
+	          android:layout_above="@id/bottomTarBar"
 	          android:id="@+id/indexListView"
 			>
 	</ListView>

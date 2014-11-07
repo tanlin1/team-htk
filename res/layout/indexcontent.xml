@@ -1,110 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#faffff"
+                tools:context=".NewIndex">
 	<RelativeLayout android:layout_width="fill_parent"
 	                android:layout_height="fill_parent"
 	                android:id="@+id/relative1"
+	                android:layout_below="@id/moment"
 	                android:layout_marginTop="1dp"
+	                android:layout_above="@id/bottomTarBar"
+	                android:layout_marginBottom="2dp"
 			>
 
-		<ImageView android:layout_width="65dp"
-		           android:layout_height="60dp"
-		           android:scaleType="fitXY"
-		           android:layout_marginTop="8dp"
-		           android:src="@drawable/header_graphic"
-		           android:id="@+id/headPhotoIndex"
-		           android:layout_marginLeft="10dp" />
-		<TextView android:layout_width="68sp"
+		<utils.view.view.CircleImageView android:layout_width="48dp"
+		                                 android:layout_height="48dp"
+		                                 android:layout_marginTop="4dp"
+		                                 android:src="@drawable/head2"
+		                                 android:id="@+id/headPhotoIndex"
+		                                 android:layout_marginLeft="12dp"
+				/>
+		<TextView android:layout_width="wrap_content"
 		          android:layout_height="29sp"
-		          android:text="@string/app_name"
+		          android:text=""
 		          android:layout_alignTop="@id/headPhotoIndex"
 		          android:layout_toRightOf="@id/headPhotoIndex"
-		          android:layout_marginLeft="8dp"
+		          android:layout_marginLeft="16dp"
 		          android:id="@+id/userNameIndex"
-		          android:gravity="bottom"
-		          android:textSize="20sp"
+		          android:gravity="center"
+		          android:textColor="@android:color/background_dark"
+		          android:textSize="15sp"
+				/>
+		<ImageView android:layout_width="15dp"
+		           android:layout_height="15dp"
+		           android:src="@drawable/location"
+		           android:id="@+id/location"
+		           android:layout_below="@id/userNameIndex"
+		           android:layout_alignLeft="@id/userNameIndex"
+		           android:layout_alignBottom="@id/headPhotoIndex"
 				/>
 		<TextView android:layout_width="wrap_content"
 		          android:layout_height="wrap_content"
 		          android:layout_below="@id/userNameIndex"
-		          android:layout_alignLeft="@id/userNameIndex"
+		          android:layout_alignLeft="@id/location"
+		          android:layout_marginLeft="20sp"
 		          android:layout_alignBottom="@id/headPhotoIndex"
 		          android:singleLine="true"
 		          android:gravity="center|bottom"
 		          android:id="@+id/address"
-		          android:text="四川 成都 双流"
-		          android:textSize="16sp"
+		          android:text=""
+		          android:textSize="12sp"
+		          android:textColor="@android:color/background_dark"
 				/>
-		<ImageButton
-				android:layout_width="80dp"
-				android:layout_height="27dp"
-				android:id="@+id/addFocus"
-				android:src="@drawable/image_default"
-				android:layout_alignBottom="@+id/address"
-				android:layout_alignParentRight="true"
-				android:layout_marginRight="16dp"
-				android:layout_marginBottom="15dp"
-				android:layout_centerVertical="true"
+
+		<TextView android:layout_width="wrap_content"
+		          android:layout_height="wrap_content"
+		          android:text="4day"
+		          android:id="@+id/daysAgo"
+
+		          android:layout_alignParentRight="true"
+		          android:layout_marginRight="16dp"
+		          android:layout_alignBottom="@id/address"
+		          android:layout_marginBottom="10dp"
+
 				/>
+		<ImageView android:layout_width="20dp"
+		           android:layout_height="20dp"
+		           android:id="@+id/time"
+		           android:src="@drawable/clock_24"
+		           android:layout_toLeftOf="@id/daysAgo"
+		           android:layout_marginRight="5dp"
+		           android:layout_alignBottom="@id/address"
+		           android:layout_marginBottom="10dp"
+				/>
+
 		<ImageView
 				android:layout_width="fill_parent"
-				android:layout_height="200dp"
+				android:layout_height="270dp"
 				android:id="@+id/userPicture"
-				android:layout_below="@id/userNameIndex"
+				android:layout_below="@id/address"
 				android:layout_alignParentLeft="true"
-				android:layout_alignParentTop="true"
-				android:layout_marginTop="75dp"
+				android:layout_marginTop="7dp"
 				android:layout_gravity="center_horizontal"
+				android:src="@drawable/head"
+				android:background="#f5f5f5"
 
 				/>
 		<TextView android:layout_width="fill_parent"
-		          android:layout_height="29dp"
+		          android:layout_height="32sp"
 		          android:id="@+id/thePictureExplain"
 		          android:layout_below="@id/userPicture"
-		          android:text="看看效果      *** --   English"
+		          android:text=""
+		          android:layout_alignParentLeft="true"
+		          android:layout_marginLeft="10dp"
+		          android:layout_marginTop="16dp"
+		          android:textColor="@android:color/background_dark"
 				/>
-		<LinearLayout android:layout_width="fill_parent"
-		              android:layout_height="29dp"
-		              android:layout_below="@id/thePictureExplain"
-		              android:orientation="horizontal"
-		              android:id="@+id/theContentTool"
-				>
-			<TextView android:layout_width="0dp"
-			          android:layout_height="wrap_content"
-			          android:id="@+id/share"
-			          android:layout_gravity="center_vertical"
-			          android:gravity="center"
-			          android:text="分享"
-			          android:layout_weight="1"
-					/>
-			<TextView android:layout_width="0dp"
-			          android:layout_height="wrap_content"
-			          android:id="@+id/speak"
-			          android:layout_gravity="center_vertical"
-			          android:gravity="center"
-			          android:text="评论"
-			          android:layout_weight="1"
-					/>
-			<TextView android:layout_width="0dp"
-			          android:layout_height="wrap_content"
-			          android:id="@+id/good"
-			          android:layout_gravity="center_vertical"
-			          android:gravity="center"
-			          android:text="赞"
-			          android:layout_weight="1"
-					/>
-			<TextView android:layout_width="0dp"
-			          android:layout_height="wrap_content"
-			          android:id="@+id/bad"
-			          android:layout_gravity="center_vertical"
-			          android:gravity="center"
-			          android:text="踩"
-			          android:layout_weight="1"
-					/>
-		</LinearLayout>
+
+
+		<ImageView style="@style/bottom_tabs_image"
+		           android:src="@drawable/like"
+		           android:id="@+id/like"
+		           android:layout_below="@id/thePictureExplain"
+		           android:layout_alignParentLeft="true"
+		           android:layout_marginLeft="16dp"
+				/>
+		<ImageView style="@style/bottom_tabs_image"
+		           android:src="@drawable/response"
+		           android:id="@+id/comment"
+		           android:layout_below="@id/thePictureExplain"
+		           android:layout_alignLeft="@id/like"
+		           android:layout_alignBottom="@id/like"
+
+		           android:layout_marginLeft="60dp"
+
+				/>
+		<ImageView style="@style/bottom_tabs_image"
+		           android:src="@drawable/share"
+		           android:id="@+id/share"
+		           android:layout_below="@id/thePictureExplain"
+		           android:layout_alignLeft="@id/comment"
+		           android:layout_alignBottom="@id/comment"
+		           android:layout_marginLeft="60dp"
+				/>
+
 	</RelativeLayout>
-</LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:drawable="@drawable/explore"/>
+	<item android:drawable="@drawable/explore_after"
+	      android:state_pressed="true"/>
+	<item android:state_focused="false"
+	      android:drawable="@drawable/explore"/>
+	<item android:state_focused="true"
+	      android:drawable="@drawable/explore_after"/>
+</selector>

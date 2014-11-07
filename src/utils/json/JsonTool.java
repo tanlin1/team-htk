@@ -1,7 +1,5 @@
 package utils.json;
 
-import utils.json.JSONObject;
-
 /**
  * Created by HP on 2014/7/28.
  */

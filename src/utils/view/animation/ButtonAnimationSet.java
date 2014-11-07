@@ -35,7 +35,7 @@ public class ButtonAnimationSet extends InOutAnimation {
 						new ButtonAnimationSet(InOutAnimation.Direction.IN, DURATION, hideImageButton);
 				// 根据需要 添加开始动画延时
 				animation.setFillAfter(true);
-				animation.setInterpolator(new OvershootInterpolator(3F));
+				animation.setInterpolator(new OvershootInterpolator(2F));
 				hideImageButton.startAnimation(animation);
 			}
 		}
@@ -57,21 +57,20 @@ public class ButtonAnimationSet extends InOutAnimation {
 	@Override
 	protected void addInAnimation(View[] views) {
 
-		if (views[0].getId() == R.id.composer_button_photo) {
+		if (views[0].getId() == R.id.the_camera_button) {
 
 			addAnimation(new TranslateAnimation(45, 0, 90, 0));
 
-		} else if (views[0].getId() == R.id.composer_button_people) {
+		} else if (views[0].getId() == R.id.the_picture_button) {
 			addAnimation(new TranslateAnimation(-45, 0, 90, 0));
 		}
-		this.setFillAfter(true);
 	}
 
 	@Override
 	protected void addOutAnimation(View[] views) {
-		if (views[0].getId() == R.id.composer_button_photo) {
+		if (views[0].getId() == R.id.the_camera_button) {
 			addAnimation(new TranslateAnimation(0, 45, 0, 90));
-		} else if (views[0].getId() == R.id.composer_button_people) {
+		} else if (views[0].getId() == R.id.the_picture_button) {
 			addAnimation(new TranslateAnimation(0, -45, 0, 90));
 		}
 	}

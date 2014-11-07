@@ -38,12 +38,9 @@ public class CameraActivity extends Activity {
 
 	private static final int CAMERA_ASK = 1000;
 	private static final int PICTURE_ASK = 1001;
-
+	private LinearLayout liner;
 	private String photoName;
 	private File directory;
-
-	private Button post;
-	private Button beauty;
 
 	// 当前屏幕显示第一张图片，在整个GridView中的位置
 	private int start = 0;
@@ -62,7 +59,7 @@ public class CameraActivity extends Activity {
 		// 无标题
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.camera_layout);
-
+		liner = (LinearLayout) findViewById(R.id.camera_liner);
 		//判断将要执行什么操作
 		String select = getIntent().getStringExtra("what");
 		//拍照
@@ -79,8 +76,7 @@ public class CameraActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 		String path = "";
 		Bitmap bitmap;
-		post = (Button) findViewById(R.id.camera_button_photo_direct_post);
-		beauty = (Button) findViewById(R.id.camera_button_handle_photo);
+		ImageView goUpdload = (ImageView) findViewById(R.id.camera_button_handle_photo);
 		ImageView imageView = (ImageView) findViewById(R.id.camera_photo_scanning);
 
 		//成功（虽然Intent为空，那是因为我们指定了保存路径，Intent返回的是一个内容提供者Content）
@@ -97,12 +93,13 @@ public class CameraActivity extends Activity {
 			imageView.setImageBitmap(bitmap);
 
 			final String sendPath = path;
-			post.setOnClickListener(new View.OnClickListener() {
+			goUpdload.setOnClickListener(new View.OnClickListener() {
 				//点击上传原图，就开启上传线程
 				@Override
 				public void onClick(View v) {
 					Intent intent = new Intent(CameraActivity.this, UploadPhoto.class);
 					intent.putExtra("photo_path", sendPath);
+					System.out.println(sendPath + "-------------------------------");
 					intent.putExtra("way", "CAMERA_ASK");
 					startActivity(intent);
 				}
@@ -112,14 +109,24 @@ public class CameraActivity extends Activity {
 			startActivity(new Intent(CameraActivity.this, NewIndex.class));
 		}
 		//美化图片
-		beauty.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				System.out.println("美化图片");
-			}
-		});
+//		beauty.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				System.out.println("美化图片");
+//			}
+//		});
 	}
 
+
+	private void beauty(){
+		ViewGroup.LayoutParams pq = liner.getLayoutParams();
+		liner.setDividerPadding(10);
+		for (int i = 0; i < 3; i++){
+			ImageView image = new ImageView(this);
+			image.setImageResource(R.drawable.head3);
+			liner.addView(image);
+		}
+	}
 
 	/**
 	 * 用GridView显示多张图片
@@ -195,6 +202,8 @@ public class CameraActivity extends Activity {
 			gridAdapter = new GridAdapter(this, imageUris);
 			final View addLocalPhoto = View.inflate(this, R.layout.multyimage, null);
 			final GridView gridView = (GridView) addLocalPhoto.findViewById(R.id.gridView);
+			gridView.setHorizontalSpacing(2);
+			gridView.setVerticalSpacing(2);
 			// 两个按钮
 			Button selectAll = (Button) addLocalPhoto.findViewById(R.id.photo_select_all);
 			Button confirm = (Button) addLocalPhoto.findViewById(R.id.add_photo_confirm);
@@ -361,8 +370,6 @@ public class CameraActivity extends Activity {
 
 			image.setMinimumHeight(width);
 			image.setMinimumWidth(width);
-			// 图片间距
-			image.setPadding(2, 1, 0, 1);
 			// 为新建的image 添加图片资源
 			image.setImageBitmap(ImageLoader.hashBitmaps.get(position));
 			// 被选中的状态

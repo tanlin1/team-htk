@@ -74,9 +74,9 @@
 				android:layout_width="wrap_content"
 				android:layout_height="fill_parent"
 				android:orientation="horizontal"
-				android:gravity="fill"
+				android:gravity="fill_horizontal"
 				android:id="@+id/liner"
-				android:layout_gravity="fill"
+				android:layout_gravity="fill_horizontal|fill_vertical"
 		        android:background="@android:color/white"
 				>
 		</LinearLayout>
