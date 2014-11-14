@@ -24,25 +24,40 @@ import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
+
 /**
+ * 用户注册 成功便进入App首页，但是通过发送登录请求进入的
+ * <p/>
+ * 需要获取SESSION（用于唯一标识用户）
+ * <p/>
  * Created by HP on 2014/7/18.
  */
 public class RegisterActivity extends Activity {
 
+	/**
+	 * SESSION
+	 */
 	private String SESSIONID = null;
+
 	private String name;
+
 	private String password;
+
 	private String passwordConfirm;
+
 	private String emailAddress;
-	private CheckBox checkBox;
 
 	private EditText nameFind;
+
 	private EditText passwordFind;
+
 	private EditText emailAddressFind;
+
 	private EditText passwordConfirmFind;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate (Bundle savedInstanceState) {
+
 		super.onCreate(savedInstanceState);
 		/**
 		 * 设置无标题，全屏幕显示
@@ -77,7 +92,7 @@ public class RegisterActivity extends Activity {
 
 		register.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public void onClick(View v) {
+			public void onClick (View v) {
 				/** 当所有项目都填写完毕之后，
 				 * 点击注册就直接发送响应的数据给服务器就好
 				 */
@@ -90,34 +105,18 @@ public class RegisterActivity extends Activity {
 
 		reset.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public void onClick(View v) {
+			public void onClick (View v) {
+
 				nameFind.setText("");
 				passwordFind.setText("");
 				emailAddressFind.setText("");
 				passwordConfirmFind.setText("");
 			}
 		});
-
-//		checkBox.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				/**
-//				 * 打开新窗口用户协议给用户浏览
-//				 */
-//				TextView protocol = (TextView) findViewById(R.id.protocol);
-//				protocol.getScrollBarStyle();
-//				if (!checkBox.isChecked()) {
-//					String s = getProtocolMessage(getResources().openRawResource(R.raw.test));
-//					protocol.setMovementMethod(new ScrollingMovementMethod());
-//					protocol.setText(s);
-//				} else {
-//					protocol.setText("");
-//				}
-//			}
-//		});
 		nameFind.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
+			public void onFocusChange (View v, boolean hasFocus) {
+
 				if (!hasFocus) {
 					name = nameFind.getText().toString();
 					if (name.length() == 0) {
@@ -129,7 +128,8 @@ public class RegisterActivity extends Activity {
 
 		passwordFind.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
+			public void onFocusChange (View v, boolean hasFocus) {
+
 				if (!hasFocus) {
 					password = passwordFind.getText().toString();
 					if (password.length() == 0) {
@@ -140,7 +140,8 @@ public class RegisterActivity extends Activity {
 		});
 		passwordConfirmFind.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
+			public void onFocusChange (View v, boolean hasFocus) {
+
 				if (!hasFocus) {
 					passwordConfirm = passwordConfirmFind.getText().toString();
 					if (!password.equals(passwordConfirm)) {
@@ -152,7 +153,8 @@ public class RegisterActivity extends Activity {
 		//在填写邮箱的完毕会连接服务器并检测此邮箱是否已经注册过本网站
 		emailAddressFind.setOnKeyListener(new View.OnKeyListener() {
 			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
+			public boolean onKey (View v, int keyCode, KeyEvent event) {
+
 				if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
 					emailAddress = emailAddressFind.getText().toString();
 					//自动以藏输入键盘
@@ -175,7 +177,8 @@ public class RegisterActivity extends Activity {
 
 	//处理子线程传回的数据（消息）
 	Handler handler = new Handler() {
-		public void handleMessage(Message msg) {
+		public void handleMessage (Message msg) {
+
 			String result = msg.getData().getString("result");
 			//注册成功
 			if ("allRight".equals(result)) {
@@ -184,7 +187,7 @@ public class RegisterActivity extends Activity {
 				//或者进入动态页
 				System.out.println("正在尝试进入主页，敬请期待！");
 				new LoginThread().start();
-			} else if ("theThemeName".equals(result) ) {
+			} else if ("theThemeName".equals(result)) {
 				//邮箱被注册过
 				AlertDialog.Builder dialog = new AlertDialog.Builder(RegisterActivity.this);
 				dialog.setMessage(R.string.email_used);
@@ -196,7 +199,7 @@ public class RegisterActivity extends Activity {
 				Toast.makeText(RegisterActivity.this, R.string.name_null, Toast.LENGTH_SHORT).show();
 			} else if ("timeOut".equals(result)) {
 				Toast.makeText(RegisterActivity.this, R.string.timeout, Toast.LENGTH_SHORT).show();
-			} else if("login".equals(result)) {
+			} else if ("login".equals(result)) {
 				// 给全局的静态变量 JSESSIONID 赋值，后续要使用。
 				LaunchActivity.JSESSIONID = SESSIONID;
 				startActivity(new Intent(RegisterActivity.this, NewIndex.class));
@@ -205,15 +208,16 @@ public class RegisterActivity extends Activity {
 	};
 
 	/**
-	 * 检测用户注册的时候，邮箱是否符合注册标准
-	 * 必须在子线程中执行
+	 * 检测用户注册的时候，邮箱是否符合注册标准 必须在子线程中执行
 	 */
 	private class emailCheckThread extends Thread {
+
 		HttpURLConnection connection;
-		String emailCheckUrl = "/checkEmail";
-		public void run() {
+
+		public void run () {
+
 			try {
-				connection = GetConnection.getConnect(emailCheckUrl);
+				connection = GetConnection.getConnect("/checkEmail");
 				connection.connect();
 				JSONObject object = new JSONObject();
 				object.put("account", emailAddress);
@@ -235,20 +239,23 @@ public class RegisterActivity extends Activity {
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			} catch (SocketException e) {
-				sendMessage("result","timeOut");
+				sendMessage("result", "timeOut");
 				e.printStackTrace();
-			} catch (IOException e){
+			} catch (IOException e) {
 				e.printStackTrace();
-			}finally {
+			} finally {
 				connection.disconnect();
 			}
 		}
 	}
 
 	private class RegisterThread extends Thread {
+
 		String registerUrl = "/sign_up";
+
 		@Override
-		public void run() {
+		public void run () {
+
 			HttpURLConnection connection;
 			JSONObject info = new JSONObject();
 			connection = GetConnection.getConnect(registerUrl);
@@ -262,7 +269,7 @@ public class RegisterActivity extends Activity {
 				OutputStream writeToServer = connection.getOutputStream();
 				writeToServer.write(info.toString().getBytes());
 				// 取得输入流，并使用Reader读取
-				JSONObject object = Read.read(connection.getInputStream());
+				JSONObject object = new JSONObject(Read.read(connection.getInputStream()));
 				String result = object.getString("accountResult");
 				if (result.equals("success")) {
 					sendMessage("result", "allRight");
@@ -292,9 +299,12 @@ public class RegisterActivity extends Activity {
 
 
 	private class LoginThread extends Thread {
+
 		String newUrl = "/login";
+
 		@Override
-		public void run() {
+		public void run () {
+
 			HttpURLConnection connection;
 			JSONObject info = new JSONObject();
 			connection = GetConnection.getConnect(newUrl);
@@ -306,7 +316,7 @@ public class RegisterActivity extends Activity {
 				OutputStream writeToServer = connection.getOutputStream();
 				writeToServer.write(info.toString().getBytes());
 				// 取得输入流，并使用Reader读取
-				JSONObject object = Read.read(connection.getInputStream());
+				JSONObject object = new JSONObject(Read.read(connection.getInputStream()));
 				String result = object.getString("accountResult");
 
 				if (result.equals("success")) {
@@ -336,7 +346,8 @@ public class RegisterActivity extends Activity {
 	}
 
 
-	private boolean canRegister() {
+	private boolean canRegister () {
+
 		if (name.length() == 0 || password.length() == 0 || emailAddress.length() == 0) {
 			sendMessage("result", "null");
 			return false;
@@ -344,7 +355,8 @@ public class RegisterActivity extends Activity {
 		return true;
 	}
 
-	private void sendMessage(String key, String value) {
+	private void sendMessage (String key, String value) {
+
 		Bundle data = new Bundle();
 		Message msg = new Message();
 		data.putString(key, value);
@@ -353,8 +365,10 @@ public class RegisterActivity extends Activity {
 	}
 
 	private class BackOnClickListener implements View.OnClickListener {
+
 		@Override
-		public void onClick(View v) {
+		public void onClick (View v) {
+
 			startActivity(new Intent(RegisterActivity.this, LaunchActivity.class));
 		}
 	}

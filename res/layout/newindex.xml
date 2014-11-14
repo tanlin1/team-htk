@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:background="@android:color/holo_purple"
+              tools:context=".NewIndex"
+		>
+
+	<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="4dp"
+			android:layout_marginRight="4dp"
+			android:orientation="vertical"
+			android:background="@drawable/index_dynamic_corner"
+	        android:clipChildren="false"
+			>
+
+		<utils.view.IndexHeadAndDate
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="10dp"
+				style="@style/listcontentmargin"
+				/>
+
+		<utils.view.IndexPhotoDescribe
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="2dp"
+				style="@style/listcontentmargin"
+				/>
+
+		<utils.view.IndexPhotoShow
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+		        android:id="@+id/userPicture"
+		        android:layout_marginTop="5dp"
+				/>
+
+		<utils.view.IndexPhotoLikeCommentInfo
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="5dp"
+		        style="@style/listcontentmargin"
+				/>
+
+		<utils.view.IndexPhotoDoByOther
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="10dp"
+		        style="@style/listcontentmargin"
+				/>
+	</LinearLayout>
+
+</LinearLayout>

@@ -1,16 +1,18 @@
 package com.htk.moment.ui;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.Window;
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
+
 
 /**
- * Created by Administrator on 2014/11/5.
+ * 从服务器下载数据，包括图片以及文件 应该 Created by Administrator on 2014/11/5.
  */
-public class LoadMessage extends Activity{
+public class LoadMessage extends Service {
+
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+	public IBinder onBind (Intent intent) {
+
+		return null;
 	}
 }

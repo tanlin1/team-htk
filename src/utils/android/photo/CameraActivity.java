@@ -76,7 +76,7 @@ public class CameraActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 		String path = "";
 		Bitmap bitmap;
-		ImageView goUpdload = (ImageView) findViewById(R.id.camera_button_handle_photo);
+		ImageView goUpload = (ImageView) findViewById(R.id.camera_button_handle_photo);
 		ImageView imageView = (ImageView) findViewById(R.id.camera_photo_scanning);
 
 		//成功（虽然Intent为空，那是因为我们指定了保存路径，Intent返回的是一个内容提供者Content）
@@ -93,14 +93,13 @@ public class CameraActivity extends Activity {
 			imageView.setImageBitmap(bitmap);
 
 			final String sendPath = path;
-			goUpdload.setOnClickListener(new View.OnClickListener() {
+			goUpload.setOnClickListener(new View.OnClickListener() {
 				//点击上传原图，就开启上传线程
 				@Override
 				public void onClick(View v) {
 					Intent intent = new Intent(CameraActivity.this, UploadPhoto.class);
-					intent.putExtra("photo_path", sendPath);
-					System.out.println(sendPath + "-------------------------------");
-					intent.putExtra("way", "CAMERA_ASK");
+					intent.putExtra("photoPath", sendPath);
+					intent.putExtra("measure", "CAMERA_ASK");
 					startActivity(intent);
 				}
 			});
@@ -162,24 +161,6 @@ public class CameraActivity extends Activity {
 				takePhoto.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
 				//调用系统相机
 				startActivityForResult(takePhoto, CAMERA_ASK);
-
-//				PackageManager pm = this.getPackageManager();
-//				List<PackageInfo> packs = pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
-//				String packageName;
-//				for (PackageInfo pi : packs) {
-//					packageName = pi.packageName.toLowerCase();
-//					// 有的手机名字不一样
-//					if ((packageName.contains("gallery") || packageName.contains("camera"))
-//							&& packageName.contains("android")) { //Android 表示系统的相机
-//
-//						Intent takePhoto = pm.getLaunchIntentForPackage(pi.packageName);
-//						if (takePhoto != null) {
-//							takePhoto.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo));
-//							startActivityForResult(takePhoto, CAMERA_ASK);
-//						}
-//					}
-//				}
-//
 
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
@@ -245,8 +226,8 @@ public class CameraActivity extends Activity {
 						}
 					}
 					// 一定不能直接写 PICTURE_ASK 传过去
-					confirmUpload.putExtra("selectMessage", photoSelectFlagMap);
-					confirmUpload.putExtra("way", "PICTURE_ASK");
+					confirmUpload.putExtra("multiple", photoSelectFlagMap);
+					confirmUpload.putExtra("measure", "PICTURE_ASK");
 					startActivity(confirmUpload);
 				}
 			});
@@ -274,17 +255,6 @@ public class CameraActivity extends Activity {
 				}
 			});
 
-			gridView.setOnItemSelectedListener(new GridView.OnItemSelectedListener() {
-				@Override
-				public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-					System.out.println("选项 状态改变");
-				}
-
-				@Override
-				public void onNothingSelected(AdapterView<?> parent) {
-					System.out.println("最开始应该是调用此方法--------------------");
-				}
-			});
 			gridView.setOnScrollListener(new GridView.OnScrollListener() {
 				@Override
 				public void onScrollStateChanged(AbsListView view, int scrollState) {

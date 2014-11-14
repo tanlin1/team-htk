@@ -17,10 +17,10 @@
 				android:background="@drawable/index_select_back_index"
 
 				/>
-		<TextView
-				style="@style/bottom_tabs_text"
-				android:text="首页"
-				/>
+		<!--<TextView-->
+				<!--style="@style/bottom_tabs_text"-->
+				<!--android:text="首页"-->
+				<!--/>-->
 	</LinearLayout>
 
 	<LinearLayout
@@ -34,56 +34,27 @@
 				android:background="@drawable/index_select_back_message"
 				/>
 
-		<TextView
-				style="@style/bottom_tabs_text"
-				android:text="消息"
-				/>
+		<!--<TextView-->
+				<!--style="@style/bottom_tabs_text"-->
+				<!--android:text="消息"-->
+				<!--/>-->
 
 	</LinearLayout>
 
 	<RelativeLayout android:layout_width="0dp"
-	                android:layout_height="100dp"
-	                android:layout_weight="5"
-	                android:layout_gravity="bottom|center"
-	                android:gravity="bottom|center"
+	                android:layout_height="55dp"
+	                android:layout_weight="1"
+	                android:layout_gravity="bottom"
 	                android:clipChildren="false"
 	                android:clipToPadding="false"
 			>
 
-		<utils.view.layout.InOutLayout android:layout_width="wrap_content"
-		                               android:layout_height="fill_parent"
-		                               android:gravity="bottom|center"
-		                               android:id="@+id/view_animal_group"
-		                               android:clipToPadding="false"
-		                               android:clipChildren="false"
-
-				>
-			<utils.view.view.HideImageButton android:layout_width="wrap_content"
-			                                 android:layout_height="wrap_content"
-			                                 android:background="@drawable/composer_camera"
-			                                 android:id="@+id/the_camera_button"
-			                                 android:layout_alignLeft="@id/view_animal_group"
-			                                 android:layout_alignBottom="@id/view_animal_group"
-			                                 android:layout_marginBottom="40dp"
-			                                 android:layout_marginLeft="-15dp"
-			                                 android:visibility="gone"
-					/>
-			<utils.view.view.HideImageButton android:layout_width="wrap_content"
-			                                 android:layout_height="wrap_content"
-			                                 android:id="@+id/the_picture_button"
-			                                 android:layout_alignBottom="@id/the_camera_button"
-			                                 android:layout_toRightOf="@id/the_camera_button"
-			                                 android:layout_alignLeft="@id/view_animal_group"
-
-			                                 android:background="@drawable/composer_with"
-			                                 android:visibility="gone"
-					/>
 			<utils.view.layout.InOutLayout android:layout_width="45dp"
 			                               android:layout_height="45dp"
-			                               android:background="@drawable/plus_animal"
+			                               android:background="@drawable/index_main_select_animal"
 			                               android:layout_alignParentBottom="true"
+			                               android:layout_centerInParent="true"
 			                               android:id="@+id/the_plus_button"
-
 					>
 				<ImageView
 						android:id="@+id/index_plus_button_image"
@@ -91,9 +62,6 @@
 						android:layout_centerInParent="true"
 						android:src="@drawable/plus"
 						/>
-
-			</utils.view.layout.InOutLayout>
-
 		</utils.view.layout.InOutLayout>
 
 	</RelativeLayout>
@@ -109,10 +77,10 @@
 				android:background="@drawable/index_select_back_search"
 				/>
 
-		<TextView
-				style="@style/bottom_tabs_text"
-				android:text="发现"
-				/>
+		<!--<TextView-->
+				<!--style="@style/bottom_tabs_text"-->
+				<!--android:text="发现"-->
+				<!--/>-->
 	</LinearLayout>
 
 	<LinearLayout
@@ -125,9 +93,9 @@
 				style="@style/bottom_tabs_image"
 				android:background="@drawable/user"
 				/>
-		<TextView
-				style="@style/bottom_tabs_text"
-				android:text="我"
-				/>
+		<!--<TextView-->
+				<!--style="@style/bottom_tabs_text"-->
+				<!--android:text="我"-->
+				<!--/>-->
 	</LinearLayout>
 </LinearLayout>

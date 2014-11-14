@@ -7,34 +7,41 @@ import android.view.View;
 import android.widget.LinearLayout;
 import com.htk.moment.ui.R;
 
-/**
- * Created by Administrator on 2014/11/6.
- */
-public class BottomTabBar extends LinearLayout {
 
-	public BottomTabBar(Context context) {
+/**
+ * Created by Administrator on 2014/11/14.
+ */
+public class IndexPhotoDescribe extends LinearLayout{
+
+	public IndexPhotoDescribe (Context context) {
+
 		super(context);
 		initView(context);
 	}
 
-	public BottomTabBar(Context context, AttributeSet attrs) {
-		super(context, attrs);
+	public IndexPhotoDescribe (Context context, AttributeSet attrs) {
 
+		super(context, attrs);
 		initView(context);
 	}
 
+	public IndexPhotoDescribe (Context context, AttributeSet attrs, int defStyle) {
+
+		super(context, attrs, defStyle);
+		initView(context);
+	}
 	/**
 	 * 加载另一个布局文件
 	 *
 	 * @param context 谁需要加载当前布局
 	 */
-	private void initView (Context context) {
+	private void initView(Context context) {
 		LayoutParams lp = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT);
 		setLayoutParams(lp);
 
 		LayoutInflater mInflater = LayoutInflater.from(context);
 
-		View v = mInflater.inflate(R.layout.my_bottom_tabs, null);
+		View v = mInflater.inflate(R.layout.index_photo_describe, null);
 		addView(v,lp);
 	}
 }

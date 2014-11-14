@@ -7,22 +7,29 @@ import android.view.View;
 import android.widget.LinearLayout;
 import com.htk.moment.ui.R;
 
-/**
- * Created by Administrator on 2014/11/6.
- */
-public class BottomTabBar extends LinearLayout {
 
-	public BottomTabBar(Context context) {
+/**
+ * Created by Administrator on 2014/11/14.
+ */
+public class IndexPhotoLikeCommentInfo extends LinearLayout{
+
+	public IndexPhotoLikeCommentInfo (Context context) {
+
 		super(context);
 		initView(context);
 	}
 
-	public BottomTabBar(Context context, AttributeSet attrs) {
-		super(context, attrs);
+	public IndexPhotoLikeCommentInfo (Context context, AttributeSet attrs) {
 
+		super(context, attrs);
 		initView(context);
 	}
 
+	public IndexPhotoLikeCommentInfo (Context context, AttributeSet attrs, int defStyle) {
+
+		super(context, attrs, defStyle);
+		initView(context);
+	}
 	/**
 	 * 加载另一个布局文件
 	 *
@@ -34,7 +41,7 @@ public class BottomTabBar extends LinearLayout {
 
 		LayoutInflater mInflater = LayoutInflater.from(context);
 
-		View v = mInflater.inflate(R.layout.my_bottom_tabs, null);
+		View v = mInflater.inflate(R.layout.index_photo_like_info, null);
 		addView(v,lp);
 	}
 }

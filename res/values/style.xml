@@ -4,15 +4,18 @@
 		<item name="android:layout_width">0dp</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:orientation">vertical</item>
-		<item name="android:gravity">center</item>
-		<item name="android:layout_gravity">bottom|center</item>
-		<item name="android:layout_weight">3</item>
+		<item name="android:gravity">center|</item>
+		<item name="android:layout_gravity">center</item>
+		<item name="android:layout_weight">1</item>
 	</style>
 
 	<style name="bottom_tabs_image" >
-		<item name="android:layout_width">27dp</item>
-		<item name="android:layout_height">27dp</item>
-		<!--<item name="android:paddingTop">5dip</item>-->
+		<item name="android:layout_width">40dp</item>
+		<item name="android:layout_height">40dp</item>
+		<!--<item name="android:paddingBottom">8dip</item>-->
+		<!--<item name="android:layout_marginBottom">15dp</item>-->
+		<!--<item name="android:layout_centerVertical">true</item>-->
+		<!--<item name="android:layout_gravity">center_vertical</item>-->
 	</style>
 
 	<style name="bottom_tabs_text" >
@@ -22,15 +25,10 @@
 		<item name="android:textColor">@android:color/darker_gray</item>
 		<item name="android:gravity">top|center</item>
 	</style>
-	<style name="animal" >
-		<item name="android:layout_width">0dp</item>
-		<item name="android:layout_height">wrap_content</item>
-		<item name="android:orientation">vertical</item>
-		<item name="android:gravity">top</item>
-		<item name="android:layout_gravity">top|center</item>
-		<item name="android:layout_weight">1</item>
-		<item name="android:clipChildren">false</item>
-		<item name="android:clipToPadding">false</item>
+	<style name="listcontentmargin">
+		<item name="android:layout_marginLeft">16dp</item>
+		<item name="android:layout_marginRight">16dp</item>
 	</style>
+
 
 </resources>
