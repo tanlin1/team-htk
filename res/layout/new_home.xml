@@ -30,7 +30,6 @@
 				android:layout_alignParentRight="true"
 				android:layout_centerVertical="true"
 				android:id="@+id/menu"
-				android:src="@drawable/menu_36"
 				android:background="@android:color/holo_green_light"
 				/>
 
@@ -40,7 +39,7 @@
 				android:id="@+id/message"
 				android:layout_toLeftOf="@id/menu"
 				android:layout_marginRight="20dp"
-				android:src="@drawable/speech_bubble"
+				android:src="@drawable/picture_comment_image_button"
 				android:background="@android:color/holo_green_light"
 				/>
 		<ImageButton
@@ -49,7 +48,6 @@
 				android:id="@+id/call_me"
 				android:layout_toLeftOf="@id/message"
 				android:layout_marginRight="20dp"
-				android:src="@drawable/chat_message"
 				android:background="@android:color/holo_green_light"
 				/>
 	</RelativeLayout>

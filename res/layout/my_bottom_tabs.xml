@@ -14,7 +14,7 @@
 		<ImageView
 				android:id="@+id/index_index_image"
 				style="@style/bottom_tabs_image"
-				android:background="@drawable/index_select_back_index"
+		        android:src="@drawable/index_menu_home_img"
 
 				/>
 		<!--<TextView-->
@@ -31,7 +31,7 @@
 		<ImageView
 				android:id="@+id/index_message_image"
 				style="@style/bottom_tabs_image"
-				android:background="@drawable/index_select_back_message"
+				android:background="@drawable/index_menu_message_img"
 				/>
 
 		<!--<TextView-->
@@ -49,20 +49,15 @@
 	                android:clipToPadding="false"
 			>
 
-			<utils.view.layout.InOutLayout android:layout_width="45dp"
-			                               android:layout_height="45dp"
-			                               android:background="@drawable/index_main_select_animal"
-			                               android:layout_alignParentBottom="true"
-			                               android:layout_centerInParent="true"
-			                               android:id="@+id/the_plus_button"
-					>
+
 				<ImageView
 						android:id="@+id/index_plus_button_image"
-						style="@style/bottom_tabs_image"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
 						android:layout_centerInParent="true"
-						android:src="@drawable/plus"
+				        android:src="@drawable/index_menu_plus_img"
 						/>
-		</utils.view.layout.InOutLayout>
+
 
 	</RelativeLayout>
 
@@ -74,7 +69,7 @@
 		<ImageView
 				android:id="@+id/index_search_image"
 				style="@style/bottom_tabs_image"
-				android:background="@drawable/index_select_back_search"
+				android:background="@drawable/index_menu_search_img"
 				/>
 
 		<!--<TextView-->
@@ -91,7 +86,8 @@
 		<ImageView
 				android:id="@+id/index_about_me_image"
 				style="@style/bottom_tabs_image"
-				android:background="@drawable/user"
+		        android:src="@drawable/index_menu_me_img"
+
 				/>
 		<!--<TextView-->
 				<!--style="@style/bottom_tabs_text"-->

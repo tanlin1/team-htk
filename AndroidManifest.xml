@@ -6,7 +6,7 @@
 	<uses-sdk android:minSdkVersion="14"/>
 	<application
 			android:label="@string/app_name"
-			android:icon="@drawable/head">
+			android:icon="@drawable/application">
 		<!--启动时候加载到屏幕上-->
 		<activity
 				android:name=".LaunchActivity"
@@ -30,25 +30,6 @@
 		</activity>
 		<!-- 用户主页-->
 
-		<!--用户个人中心-->
-		<activity
-				android:name=".UserHome"
-				android:launchMode="singleTask"
-				>
-			<intent-filter android:label="test">
-			</intent-filter>
-		</activity>
-		<!--热门话题-->
-		<activity
-				android:name=".HotActivity"
-				android:launchMode="singleTask"
-				>
-			<intent-filter android:label="@string/share_photo">
-				<action android:name="notice"/>
-				<category android:name="android.intent.category.DEFAULT"/>
-				<!--<data android:mimeType="image/*"/>-->
-			</intent-filter>
-		</activity>
 		<!--10.29号之前的照相机，通过双指下滑，获得照相功能-->
 		<activity
 				android:name="utils.android.photo.CameraActivity"
@@ -81,13 +62,27 @@
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
-		<activity android:name=".NewIndex"
+		<activity android:name=".UserMainCoreActivity"
 		          android:launchMode="singleTask"
 				>
 			<intent-filter>
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
+
+
+		<activity android:name="utils.android.photo.LocalPictureLibrary">
+			<intent-filter>
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+
+
+		<service android:name="utils.services.LoadDataService">
+			<intent-filter>
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</service>
 	</application>
 	<!--权限申请-->
 	<uses-permission android:name="android.permission.INTERNET"/>

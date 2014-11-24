@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.provider.MediaStore;
+import android.util.Log;
 import com.htk.moment.ui.LaunchActivity;
 
 import java.io.*;
@@ -16,6 +17,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 /**
+ * 加载本地图片
+ *
  * Created by Administrator on 2014/9/8.
  */
 public class ImageLoader {
@@ -34,6 +37,7 @@ public class ImageLoader {
 
 	public static HashMap<Integer, Boolean> selected;
 
+	public String TAG = "ImageLoader";
 	// 间隔当前屏幕的显示的 开始（/结束）位置开始删除资源，
 	// 及时清理内存，保证运行
 	final int DELETE_SPACE = 15;
@@ -66,7 +70,7 @@ public class ImageLoader {
 		photoEachWidth = (LaunchActivity.screenWidth - 8 * 3) / 3;
 		photoPath = getImagePath();
 		sortPhotoPathByTime(photoPath);
-		initPhotoSelect(false);
+		setPhotoSelect(false);
 		new LoadImageThread().start();
 	}
 
@@ -101,7 +105,7 @@ public class ImageLoader {
 						if (!hashBitmaps.containsKey(i)) {
 							templeBitmap = ImageCompressUtil.zoomImage(BitmapFactory.decodeFile(templePhotoPath, options), photoEachWidth, photoEachWidth);
 							hashBitmaps.put(i, templeBitmap);
-							CameraActivity.sendMessage("notify", "yes");
+							LocalPictureLibrary.sendMessage("notify", "yes");
 							// 写入文件（缩略图）
 							// 由于文件的路径为绝对路径，所以，在悬着保存文件的名字的时候将目录“/”符号更改为“-”（或者其他的）
 							writeBitmapToFileCache(templePhotoPath.replace('/', '-'), templeBitmap);
@@ -127,21 +131,35 @@ public class ImageLoader {
 			}
 		}
 	}
-	private boolean writeBitmapToFileCache(String path, Bitmap bitmap) {
+
+	/**
+	 * 将已经加载（找到的图片写入隐藏文件，当做缓存使用）。
+	 *
+	 * 创建缩略图 到指定路径 隐藏文件夹下面
+	 * 考虑到，写入文件的图片尺寸应该是跟机器相关的
+	 * 所以直接将显示在屏幕上的图片写入文件，
+	 * 以后就节约了图片的缩放处理的时间
+	 *
+	 * @param specialName 为了唯一区分写入的图片
+	 * @param bitmap 即将写入文件的那张图片
+	 * @return 操作是否成功
+	 */
+	private boolean writeBitmapToFileCache(String specialName, Bitmap bitmap) {
 		String dir = photoParentDirectory +  "/moment/.cache/";
 		// 特殊的文件名字，应该是可以区分开来的
-		String name = "tk2014" + path;
+		String name = "tk2014" + specialName;
 		File fileDir = new File(dir);
 		File photo;
 		if(!fileDir.exists()){
-			fileDir.mkdirs();
+			if(!fileDir.mkdirs()){
+				Log.d(TAG, "创建隐藏文件失败，请检查！");
+			}
 		}
 
 		photo = new File(fileDir, name);
-// 创建缩略图 到指定路径 隐藏文件夹下面
-// 考虑到，写入文件的图片尺寸应该是跟机器相关的，所以直接将显示在屏幕上的图片写入文件，
-// 以后就节约了图片的缩放处理的时间
+
 //		Bitmap newBitmap = ThumbnailUtils.extractThumbnail(bitmap, 100, 100);
+
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		// 直接将图片写入文件
 		bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
@@ -174,9 +192,9 @@ public class ImageLoader {
 				MediaStore.Images.Media.DATA // 图片绝对路径
 		};
 		Cursor cursor;// = context.getContentResolver().query(MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI, projection, null, null, null);
-		cursor = context.getContentResolver().query(
-				MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, "",
-				null, "");
+		cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+				projection, "",	null, "");
+
 		// 其他列易需要再打开使用（）
 //		int fileIdColumn = cursor.getColumnIndex(MediaStore.Images.Media._ID);
 //		int folderIdColumn = cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID);
@@ -194,6 +212,13 @@ public class ImageLoader {
 		// 找到本应用程序的照片，因为此应用没有将图片共享
 		String dir = photoParentDirectory + "/moment/photo/";
 		File file = new File(dir);
+		if(!file.exists()){
+			if(!file.mkdirs()){
+				Log.d(TAG,"加载图片， 创建文件夹失败，请检查！");
+				photoPathListLength = list.size();
+				return list;
+			}
+		}
 		String[] strings = file.list();
 		for(String name:strings){
 			// 依次添加至要显示的文件List中
@@ -203,7 +228,7 @@ public class ImageLoader {
 		return list;
 	}
 	// 为后面的全选提供接口
-	public static void initPhotoSelect(boolean flag) {
+	public static void setPhotoSelect(boolean flag) {
 		// 初始化 map 长度
 		selected = new HashMap<Integer, Boolean>(photoPath.size());
 		for (int i = 0; i < photoPath.size(); i++) {
@@ -211,11 +236,17 @@ public class ImageLoader {
 			selected.put(i, flag);
 		}
 	}
+
+	/**
+	 * 将文件排序，按时间大-小顺序
+	 *
+	 * @param list filePathString
+	 */
 	private void sortPhotoPathByTime(ArrayList<String> list){
 		ArrayList<photoObject> pathSorted = new ArrayList<photoObject>();
 		int length = list.size();
-		for(int i = 0; i < length; i++) {
-			String name = list.get(i);
+
+		for(String name : list){
 			photoObject temp = new photoObject();
 			temp.name = name;
 			temp.time = new File(name).lastModified();

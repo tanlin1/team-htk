@@ -6,11 +6,10 @@
               android:layout_height="match_parent">
 	<ImageView
 			android:layout_width="fill_parent"
-			android:layout_height="350dp"
-			android:id="@+id/userPicture"
-			android:layout_gravity="center_horizontal"
-			android:src="@drawable/ui_back"
+			android:layout_height="280dp"
+			android:id="@+id/showingPicture"
+			android:layout_gravity="center_horizontal|center_vertical"
+			android:src="@drawable/index_a_usr_picture"
 	        android:scaleType="centerCrop"
-
 			/>
 </LinearLayout>

@@ -10,17 +10,22 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import com.htk.moment.ui.R;
 
 /**
+ * 用户选择图片
  * Created by Administrator on 2014/8/21.
  */
 public class PictureSelect extends Activity {
 
 	private static final int PICTURE_ASK = 1001;
+
+	private static final String TAG = "PictureActivity";
+
 	private String photoPath = null;
 
 	@Override
@@ -33,7 +38,7 @@ public class PictureSelect extends Activity {
 		Intent pictureSelect = new Intent(Intent.ACTION_GET_CONTENT);
 		pictureSelect.setType("image/*");
 
-		//调用系统相册
+		//获取本地图片资源
 		startActivityForResult(pictureSelect, PICTURE_ASK);
 	}
 
@@ -47,7 +52,11 @@ public class PictureSelect extends Activity {
 		}
 	}
 
-	//处理选择的图片
+	/**
+	 * 选择图片后的处理
+	 *
+	 * @param data 意图
+	 */
 	private void handlePictureSelect(Intent data) {
 
 		Uri imgUri;
@@ -75,6 +84,9 @@ public class PictureSelect extends Activity {
 		}
 	}
 
+	/**
+	 * 子线程跟UI线程的通信渠道
+	 */
 	private Handler handler = new Handler(){
 		@Override
 		public void handleMessage(Message msg) {
@@ -86,7 +98,7 @@ public class PictureSelect extends Activity {
 				intent.putExtra("photo",bm);
 			}
 			if("yes".equals(data.getString("selected"))){
-
+				Log.d(TAG, "测试选择图片");
 			}
 		}
 	};

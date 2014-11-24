@@ -114,7 +114,7 @@ public class LaunchActivity extends Activity {
 			public void onClick (View v) {
 				//连接到服务器找回密码
 				//Toast.makeText(getApplication(), "服务器暂时不能处理找回密码", Toast.LENGTH_SHORT).show();
-				startActivity(new Intent().setClass(LaunchActivity.this, NewIndex.class));
+				startActivity(new Intent().setClass(LaunchActivity.this, UserMainCoreActivity.class));
 			}
 		});
 	}
@@ -229,7 +229,7 @@ public class LaunchActivity extends Activity {
 			Bundle data = msg.getData();
 			if ("true".equals(data.getString("password"))) {
 				//Toast.makeText(getApplicationContext(), "登录成功！", Toast.LENGTH_SHORT).show();
-				startActivity(new Intent(LaunchActivity.this, NewIndex.class));
+				startActivity(new Intent(LaunchActivity.this, UserMainCoreActivity.class));
 			} else if ("passwordWrong".equals(data.getString("result"))) {
 				Toast.makeText(LaunchActivity.this, R.string.login_error, Toast.LENGTH_SHORT).show();
 			} else if ("timeOut".equals(data.getString("result"))) {

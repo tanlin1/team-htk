@@ -202,7 +202,7 @@ public class RegisterActivity extends Activity {
 			} else if ("login".equals(result)) {
 				// 给全局的静态变量 JSESSIONID 赋值，后续要使用。
 				LaunchActivity.JSESSIONID = SESSIONID;
-				startActivity(new Intent(RegisterActivity.this, NewIndex.class));
+				startActivity(new Intent(RegisterActivity.this, UserMainCoreActivity.class));
 			}
 		}
 	};

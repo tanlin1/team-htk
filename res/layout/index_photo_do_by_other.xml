@@ -4,7 +4,6 @@
               android:orientation="horizontal"
               android:layout_width="fill_parent"
               android:layout_height="30dp"
-              android:background="#f5f5f5"
 		>
 	<RelativeLayout
 			android:layout_width="fill_parent"
@@ -13,33 +12,32 @@
 		<ImageView
 				android:layout_width="25dp"
 				android:layout_height="25dp"
-				android:src="@drawable/like"
+				android:src="@drawable/like_image_button"
 				android:id="@+id/index_photo_like_image"
 				android:layout_alignParentLeft="true"
-				android:layout_marginLeft="16dp"
 				/>
 		<ImageView
 				android:layout_width="25dp"
 				android:layout_height="25dp"
-				android:src="@drawable/response"
+				android:src="@drawable/picture_comment_image_button"
 				android:id="@+id/index_photo_comment_image"
 				android:layout_toRightOf="@id/index_photo_like_image"
-				android:layout_marginLeft="22dp"
+				android:layout_marginLeft="35dp"
 				/>
 
 		<ImageView
 				android:layout_width="25dp"
 				android:layout_height="25dp"
-				android:src="@drawable/share"
+				android:src="@drawable/share_image_button"
 				android:id="@+id/index_photo_share_image"
 				android:layout_toRightOf="@id/index_photo_comment_image"
-				android:layout_marginLeft="22dp"
+				android:layout_marginLeft="35dp"
 				/>
 
 		<ImageView
 				android:layout_width="25dp"
 				android:layout_height="25dp"
-				android:src="@drawable/do_more"
+				android:src="@drawable/picture_do_more_image_button"
 				android:layout_alignParentRight="true"
 		        android:layout_marginRight="6dp"
 				/>
