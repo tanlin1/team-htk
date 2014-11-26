@@ -1,6 +1,5 @@
 package com.htk.moment.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -9,6 +8,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.*;
@@ -17,11 +19,15 @@ import android.view.animation.AnimationUtils;
 import android.widget.*;
 import utils.android.photo.CameraActivity;
 import utils.android.photo.LocalPictureLibrary;
+import utils.test.*;
 import utils.view.IndexPullRefreshListView;
 import utils.view.NotFilingViewPager;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -30,7 +36,7 @@ import java.util.*;
  * @author 谭林
  * @version 2014/11/2.
  */
-public class UserMainCoreActivity extends Activity {
+public class UserMainCoreActivity extends FragmentActivity {
 
     // 侦听器发出的按钮飞入消息标识
 	public final static int FLING_IN = 0;
@@ -42,6 +48,13 @@ public class UserMainCoreActivity extends Activity {
     private static int speed = 10;
     private final String TAG = "PullToRefreshListView";
     private final static int DELAY = 10;
+
+
+	private RadioGroup mRadioGroup;
+	private ArrayList<Fragment> fragments;
+	private FragmentTabAdapter tabAdapter;
+
+
 
     // 菜单栏中间的按钮是否处于动画中
 	private boolean buttonIsOnscreen;
@@ -109,6 +122,8 @@ public class UserMainCoreActivity extends Activity {
 
 	private WindowManager.LayoutParams pictureParams;
 
+//	private VerticalViewPager mVerticalViewPager;
+
 
 	private Handler mHandler = new Handler() {
 
@@ -123,7 +138,7 @@ public class UserMainCoreActivity extends Activity {
 				}
 				break;
 				case INIT_COMPLETED: {
-					test();
+					//test();
 				}
 				break;
 				case FLING_OUT: {
@@ -139,7 +154,7 @@ public class UserMainCoreActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.after_login);
+		setContentView(R.layout.after_login_layout);
 		initAll();
 		widgetsListener();
 		sendLayoutCompleted();
@@ -148,6 +163,9 @@ public class UserMainCoreActivity extends Activity {
 //		logoName.setTypeface(font);
 	}
 
+	/**
+	 * 边缘进入的动画出现
+	 */
 	private void appear() {
 
 		if (cameraParams.x >= cameraMaxX || pictureParams.x <= pictureMaxX) {
@@ -177,6 +195,9 @@ public class UserMainCoreActivity extends Activity {
 		mHandler.sendMessage(createAMsg("messageClass", FLING_OUT));
 	}
 
+	/**
+	 * 消失
+	 */
 	private void disappear() {
 
 		filingButtonLayout.setVisibility(View.GONE);
@@ -191,9 +212,64 @@ public class UserMainCoreActivity extends Activity {
 	public void initAll() {
 
 		initWidgets();
-		initViewPager();
+//		initViewPager();
 		initPlusButtonAnimal();
+		initFlingButton();
+		initFragment();
+	}
+	private void initFragment(){
+		fragments = new ArrayList<Fragment>();
+		fragments.add(new IndexFragment());
+		fragments.add(new MessageFragment());
+		fragments.add(new SearchFragment());
+		fragments.add(new MeFragment());
+		FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
+		ft.add(R.id.container, fragments.get(0));
+		ft.commit();
+	}
 
+	int currentFragmentIndex = 0;
+	/**
+	 * set the current fragment for View
+	 *
+	 * @param index index of fragment
+	 *              Note:the index begin 0
+	 */
+	private void setFragmentIndex(int index){
+
+		if(index < 0 || index > 4){
+			Log.w(TAG, "your index must select between zero and four!\n");
+			return;
+		}
+		// 上一个frament
+		Fragment lastFragment = getCurrentFragment();
+
+		// 准备显示的fragment
+		Fragment newFragment = fragments.get(index);
+		FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
+		if(newFragment.isVisible()) {
+			System.out.println("重复了---------------------------------------------------");
+			return;
+		}
+		if (newFragment.isAdded()) {
+			newFragment.onResume();
+			ft.show(newFragment);
+		} else {
+			ft.add(R.id.container, newFragment);
+			ft.show(newFragment);
+		}
+		ft.hide(lastFragment);
+		ft.commit();
+		currentFragmentIndex = index;
+		System.out.println("---------------状态改变   " + currentFragmentIndex);
+	}
+	/**
+	 * 得到上一次的Fragment，避免重复
+	 *
+	 * @return 上一次的Fragment
+	 */
+	private Fragment getCurrentFragment(){
+		return fragments.get(currentFragmentIndex);
 	}
 
 	/**
@@ -242,7 +318,7 @@ public class UserMainCoreActivity extends Activity {
 		 */
 		List<View> pageList = new ArrayList<View>();
 
-		pages = (NotFilingViewPager) findViewById(R.id.multi_page);
+		//pages = (NotFilingViewPager) findViewById(R.id.multi_page);
 
 		LayoutInflater inflater = LayoutInflater.from(this);
 
@@ -254,6 +330,7 @@ public class UserMainCoreActivity extends Activity {
 
 		pages.setAdapter(new myViewPagerAdapter(pageList));
 		pages.setOnPageChangeListener(new MyOnPageChangeListener());
+		currentItem = (LinearLayout) pages.findViewById(R.id.after_login_list_view);
 		pages.setCurrentItem(0);
 		// 限制水平滑动
 		pages.enableHorizonScroll(false);
@@ -286,6 +363,7 @@ public class UserMainCoreActivity extends Activity {
 			}
 		});
 
+
 		theCameraButton.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -301,7 +379,6 @@ public class UserMainCoreActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-
 				shutdown();
 				startActivity(new Intent(UserMainCoreActivity.this, LocalPictureLibrary.class));
 				overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
@@ -317,7 +394,9 @@ public class UserMainCoreActivity extends Activity {
 //				view_message.setImageResource(R.drawable.topic);
 //				view_search.setImageResource(R.drawable.explore);
 //				view_me.setImageResource(R.drawable.user);
-				pages.setCurrentItem(0, false);
+				//pages.setCurrentItem(0, false);
+				System.out.println("-----   0   -----");
+				setFragmentIndex(0);
 				shutdown();
 
 			}
@@ -333,7 +412,9 @@ public class UserMainCoreActivity extends Activity {
 //				view_message.setImageResource(R.drawable.topic_after);
 //				view_search.setImageResource(R.drawable.explore);
 //				view_me.setImageResource(R.drawable.user);
-				pages.setCurrentItem(1, false);
+//				pages.setCurrentItem(1, false);
+				System.out.println("-----   1   -----");
+				setFragmentIndex(1);
 				shutdown();
 				//startActivity(new Intent());
 			}
@@ -353,7 +434,9 @@ public class UserMainCoreActivity extends Activity {
 //				view_message.setImageResource(R.drawable.topic);
 //				view_search.setImageResource(R.drawable.explore_after);
 //				view_me.setImageResource(R.drawable.user);
-				pages.setCurrentItem(2, false);
+//				pages.setCurrentItem(2, false);
+				System.out.println("-----   2   -----");
+				setFragmentIndex(2);
 				shutdown();
 				//startActivity(new Intent());
 			}
@@ -368,7 +451,9 @@ public class UserMainCoreActivity extends Activity {
 //				view_message.setImageResource(R.drawable.topic);
 //				view_search.setImageResource(R.drawable.explore);
 //				view_me.setImageResource(R.drawable.user_after);
-				pages.setCurrentItem(3, false);
+//				pages.setCurrentItem(3, false);
+				System.out.println("-----   3   -----");
+				setFragmentIndex(3);
 				shutdown();
 			}
 		});
@@ -404,8 +489,8 @@ public class UserMainCoreActivity extends Activity {
 				WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
 				PixelFormat.RGBA_8888);
 		params.gravity = Gravity.LEFT | Gravity.TOP;
-
 		int h = findViewById(R.id.bottomTarBar).getHeight();
+//		int h = findViewById(R.id.tabs_rg).getHeight();
 		Rect rect = new Rect();
 		getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
 		params.y = rect.bottom - h * 2;
@@ -643,12 +728,53 @@ public class UserMainCoreActivity extends Activity {
 			// 用户处于某一页
 			switch (arg0) {
 				case 0: {
-
+					currentItem = (LinearLayout) pages.findViewById(R.id.after_login_list_view);
+					test3();
+				}
+				break;
+				case 3:{
+					currentItem = (LinearLayout) pages.findViewById(R.id.user_home_index);
+					if(currentItem == null){
+						break;
+					}
+					initVerticalViewPager();
 				}
 				break;
 			}
 		}
 	}
+
+	private void initVerticalViewPager(){
+		ArrayList<View> views = new ArrayList<View>();
+		LayoutInflater inflater = LayoutInflater.from(this);
+//		mVerticalViewPager = (VerticalViewPager) currentItem.findViewById(R.id.verticalViewPager);
+//		views.add(inflater.inflate(R.layout.user_home1, null));
+//		views.add(inflater.inflate(R.layout.user_home2, null));
+////		mVerticalViewPager.setAdapter(new MyVerticalViewPagerAdapter(views));
+//		mVerticalViewPager.setCurrentItem(0);
+
+
+	}
+
+	private class MyVerticalViewPagerAdapter extends utils.view.vertical.PagerAdapter{
+
+		ArrayList<View> viewArrayList;
+		public MyVerticalViewPagerAdapter(ArrayList<View> viewData){
+			viewArrayList = viewData;
+		}
+
+		@Override
+		public boolean isViewFromObject(View view, Object object) {
+			return true;
+		}
+
+		@Override
+		public int getCount() {
+			return viewArrayList.size();
+		}
+
+	}
+
 
 	private LinearLayout currentItem;
 	public void test() {

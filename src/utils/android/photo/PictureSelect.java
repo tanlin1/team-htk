@@ -34,7 +34,7 @@ public class PictureSelect extends Activity {
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		setContentView(R.layout.camera_layout);
+		setContentView(R.layout.take_photo_layout);
 		Intent pictureSelect = new Intent(Intent.ACTION_GET_CONTENT);
 		pictureSelect.setType("image/*");
 

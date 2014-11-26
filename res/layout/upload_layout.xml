@@ -57,7 +57,7 @@
 				android:layout_alignParentRight="true"
 				android:layout_marginRight="6dp"
 				android:layout_centerVertical="true"
-				android:src="@drawable/uploade_button_img"
+				android:src="@drawable/upload_button_img"
 				android:background="@android:color/holo_blue_bright"
 				/>
 	</RelativeLayout>

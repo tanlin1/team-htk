@@ -281,8 +281,9 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 					resetHeaderPadding();
 				}
 			}
-			System.out.println("-------   last" + getLastVisiblePosition() + "     " + totalItemCount);
-			if((getLastVisiblePosition() == totalItemCount - 1) && (startY > endY)){
+			if((getLastVisiblePosition() == totalItemCount - 1) && (startY > endY)
+					&& canLoadMore && (mLoadMoreState == NORMAL_STATE_TO_READ)) {
+
 				mLoadMoreState = LOAD_MORE;
 			}
 		}
@@ -290,8 +291,6 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
-
-		int tempY = (int) ev.getY();
 
 		switch (ev.getAction()) {
 			case MotionEvent.ACTION_DOWN:
@@ -340,6 +339,7 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 				mRefreshState = REFRESHING;
 				// 禁止再次刷新
 				canRefresh = false;
+				canLoadMore = false;
 				refresh();
 				break;
 			case NORMAL_STATE_TO_READ:
@@ -355,6 +355,7 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 			case LOAD_MORE:
 				mLoadMoreState = LOADING;
 				canLoadMore = false;
+				canRefresh = false;
 				loadMore();
 				break;
 			default:
@@ -430,10 +431,12 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 			setSelection(1);
 		}
 		canRefresh = true;
+		canLoadMore =true;
 	}
 	public void onLoadMoreComplete() {
 		invalidateViews();
 		canLoadMore = true;
+		canRefresh = true;
 		resetFooter();
 	}
 }

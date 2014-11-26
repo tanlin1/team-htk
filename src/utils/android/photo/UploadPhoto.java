@@ -68,7 +68,7 @@ public class UploadPhoto extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.upload);
+		setContentView(R.layout.upload_layout);
 		init();
 		messageAway();
 		buttonOnClickListening();

@@ -48,7 +48,7 @@ public class CameraActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		// 无标题
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.camera_layout);
+		setContentView(R.layout.take_photo_layout);
 		LinearLayout liner = (LinearLayout) findViewById(R.id.camera_liner);
 		takeSomePhoto();
 	}

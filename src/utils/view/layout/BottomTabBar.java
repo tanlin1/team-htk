@@ -1,4 +1,4 @@
-package utils.view;
+package utils.view.layout;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -34,7 +34,7 @@ public class BottomTabBar extends LinearLayout {
 
 		LayoutInflater mInflater = LayoutInflater.from(context);
 
-		View v = mInflater.inflate(R.layout.my_bottom_tabs, null);
+		View v = mInflater.inflate(R.layout.bottom_menu_layout, null);
 		addView(v,lp);
 	}
 }

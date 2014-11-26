@@ -82,7 +82,7 @@ public class LaunchActivity extends Activity {
 		// 显示样式：无标题栏
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		//当前Activity 是哪一个布局文件，以何种方式显示
-		setContentView(R.layout.main);
+		setContentView(R.layout.lanuch_layout);
 		initWidgets();
 		theWidgetsFunction();
 	}

@@ -63,7 +63,7 @@ public class RegisterActivity extends Activity {
 		 * 设置无标题，全屏幕显示
 		 */
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.register);
+		setContentView(R.layout.register_layout);
 
 		ImageView back1 = (ImageView) findViewById(R.id.backImage);
 		TextView back2 = (TextView) findViewById(R.id.backText);

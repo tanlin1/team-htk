@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@android:color/white"
+		>
+
+	<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+	        android:orientation="vertical"
+	        android:layout_marginTop="1dp"
+	        android:background="#ecf0f1"
+			>
+		<ImageView
+				android:layout_width="40dp"
+				android:layout_height="30dp"
+				android:layout_gravity="center"
+				android:src="@drawable/menu_only"
+				android:scaleType="centerCrop"
+				android:id="@+id/user_home_menu_fling"
+				/>
+	</LinearLayout>
+
+	<View
+			android:layout_width="fill_parent"
+			android:layout_height="1dp"
+	        android:background="#ccefcf"
+	        />
+	<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="60dp"
+			android:orientation="horizontal"
+	        android:gravity="center_vertical"
+			>
+
+		<ImageView
+				style="@style/user_home_photo_image_style"
+				android:src="@drawable/one_class"
+				/>
+
+		<ImageView
+				style="@style/user_home_photo_image_style"
+				android:src="@drawable/menu_only"
+				/>
+
+		<ImageView
+				style="@style/user_home_photo_image_style"
+				android:src="@drawable/maypoint_map"
+				/>
+
+		<ImageView
+				style="@style/user_home_photo_image_style"
+				android:src="@drawable/one_class"
+				/>
+	</LinearLayout>
+
+	<GridView
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:id="@+id/user_home_photo_classes"
+			android:paddingTop="2dp"
+			android:paddingBottom="2dp"
+			android:numColumns="3"
+	        android:background="@color/green"
+			/>
+</LinearLayout>

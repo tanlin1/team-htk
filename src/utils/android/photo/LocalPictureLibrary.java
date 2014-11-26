@@ -257,10 +257,10 @@ public class LocalPictureLibrary extends Activity {
 			holder.image.setImageBitmap(ImageLoader.hashBitmaps.get(position));
 			if(ImageLoader.selected.get(position)){
 				holder.isSelect.setVisibility(View.VISIBLE);
-				//convertView.setBackgroundColor(Color.DKGRAY);
+				convertView.setBackgroundColor(Color.DKGRAY);
 			}else {
 				holder.isSelect.setVisibility(View.GONE);
-				//convertView.setBackgroundColor(Color.WHITE);
+				convertView.setBackgroundColor(Color.WHITE);
 			}
 
 			return convertView;
