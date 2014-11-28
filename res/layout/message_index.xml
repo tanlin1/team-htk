@@ -3,12 +3,61 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
-<TextView
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-        android:text="这是消息主页"
-        android:textSize="30sp"
-        android:textColor="@android:color/holo_blue_light"
-		/>
+              android:layout_height="match_parent"
+		>
+
+	<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+	        android:orientation="vertical"
+	        android:background="@color/green"
+			>
+
+		<RelativeLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				>
+
+			<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_height="40dp"
+					android:layout_centerHorizontal="true"
+					android:layout_centerVertical="true"
+					android:gravity="center_vertical"
+					android:orientation="horizontal"
+					android:layout_marginTop="10dp"
+					>
+
+				<LinearLayout
+						style="@style/message_index_content_tab"
+						>
+
+					<TextView
+							style="@style/message_index_content_text"
+							android:text="通知"
+							android:id="@+id/index_message_content_page_notice"
+
+							/>
+				</LinearLayout>
+
+				<LinearLayout
+						style="@style/message_index_content_tab"
+						>
+
+					<TextView
+							style="@style/message_index_content_text"
+							android:id="@+id/index_message_content_page_notice_private"
+							android:text="私信"
+							/>
+				</LinearLayout>
+			</LinearLayout>
+		</RelativeLayout>
+
+		<android.support.v4.view.ViewPager
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:id="@+id/index_message_content_page"
+				>
+		</android.support.v4.view.ViewPager>
+	</LinearLayout>
 </LinearLayout>

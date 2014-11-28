@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+		>
+
+	<RelativeLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			>
+
+		<view
+				android:layout_width="100dp"
+				android:layout_height="100dp"
+				class="utils.view.view.CircleImageView"
+				android:id="@+id/message_index_user_photo_head"
+				android:layout_gravity="center_vertical"
+				android:src="@drawable/head2"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentTop="true"
+		        android:layout_marginTop="16dp"
+		        android:layout_marginLeft="16dp"
+		        android:layout_marginBottom="10dp"
+				/>
+
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="流动的心"
+				android:textStyle="bold"
+				android:textSize="18sp"
+				android:id="@+id/message_index_user_name"
+				android:layout_centerVertical="true"
+				android:layout_alignTop="@id/message_index_user_photo_head"
+				android:layout_toRightOf="@id/message_index_user_photo_head"
+				/>
+
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/message_index_comment_text"
+				android:layout_alignTop="@id/message_index_user_photo_head"
+				android:layout_toRightOf="@id/message_index_user_name"
+				android:layout_toLeftOf="@+id/message_index_picture_commented_by_someone"
+				android:layout_marginLeft="2dp"
+				android:layout_marginRight="6dp"
+
+				android:text="评论了: 输入点什么好呢，yaoqiu 文字要多一点，尽可能的长一点，尽可能的中英文结合使用，我单词这么少，哪来的单词写给你呀，算了，就写这些，应该够了，the end !"
+				/>
+
+		<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/message_index_time_of_comment_image"
+				android:src="@drawable/index_clock_img_button"
+				android:layout_alignLeft="@id/message_index_user_name"
+				android:layout_alignBottom="@id/message_index_user_photo_head"
+				/>
+
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="昨天 12:29"
+				android:id="@+id/message_index_time_of_comment"
+				android:layout_toRightOf="@id/message_index_time_of_comment_image"
+				android:layout_alignBottom="@id/message_index_time_of_comment_image"
+				/>
+
+
+			<ImageView
+					android:layout_width="100dp"
+					android:layout_height="fill_parent"
+					android:id="@+id/message_index_picture_commented_by_someone"
+					android:src="@drawable/user_home_foot"
+			        android:layout_alignParentRight="true"
+			        android:layout_marginRight="8dp"
+			        android:layout_alignBottom="@id/message_index_user_photo_head"
+			        android:layout_alignTop="@id/message_index_user_photo_head"
+			        android:scaleType="center"
+					/>
+	</RelativeLayout>
+</LinearLayout>

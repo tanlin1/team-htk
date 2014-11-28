@@ -4,8 +4,7 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="#ffffff"
-              android:weightSum="1"
+              android:background="#efefef"
 		>
 
 	<FrameLayout
@@ -37,7 +36,7 @@
 					android:text="随心而动"
 					android:textSize="18sp"
 					android:textStyle="bold"
-					android:textColor="@color/dark"
+					android:textColor="#3f474e"
 					android:id="@+id/user_style_name_home"
 					android:layout_gravity="bottom|right"
 					android:layout_marginRight="85dp"
@@ -93,7 +92,7 @@
 				android:text="康       乐"
 				android:textSize="30sp"
 				android:textStyle="bold"
-				android:textColor="@color/dark"
+				android:textColor="#3f474e"
 				android:id="@+id/user_name_home_text"
 				android:layout_gravity="right|bottom"
 				android:layout_marginRight="60dp"
@@ -133,12 +132,12 @@
 				android:layout_alignParentBottom="true"
 		        android:orientation="vertical"
 		        android:gravity="center_horizontal"
-		        android:background="#ecf0f1"
+		        android:background="#dfded9"
 				>
 			<ImageView
 					android:layout_width="wrap_content"
 					android:layout_height="25dp"
-					android:src="@drawable/menu_only"
+					android:src="@drawable/user_home_menu_only"
 					android:scaleType="centerCrop"
 					android:id="@+id/user_home_menu_fling"
 					/>

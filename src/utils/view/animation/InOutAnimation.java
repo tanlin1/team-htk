@@ -4,6 +4,8 @@ import android.view.View;
 import android.view.animation.AnimationSet;
 
 /**
+ * 主页上的加好按钮旋转，可以不用这个实现
+ *
  * Created by Administrator on 2014/11/4.
  */
 public abstract class InOutAnimation extends AnimationSet {
@@ -11,7 +13,7 @@ public abstract class InOutAnimation extends AnimationSet {
 	public Direction	direction;
 
 	public enum Direction {
-		IN, OUT;
+		IN, OUT
 	}
 
 	public InOutAnimation(Direction direction, long l, View[] views) {

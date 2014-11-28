@@ -35,7 +35,7 @@ public class UserHomeDetailLayout extends LinearLayout {
 
 		LayoutInflater mInflater = LayoutInflater.from(context);
 
-		View v = mInflater.inflate(R.layout.user_home_detail_indo, null);
+		View v = mInflater.inflate(R.layout.user_home_like_fans_number, null);
 		addView(v,lp);
 	}
 }

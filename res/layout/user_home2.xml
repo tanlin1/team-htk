@@ -12,23 +12,17 @@
 			android:layout_height="wrap_content"
 	        android:orientation="vertical"
 	        android:layout_marginTop="1dp"
-	        android:background="#ecf0f1"
+	        android:background="#dfded9"
 			>
 		<ImageView
-				android:layout_width="40dp"
-				android:layout_height="30dp"
+				android:layout_width="wrap_content"
+				android:layout_height="25dp"
 				android:layout_gravity="center"
-				android:src="@drawable/menu_only"
+				android:src="@drawable/user_home_menu_only"
 				android:scaleType="centerCrop"
 				android:id="@+id/user_home_menu_fling"
 				/>
 	</LinearLayout>
-
-	<View
-			android:layout_width="fill_parent"
-			android:layout_height="1dp"
-	        android:background="#ccefcf"
-	        />
 	<LinearLayout
 			android:layout_width="fill_parent"
 			android:layout_height="60dp"
@@ -38,22 +32,22 @@
 
 		<ImageView
 				style="@style/user_home_photo_image_style"
-				android:src="@drawable/one_class"
+				android:src="@drawable/user_home_look_photo"
 				/>
 
 		<ImageView
 				style="@style/user_home_photo_image_style"
-				android:src="@drawable/menu_only"
+				android:src="@drawable/user_home_list_menu"
 				/>
 
 		<ImageView
 				style="@style/user_home_photo_image_style"
-				android:src="@drawable/maypoint_map"
+				android:src="@drawable/user_home_foot"
 				/>
 
 		<ImageView
 				style="@style/user_home_photo_image_style"
-				android:src="@drawable/one_class"
+				android:src="@drawable/user_home_likes_folder"
 				/>
 	</LinearLayout>
 
@@ -61,9 +55,9 @@
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
 			android:id="@+id/user_home_photo_classes"
-			android:paddingTop="2dp"
-			android:paddingBottom="2dp"
+			android:gravity="center"
 			android:numColumns="3"
-	        android:background="@color/green"
+			android:scrollbars="none"
+	        android:background="@color/white"
 			/>
 </LinearLayout>

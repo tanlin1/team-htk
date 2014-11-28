@@ -118,7 +118,7 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 		mInflater = LayoutInflater.from(context);
 
 		mListHeadLayout = (RelativeLayout) mInflater.inflate(R.layout.pull_to_refresh_header, this, false);
-		mListFootLayout = (RelativeLayout) mInflater.inflate(R.layout.loadmore_footer, this, false);
+		mListFootLayout = (RelativeLayout) mInflater.inflate(R.layout.index_list_view_loadmore_footer, this, false);
 
 		mRefreshText = (TextView) mListHeadLayout.findViewById(R.id.pull_to_refresh_text);
 		mLastTimeText = (TextView) mListHeadLayout.findViewById(R.id.last_time_refresh_text);

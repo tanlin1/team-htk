@@ -19,7 +19,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.*;
 import utils.android.photo.CameraActivity;
 import utils.android.photo.LocalPictureLibrary;
-import utils.test.*;
+import utils.view.fragment.*;
 import utils.view.IndexPullRefreshListView;
 import utils.view.NotFilingViewPager;
 
@@ -49,12 +49,7 @@ public class UserMainCoreActivity extends FragmentActivity {
     private final String TAG = "PullToRefreshListView";
     private final static int DELAY = 10;
 
-
-	private RadioGroup mRadioGroup;
 	private ArrayList<Fragment> fragments;
-	private FragmentTabAdapter tabAdapter;
-
-
 
     // 菜单栏中间的按钮是否处于动画中
 	private boolean buttonIsOnscreen;
@@ -248,7 +243,6 @@ public class UserMainCoreActivity extends FragmentActivity {
 		Fragment newFragment = fragments.get(index);
 		FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
 		if(newFragment.isVisible()) {
-			System.out.println("重复了---------------------------------------------------");
 			return;
 		}
 		if (newFragment.isAdded()) {
@@ -261,7 +255,6 @@ public class UserMainCoreActivity extends FragmentActivity {
 		ft.hide(lastFragment);
 		ft.commit();
 		currentFragmentIndex = index;
-		System.out.println("---------------状态改变   " + currentFragmentIndex);
 	}
 	/**
 	 * 得到上一次的Fragment，避免重复
@@ -390,12 +383,12 @@ public class UserMainCoreActivity extends FragmentActivity {
 			@Override
 			public void onClick(View v) {
 
-//				view_index.setImageResource(R.drawable.home_after);
-//				view_message.setImageResource(R.drawable.topic);
-//				view_search.setImageResource(R.drawable.explore);
-//				view_me.setImageResource(R.drawable.user);
+
+				view_index.setImageResource(R.drawable.index_menu_home_img);
+				view_message.setImageResource(R.drawable.index_menu_message_before_img);
+				view_search.setImageResource(R.drawable.index_menu_search_before_img);
+				view_me.setImageResource(R.drawable.index_menu_me_before_img);
 				//pages.setCurrentItem(0, false);
-				System.out.println("-----   0   -----");
 				setFragmentIndex(0);
 				shutdown();
 
@@ -408,12 +401,11 @@ public class UserMainCoreActivity extends FragmentActivity {
 			@Override
 			public void onClick(View v) {
 
-//				view_index.setImageResource(R.drawable.home);
-//				view_message.setImageResource(R.drawable.topic_after);
-//				view_search.setImageResource(R.drawable.explore);
-//				view_me.setImageResource(R.drawable.user);
+				view_index.setImageResource(R.drawable.index_menu_home_before_img);
+				view_message.setImageResource(R.drawable.index_menu_message_img);
+				view_search.setImageResource(R.drawable.index_menu_search_before_img);
+				view_me.setImageResource(R.drawable.index_menu_me_before_img);
 //				pages.setCurrentItem(1, false);
-				System.out.println("-----   1   -----");
 				setFragmentIndex(1);
 				shutdown();
 				//startActivity(new Intent());
@@ -430,12 +422,13 @@ public class UserMainCoreActivity extends FragmentActivity {
 			@Override
 			public void onClick(View v) {
 
-//				view_index.setImageResource(R.drawable.home);
-//				view_message.setImageResource(R.drawable.topic);
-//				view_search.setImageResource(R.drawable.explore_after);
-//				view_me.setImageResource(R.drawable.user);
+				findViewById(R.id.my_index_button_liner1).setBackgroundResource(R.drawable.index_menu_button_back);
+
+				view_index.setImageResource(R.drawable.index_menu_home_before_img);
+				view_message.setImageResource(R.drawable.index_menu_message_before_img);
+				view_search.setImageResource(R.drawable.index_menu_search_img);
+				view_me.setImageResource(R.drawable.index_menu_me_before_img);
 //				pages.setCurrentItem(2, false);
-				System.out.println("-----   2   -----");
 				setFragmentIndex(2);
 				shutdown();
 				//startActivity(new Intent());
@@ -447,12 +440,11 @@ public class UserMainCoreActivity extends FragmentActivity {
 			@Override
 			public void onClick(View v) {
 
-//				view_index.setImageResource(R.drawable.home);
-//				view_message.setImageResource(R.drawable.topic);
-//				view_search.setImageResource(R.drawable.explore);
-//				view_me.setImageResource(R.drawable.user_after);
+				view_index.setImageResource(R.drawable.index_menu_home_before_img);
+				view_message.setImageResource(R.drawable.index_menu_message_before_img);
+				view_search.setImageResource(R.drawable.index_menu_search_before_img);
+				view_me.setImageResource(R.drawable.index_menu_me_img);
 //				pages.setCurrentItem(3, false);
-				System.out.println("-----   3   -----");
 				setFragmentIndex(3);
 				shutdown();
 			}

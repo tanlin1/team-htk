@@ -11,7 +11,6 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.*;
 import com.htk.moment.ui.R;
-import utils.view.PullToRefreshListView;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -131,7 +130,7 @@ public class MyListView extends ListView implements AbsListView.OnScrollListener
         refreshLastTime =
                 (TextView) refreshHeaderLayout.findViewById(R.id.last_time_refresh_text);
 
-        loadMoreLayout = (RelativeLayout) inflater.inflate(R.layout.loadmore_footer, this, false);
+        loadMoreLayout = (RelativeLayout) inflater.inflate(R.layout.index_list_view_loadmore_footer, this, false);
         loadMoreText = (TextView) loadMoreLayout.findViewById(R.id.load_more_text);
         loadProcessBar = (ProgressBar) loadMoreLayout.findViewById(R.id.load_more_progress);
 
