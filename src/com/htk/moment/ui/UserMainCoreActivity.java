@@ -236,7 +236,7 @@ public class UserMainCoreActivity extends FragmentActivity {
 			Log.w(TAG, "your index must select between zero and four!\n");
 			return;
 		}
-		// 上一个frament
+		// 上一个fragment
 		Fragment lastFragment = getCurrentFragment();
 
 		// 准备显示的fragment
@@ -300,34 +300,7 @@ public class UserMainCoreActivity extends FragmentActivity {
 		icon = findViewById(R.id.index_plus_button_image);
 	}
 
-	/**
-	 * 初始化ViewPager
-	 * <p/>
-	 * 完成页面加载
-	 */
-	private void initViewPager() {
-		/**
-		 * ViewPager 包含的页面
-		 */
-		List<View> pageList = new ArrayList<View>();
 
-		//pages = (NotFilingViewPager) findViewById(R.id.multi_page);
-
-		LayoutInflater inflater = LayoutInflater.from(this);
-
-		pageList.add(inflater.inflate(R.layout.after_login_listview_layout, null));
-		pageList.add(inflater.inflate(R.layout.message_index, null));
-		pageList.add(inflater.inflate(R.layout.search_index, null));
-		pageList.add(inflater.inflate(R.layout.user_home_index, null));
-
-
-		pages.setAdapter(new myViewPagerAdapter(pageList));
-		pages.setOnPageChangeListener(new MyOnPageChangeListener());
-		currentItem = (LinearLayout) pages.findViewById(R.id.after_login_list_view);
-		pages.setCurrentItem(0);
-		// 限制水平滑动
-		pages.enableHorizonScroll(false);
-	}
 	/**
 	 * 通知UI线程，布局加载完成，可以对响应的控件进行事件侦听
 	 */
@@ -703,109 +676,12 @@ public class UserMainCoreActivity extends FragmentActivity {
 		}
 	}
 
-	public class MyOnPageChangeListener implements NotFilingViewPager.OnPageChangeListener {
-
-		@Override
-		public void onPageScrolled(int arg0, float arg1, int arg2) {
-
-		}
-
-		@Override
-		public void onPageScrollStateChanged(int arg0) {
-
-		}
-
-		@Override
-		public void onPageSelected(final int arg0) {
-			// 用户处于某一页
-			switch (arg0) {
-				case 0: {
-					currentItem = (LinearLayout) pages.findViewById(R.id.after_login_list_view);
-					test3();
-				}
-				break;
-				case 3:{
-					currentItem = (LinearLayout) pages.findViewById(R.id.user_home_index);
-					if(currentItem == null){
-						break;
-					}
-					initVerticalViewPager();
-				}
-				break;
-			}
-		}
-	}
-
-	private void initVerticalViewPager(){
-		ArrayList<View> views = new ArrayList<View>();
-		LayoutInflater inflater = LayoutInflater.from(this);
-//		mVerticalViewPager = (VerticalViewPager) currentItem.findViewById(R.id.verticalViewPager);
-//		views.add(inflater.inflate(R.layout.user_home1, null));
-//		views.add(inflater.inflate(R.layout.user_home2, null));
-////		mVerticalViewPager.setAdapter(new MyVerticalViewPagerAdapter(views));
-//		mVerticalViewPager.setCurrentItem(0);
-
-
-	}
-
-	private class MyVerticalViewPagerAdapter extends utils.view.vertical.PagerAdapter{
-
-		ArrayList<View> viewArrayList;
-		public MyVerticalViewPagerAdapter(ArrayList<View> viewData){
-			viewArrayList = viewData;
-		}
-
-		@Override
-		public boolean isViewFromObject(View view, Object object) {
-			return true;
-		}
-
-		@Override
-		public int getCount() {
-			return viewArrayList.size();
-		}
-
-	}
-
-
-	private LinearLayout currentItem;
-	public void test() {
-
-		currentItem = (LinearLayout) pages.findViewWithTag("tag1");
-
-		if (currentItem == null) {
-			System.out.println("currentItem is null");
-			return;
-		}
-		//test4();
-		test3();
-	}
-
 	private static List<HashMap<String, Object>> items = null;
 
 	public static IndexPullRefreshListView indexPullListView;
 
 	static MyContentListViewAdapter myContentListViewAdapter;
 
-	private void test3() {
-		indexPullListView = (IndexPullRefreshListView) currentItem.findViewById(R.id.index_pull_to_refresh_list_view);
-		indexPullListView.setOnRefreshListener(new IndexPullRefreshListView.OnRefreshListener() {
-
-			@Override
-			public void refresh() {
-				// Do work to refresh the list here.
-				new GetDataTask(UserMainCoreActivity.this, PULL_TO_REFRESH).execute();
-			}
-
-			@Override
-			public void loadMore() {
-				new GetDataTask(UserMainCoreActivity.this, LOAD_MORE).execute();
-			}
-		});
-		myContentListViewAdapter = new MyContentListViewAdapter(UserMainCoreActivity.this, getListItems());
-		indexPullListView.setAdapter(myContentListViewAdapter);
-
-	}
 
 	private class GetDataTask extends AsyncTask<Void, Void, HashMap<String,Object>> {
 
@@ -859,5 +735,5 @@ public class UserMainCoreActivity extends FragmentActivity {
 			super.onCancelled(stringObjectHashMap);
 		}
 	}
-static int name = 10;
+	static int name = 10;
 }
