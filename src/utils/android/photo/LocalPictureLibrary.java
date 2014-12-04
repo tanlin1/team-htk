@@ -10,6 +10,7 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.*;
 import com.htk.moment.ui.R;
 
@@ -49,6 +50,7 @@ public class LocalPictureLibrary extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.to_choose_user_photo);
 		init();
 		selectSomePicture();
@@ -132,7 +134,7 @@ public class LocalPictureLibrary extends Activity {
 					if (!isSelected) {
 						ImageLoader.selected.put(position, true);
 						view.findViewById(R.id.photo_is_select_text).setVisibility(View.VISIBLE);
-						view.setBackgroundColor(Color.DKGRAY);
+						view.setBackgroundColor(R.color.picture_select);
 						// 添加
 						photoSelectFlagMap.put(position, ImageLoader.photoPath.get(position));
 					} else {
@@ -257,7 +259,7 @@ public class LocalPictureLibrary extends Activity {
 			holder.image.setImageBitmap(ImageLoader.hashBitmaps.get(position));
 			if(ImageLoader.selected.get(position)){
 				holder.isSelect.setVisibility(View.VISIBLE);
-				convertView.setBackgroundColor(Color.DKGRAY);
+				convertView.setBackgroundColor(R.color.picture_select);
 			}else {
 				holder.isSelect.setVisibility(View.GONE);
 				convertView.setBackgroundColor(Color.WHITE);

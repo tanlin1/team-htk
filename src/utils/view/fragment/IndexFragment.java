@@ -2,8 +2,11 @@ package utils.view.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,7 +15,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.htk.moment.ui.PictureScanActivity;
 import com.htk.moment.ui.R;
+import com.htk.moment.ui.ViewLikeOrComment;
 import utils.view.IndexPullRefreshListView;
 
 import java.text.SimpleDateFormat;
@@ -57,7 +62,7 @@ public class IndexFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 
 		super.onActivityCreated(savedInstanceState);
-		test1();
+		addDataToListView();
 	}
 
 	@Override
@@ -101,9 +106,9 @@ public class IndexFragment extends Fragment {
 
 		super.onDetach();
 	}
-	static IndexPullRefreshListView listView;
+	private static IndexPullRefreshListView listView;
 
-	public void test1() {
+	public void addDataToListView() {
 
 		listView = (IndexPullRefreshListView) this.getView().findViewById(R.id.index_pull_to_refresh_list_view);
 
@@ -166,7 +171,7 @@ public class IndexFragment extends Fragment {
 			/**
 			 * “Comment”
 			 */
-			public TextView theCommentText;
+			public TextView commentText;
 
 			// 喜欢等图片按钮
 			public ImageView loveHeartImage;
@@ -200,7 +205,7 @@ public class IndexFragment extends Fragment {
 			return position;
 		}
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, View convertView, ViewGroup parent) {
 
 			ListItemsView listItemsView;
 
@@ -213,6 +218,13 @@ public class IndexFragment extends Fragment {
 				listItemsView.userAddress = (TextView) convertView.findViewById(R.id.address);
 				listItemsView.showingPicture = (ImageView) convertView.findViewById(R.id.showingPicture);
 				listItemsView.photoDescribe = (TextView) convertView.findViewById(R.id.index_photo_describe);
+
+
+				listItemsView.likeSum = (TextView) convertView.findViewById(R.id.index_photo_like_num);
+				listItemsView.likeText = (TextView) convertView.findViewById(R.id.index_photo_like_text);
+				listItemsView.commentSum = (TextView) convertView.findViewById(R.id.index_photo_comment_num);
+				listItemsView.commentText = (TextView) convertView.findViewById(R.id.index_photo_comment_text);
+
 
 				// 设置控件集到convertView中
 				convertView.setTag(listItemsView);
@@ -227,6 +239,25 @@ public class IndexFragment extends Fragment {
 			listItemsView.showingPicture.setImageResource((Integer) map.get("userPicture"));
 			listItemsView.photoDescribe.setText((String) map.get("explain"));
 
+			listItemsView.showingPicture.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(getActivity(), PictureScanActivity.class);
+					intent.putExtra("position", position);
+					startActivity(intent);
+					getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+				}
+			});
+
+
+			test(listItemsView.likeSum);
+			test(listItemsView.likeText);
+
+			test(listItemsView.commentSum);
+			test(listItemsView.commentText);
+
+
 			return convertView;
 		}
 	}
@@ -236,28 +267,28 @@ public class IndexFragment extends Fragment {
 		items = new ArrayList<HashMap<String, Object>>();
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("photoHead", R.drawable.head2);
-		map.put("userName", "喜欢");
-		map.put("userAddress", "好望角海域");
-		map.put("userPicture", R.drawable.index_aother_user_picture);
-		map.put("explain", "这里是用户文字描述");
+		map.put("photoHead", R.drawable.head1);
+		map.put("userName", "方伦");
+		map.put("userAddress", "哥伦贝尔草原");
+		map.put("userPicture", R.drawable.index_another_user_picture);
+		map.put("explain", "在哥伦贝尔大草原上，呼吸着、感受着");
 		items.add(map);
 
 		HashMap<String, Object> map2 = new HashMap<String, Object>();
 		map2.put("photoHead", R.drawable.head2);
-		map2.put("userName", "不喜欢");
-		map2.put("userAddress", "成都双流");
-		map2.put("userPicture", R.drawable.index_aother_user_picture);
-		map2.put("explain", "我说了很多？");
+		map2.put("userName", "桂杰双");
+		map2.put("userAddress", "成都");
+		map2.put("userPicture", R.drawable.nine);
+		map2.put("explain", "赏金怒拿五杀，这个游戏如此的简单啊。。！");
 		items.add(map2);
 
 
 		HashMap<String, Object> map3 = new HashMap<String, Object>();
-		map3.put("photoHead", R.drawable.application);
-		map3.put("userName", "hellen");
-		map3.put("userAddress", "北京");
-		map3.put("userPicture", R.drawable.index_aother_user_picture);
-		map3.put("explain", "我说了很多aassdfsfdgsdg2222sdasd");
+		map3.put("photoHead", R.drawable.images);
+		map3.put("userName", "康乐");
+		map3.put("userAddress", "常乐村");
+		map3.put("userPicture", R.drawable.twleve);
+		map3.put("explain", "成信的图书馆，最安静，最喜欢的地方");
 		items.add(map3);
 		return items;
 	}
@@ -281,11 +312,11 @@ public class IndexFragment extends Fragment {
 			HashMap<String, Object> dataMap = new HashMap<String, Object>();
 			try {
 				Thread.sleep(2000);
-				dataMap.put("photoHead", R.drawable.head2);
-				dataMap.put("userName", String.valueOf(name++));
-				dataMap.put("userAddress", "好莱坞----");
-				dataMap.put("userPicture", R.drawable.index_aother_user_picture);
-				dataMap.put("explain", "用户文字描述");
+				dataMap.put("photoHead", R.drawable.eight);
+				dataMap.put("userName", "Alby");
+				dataMap.put("userAddress", "new york");
+				dataMap.put("userPicture", R.drawable.zero);
+				dataMap.put("explain", "NBA 。。。NBA");
 
 			} catch (InterruptedException e) {
 				Log.d("test", "Sleep Exception");
@@ -319,4 +350,27 @@ public class IndexFragment extends Fragment {
 		}
 	}
 
+
+	private class MyHandler extends Handler{
+
+		@Override
+		public void handleMessage(Message msg) {
+
+			super.handleMessage(msg);
+		}
+	}
+
+	private void test(){
+		MyHandler myHandler = new MyHandler();
+	}
+
+	private void test(View v){
+		v.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				startActivity(new Intent(getActivity(), ViewLikeOrComment.class));
+			}
+		});
+	}
 }

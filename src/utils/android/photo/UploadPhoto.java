@@ -9,12 +9,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import com.htk.moment.ui.AppIndexActivity;
 import com.htk.moment.ui.LaunchActivity;
 import com.htk.moment.ui.R;
-import com.htk.moment.ui.UserMainCoreActivity;
 import utils.android.sdcard.Read;
 import utils.android.sdcard.Write;
 import utils.check.Check;
@@ -54,6 +55,8 @@ public class UploadPhoto extends Activity {
 	// 上传按钮
 	private ImageButton uploadButton;
 
+	private EditText mEditText;
+
 	// 选择的图片路径集
 	private ArrayList<String> pathArrayList = new ArrayList<String>();
 
@@ -71,7 +74,7 @@ public class UploadPhoto extends Activity {
 		setContentView(R.layout.upload_layout);
 		init();
 		messageAway();
-		buttonOnClickListening();
+		listenerStart();
 	}
 
 	/**
@@ -81,9 +84,13 @@ public class UploadPhoto extends Activity {
 	 */
 	private void init() {
 		intent = getIntent();
-		back = (ImageButton) findViewById(R.id.back_to_camera);
-		uploadButton = (ImageButton) findViewById(R.id.UploadPhoto);
 		liner = (LinearLayout) findViewById(R.id.liner);
+
+		back = (ImageButton) findViewById(R.id.back_to_camera);
+		uploadButton = (ImageButton) findViewById(R.id.goto_upload_button_img);
+		mEditText = (EditText) findViewById(R.id.describe_of_user_picture_edit_text);
+
+
 	}
 
 	/**
@@ -132,10 +139,10 @@ public class UploadPhoto extends Activity {
 			ViewGroup.LayoutParams parent = liner.getLayoutParams();
 			image.setLayoutParams(parent);
 			ViewGroup.LayoutParams params = image.getLayoutParams();
-			params.width = 160;
-			params.height = 120;
+			params.width = 210;
+			params.height = 210;
 			image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-			image.setPadding(2,1,0,1);
+			image.setPadding(9, 20, 5, 15);
 
 			// 直接在内存中查看，如果没有，则根据路径重新生成图片
 			if (ImageLoader.hashBitmaps.containsKey(temp)) {
@@ -145,7 +152,7 @@ public class UploadPhoto extends Activity {
 				path = hashMap.get(temp);
 				// 此方法将得到图片的绝对路径，不包含由程序生成缩略图文件夹
 				bitmap = BitmapFactory.decodeFile(path);
-				image.setImageBitmap(ImageCompressUtil.zoomImage(bitmap, 160, 120));
+				image.setImageBitmap(ImageCompressUtil.zoomImage(bitmap, 210, 210));
 				pathArrayList.add(path);
 			}
 			liner.addView(image);
@@ -166,6 +173,16 @@ public class UploadPhoto extends Activity {
 		}
 	}
 
+	private void listenerStart(){
+		buttonOnClickListening();
+
+		mEditText.setCursorVisible(true);
+
+	}
+
+
+
+
 	private void buttonOnClickListening() {
 		// 返回按钮
 		back.setOnClickListener(new View.OnClickListener() {
@@ -185,7 +202,7 @@ public class UploadPhoto extends Activity {
 					System.out.println("用户不在线");
 					//保存至本地，等到下次用户连接上internet的时候上传图片
 				}
-				startActivity(new Intent(UploadPhoto.this, UserMainCoreActivity.class));
+				startActivity(new Intent(UploadPhoto.this, AppIndexActivity.class));
 			}
 		});
 	}

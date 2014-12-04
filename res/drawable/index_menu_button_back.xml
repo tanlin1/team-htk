@@ -6,7 +6,7 @@
 	      android:drawable="@color/red"
 			/>
 	<item android:state_selected="false"
-	      android:drawable="@color/custem"
+	      android:drawable="@color/custom"
 	      />
 
 </selector>

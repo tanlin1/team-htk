@@ -34,7 +34,7 @@ import java.util.ArrayList;
  * @author 谭林
  * @version 2014/11/2.
  */
-public class UserMainCoreActivity extends FragmentActivity {
+public class AppIndexActivity extends FragmentActivity {
 
     // 侦听器发出的按钮飞入消息标识
 	public final static int FLING_IN = 0;
@@ -217,7 +217,7 @@ public class UserMainCoreActivity extends FragmentActivity {
 		fragments.add(new SearchFragment());
 		fragments.add(new MeFragment());
 		FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
-		ft.add(R.id.container, fragments.get(0));
+		ft.add(R.id.app_index_container, fragments.get(0));
 		ft.commit();
 	}
 
@@ -247,7 +247,7 @@ public class UserMainCoreActivity extends FragmentActivity {
 			newFragment.onResume();
 			ft.show(newFragment);
 		} else {
-			ft.add(R.id.container, newFragment);
+			ft.add(R.id.app_index_container, newFragment);
 			ft.show(newFragment);
 		}
 		ft.hide(lastFragment);
@@ -334,7 +334,7 @@ public class UserMainCoreActivity extends FragmentActivity {
 			public void onClick(View v) {
 
 				shutdown();
-				startActivity(new Intent(UserMainCoreActivity.this, CameraActivity.class));
+				startActivity(new Intent(AppIndexActivity.this, CameraActivity.class));
 				overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 			}
 		});
@@ -344,7 +344,7 @@ public class UserMainCoreActivity extends FragmentActivity {
 			@Override
 			public void onClick(View v) {
 				shutdown();
-				startActivity(new Intent(UserMainCoreActivity.this, LocalPictureLibrary.class));
+				startActivity(new Intent(AppIndexActivity.this, LocalPictureLibrary.class));
 				overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
 			}
 		});
@@ -456,15 +456,15 @@ public class UserMainCoreActivity extends FragmentActivity {
 //		int h = findViewById(R.id.tabs_rg).getHeight();
 		Rect rect = new Rect();
 		getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
-		params.y = rect.bottom - h * 2;
+		params.y = rect.bottom - h * 5 / 2;
 		if (tag == null) {
 			Log.e("wrong", "It mustn't be give a par");
 			return null;
 		} else if (tag.equals("camera")) {
-			cameraMaxX = (rect.right - h) / 2;
+			cameraMaxX = (rect.right) / 2 - h * 3;
 			params.x = 0;
 		} else {
-			pictureMaxX = (rect.right + h) / 2;
+			pictureMaxX = (rect.right) / 2 + h * 3;
 			params.x = rect.right;
 		}
 		return params;

@@ -12,7 +12,7 @@
 		<ImageView
 				android:layout_width="25dp"
 				android:layout_height="25dp"
-				android:src="@drawable/like_image_button"
+				android:src="@drawable/like_image_button_solid"
 				android:id="@+id/index_photo_like_image"
 				android:layout_alignParentLeft="true"
 				/>
@@ -28,7 +28,7 @@
 		<ImageView
 				android:layout_width="25dp"
 				android:layout_height="25dp"
-				android:src="@drawable/share_image_button"
+				android:src="@drawable/share_image_button_solid"
 				android:id="@+id/index_photo_share_image"
 				android:layout_toRightOf="@id/index_photo_comment_image"
 				android:layout_marginLeft="35dp"

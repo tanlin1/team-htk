@@ -12,12 +12,13 @@ import android.os.storage.StorageManager;
 import android.provider.MediaStore;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import com.htk.moment.ui.AppIndexActivity;
 import com.htk.moment.ui.R;
-import com.htk.moment.ui.UserMainCoreActivity;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -42,6 +43,7 @@ public class CameraActivity extends Activity {
 
 	private File directory;
 
+	private LinearLayout liner;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +51,7 @@ public class CameraActivity extends Activity {
 		// 无标题
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.take_photo_layout);
-		LinearLayout liner = (LinearLayout) findViewById(R.id.camera_liner);
+		liner = (LinearLayout) findViewById(R.id.camera_liner);
 		takeSomePhoto();
 	}
 
@@ -85,9 +87,12 @@ public class CameraActivity extends Activity {
 					startActivity(intent);
 				}
 			});
+
+
+			addFilter();
 		} else {
 			// 返回主页
-			startActivity(new Intent(CameraActivity.this, UserMainCoreActivity.class));
+			startActivity(new Intent(CameraActivity.this, AppIndexActivity.class));
 		}
 	}
 
@@ -134,5 +139,12 @@ public class CameraActivity extends Activity {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private void addFilter(){
+
+		LayoutInflater inflater = LayoutInflater.from(this);
+
+		liner.addView(inflater.inflate(R.layout.filter_items, null));
 	}
 }

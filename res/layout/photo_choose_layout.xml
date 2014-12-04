@@ -19,8 +19,9 @@
 				android:layout_height="wrap_content"
 				android:layout_gravity="center"
 				android:text="选中"
-				android:textSize="16sp"
-				android:textColor="@android:color/white"
+				android:textSize="18sp"
+				android:textStyle="bold"
+				android:textColor="#2ecc71"
 				android:visibility="gone"
 				/>
 	</FrameLayout>

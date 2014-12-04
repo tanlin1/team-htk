@@ -8,7 +8,7 @@
 
 	<RelativeLayout
 			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
+			android:layout_height="wrap_content"
 	        android:background="@color/white"
 			>
 			<LinearLayout
@@ -16,12 +16,14 @@
 					android:layout_height="wrap_content"
 					android:layout_alignParentTop="true"
 					android:layout_alignParentLeft="true"
-					android:layout_marginLeft="16dp"
+					android:layout_marginLeft="10dp"
+					android:paddingTop="5dp"
+					android:paddingBottom="5dp"
 			        android:id="@+id/liner"
 					>
 				<view
-						android:layout_width="50dp"
-						android:layout_height="50dp"
+						android:layout_width="60dp"
+						android:layout_height="60dp"
 						android:id="@+id/message_index_user_photo_head_of_private_comment"
 						android:src="@drawable/head2"
 						android:layout_gravity="center_horizontal|center_vertical"
@@ -37,12 +39,17 @@
 					android:layout_alignParentRight="true"
 					android:layout_marginRight="50sp"
 					android:layout_toRightOf="@id/liner"
+			        android:layout_marginLeft="16dp"
+			        android:paddingTop="12dp"
 					>
 
 				<TextView
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
+						android:id="@+id/message_index_private_content_user_name"
 						android:text="康乐"
+						android:textColor="@color/dark"
+				        android:textSize="17sp"
 						/>
 
 				<TextView
@@ -50,6 +57,9 @@
 						android:layout_height="wrap_content"
 						android:id="@+id/message_index_private_comment_content"
 						android:text="你好，关于你的这边博客，我对这几个地方有疑惑，你方便帮我解答一下吗？"
+				        android:singleLine="true"
+				        android:textColor="@color/gray"
+				        android:layout_marginTop="6dp"
 						/>
 			</LinearLayout>
 

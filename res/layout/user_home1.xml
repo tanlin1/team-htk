@@ -24,8 +24,8 @@
 					android:layout_width="fill_parent"
 					android:layout_height="fill_parent"
 					android:id="@+id/imageView3"
-					android:layout_gravity="center_horizontal|top"
-					android:src="@drawable/application"
+					android:layout_gravity="center_horizontal"
+					android:src="@drawable/me_index_k_back"
 					android:scaleType="centerCrop"
 					android:paddingBottom="120dp"
 					/>
@@ -36,7 +36,7 @@
 					android:text="随心而动"
 					android:textSize="18sp"
 					android:textStyle="bold"
-					android:textColor="#3f474e"
+					android:textColor="@color/dark"
 					android:id="@+id/user_style_name_home"
 					android:layout_gravity="bottom|right"
 					android:layout_marginRight="85dp"
@@ -81,7 +81,7 @@
 				android:layout_height="150dp"
 				android:id="@+id/imageView4"
 				android:layout_gravity="left|bottom"
-				android:src="@drawable/head2"
+				android:src="@drawable/head_k"
 				android:layout_marginLeft="16dp"
 				android:layout_marginBottom="10dp"
 				/>
@@ -105,7 +105,7 @@
 				android:layout_height="wrap_content"
 				android:id="@+id/imageView5"
 				android:layout_gravity="right|bottom"
-				android:src="@drawable/index_menu_plus_img"
+				android:src="@drawable/append_someone"
 				android:layout_marginRight="16dp"
 				android:layout_marginBottom="33dp"
 				/>

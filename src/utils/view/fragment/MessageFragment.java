@@ -8,10 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.*;
 import com.htk.moment.ui.R;
 import utils.view.view.CircleImageView;
 
@@ -46,14 +43,13 @@ public class MessageFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		View convertView = inflater.inflate(R.layout.message_index, container, false);
-
-		mViewPager = (ViewPager) convertView.findViewById(R.id.index_message_content_page);
+		initViews(convertView);
 
 		mViewPager.setAdapter(new android.support.v4.app.FragmentStatePagerAdapter(getChildFragmentManager()) {
 
 			@Override
 			public Fragment getItem(int position) {
-
+				currentPosition = position;
 				if (position == 0) {
 					return NoticeFrag.getFragment();
 				}
@@ -75,6 +71,7 @@ public class MessageFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 
 		super.onActivityCreated(savedInstanceState);
+		testButton();
 	}
 
 	@Override
@@ -119,6 +116,31 @@ public class MessageFragment extends Fragment {
 		super.onDetach();
 	}
 
+	private static int currentPosition = 0;
+	private void changeView(){
+		if(currentPosition == 0){
+			mViewPager.setCurrentItem(1);
+			return;
+		}
+		setPositionView(0);
+	}
+
+	private void setPositionView(int position){
+		mViewPager.setCurrentItem(position);
+	}
+
+	private Button mNoticeButton;
+	private Button mPrivateNoticeButton;
+
+
+	private void initViews(View v){
+
+		mNoticeButton = (Button) v.findViewById(R.id.message_index_notice_button);
+		mPrivateNoticeButton = (Button) v.findViewById(R.id.message_index_private_notice_button);
+		mViewPager = (ViewPager) v.findViewById(R.id.index_message_content_page);
+	}
+
+
 
 	/**
 	 * 通知容器
@@ -155,7 +177,7 @@ public class MessageFragment extends Fragment {
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 			View convertView = inflater.inflate(R.layout.message_index_page_notice_list, container, false);
 			ListView mListView = (ListView) convertView.findViewById(R.id.notice_list_view);
-			mListView.setAdapter(new MyListViewAdapter(getActivity(), MessageFragment.getSomeStaticData()));
+			mListView.setAdapter(new NoticeAdapter(getActivity(), MessageFragment.getSomeStaticData()));
 
 			return convertView;
 		}
@@ -191,21 +213,24 @@ public class MessageFragment extends Fragment {
 			super.onPause();
 		}
 
-
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 			View convertView = inflater.inflate(R.layout.message_index_page_private_list, container, false);
 			ListView mListView = (ListView) convertView.findViewById(R.id.private_list_view);
-			mListView.setAdapter(new TestA(getActivity(), MessageFragment.getSomeStaticData()));
+			mListView.setAdapter(new PrivateMessageAdapter(getActivity(), MessageFragment.getSomeStaticData()));
+
 			return convertView;
 		}
 	}
 
 
+
+
+
 	/**
 	 * 通知页适配器
 	 */
-	private static class MyListViewAdapter extends BaseAdapter {
+	private static class NoticeAdapter extends BaseAdapter {
 
 		private ArrayList<HashMap<String, Object>> mData;
 		private LayoutInflater mInflater;
@@ -220,7 +245,7 @@ public class MessageFragment extends Fragment {
 			ImageView mUserPisture;
 		}
 
-		public MyListViewAdapter(Context context, ArrayList<HashMap<String, Object>> maps) {
+		public NoticeAdapter(Context context, ArrayList<HashMap<String, Object>> maps) {
 
 			mData = maps;
 			mInflater = LayoutInflater.from(context);
@@ -250,14 +275,14 @@ public class MessageFragment extends Fragment {
 				mMyListViewHolder.mCircleImagePhotoHead = (CircleImageView) convertView.findViewById(R.id.message_index_user_photo_head);
 				mMyListViewHolder.mComment = (TextView) convertView.findViewById(R.id.message_index_comment_text);
 				mMyListViewHolder.mTimeOfComment = (TextView) convertView.findViewById(R.id.message_index_time_of_comment);
-				mMyListViewHolder.mUserName = (TextView) convertView.findViewById(R.id.message_index_user_name);
+				mMyListViewHolder.mUserName = (TextView) convertView.findViewById(R.id.message_index_notice_user_name);
 				mMyListViewHolder.mUserPisture = (ImageView) convertView.findViewById(R.id.message_index_picture_commented_by_someone);
 				convertView.setTag(mMyListViewHolder);
 			} else {
 				mMyListViewHolder = (MyListViewHolder) convertView.getTag();
 			}
 			mMyListViewHolder.mCircleImagePhotoHead.setImageResource(R.drawable.head2);
-			mMyListViewHolder.mUserPisture.setImageResource(R.drawable.index_a_usr_picture);
+			mMyListViewHolder.mUserPisture.setImageResource(R.drawable.application_launch_back);
 
 			return convertView;
 		}
@@ -281,41 +306,80 @@ public class MessageFragment extends Fragment {
 	 *
 	 * 准备更新内容，现在实现的跟通知页的内容一样
 	 */
-	private static class TestA extends MyListViewAdapter {
+	private static class PrivateMessageAdapter extends BaseAdapter{
 
-		public TestA(Context context, ArrayList<HashMap<String, Object>> maps) {
+		private ArrayList<HashMap<String, Object>> mData;
+		private LayoutInflater mInflater;
 
-			super(context, maps);
+		private class ViewHolder{
+			CircleImageView mCircleImagePhotoHead;
+			TextView mUserName;
+			TextView mComment;
+			TextView mTimeOfComment;
+		}
+
+		public PrivateMessageAdapter(Context context, ArrayList<HashMap<String, Object>> maps) {
+
+			mData = maps;
+			mInflater = LayoutInflater.from(context);
 		}
 		@Override
 		public int getCount() {
 
-			return super.getCount();
+			return mData.size();
 		}
 		@Override
 		public Object getItem(int position) {
 
-			return super.getItem(position);
+			return mData.get(position);
 		}
 		@Override
 		public long getItemId(int position) {
 
-			return super.getItemId(position);
+			return position;
 		}
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
+			ViewHolder mViewHolder;
+
+			if(convertView == null){
+				mViewHolder = new ViewHolder();
+				convertView = mInflater.inflate(R.layout.message_index_page_private_content, null);
+				mViewHolder.mCircleImagePhotoHead = (CircleImageView) convertView.findViewById(R.id.message_index_user_photo_head_of_private_comment);
+				mViewHolder.mComment = (TextView) convertView.findViewById(R.id.message_index_private_comment_content);
+				mViewHolder.mUserName = (TextView) convertView.findViewById(R.id.message_index_private_content_user_name);
+				mViewHolder.mTimeOfComment = (TextView) convertView.findViewById(R.id.message_index_time_of_private_comment);
+				convertView.setTag(mViewHolder);
+			}else {
+				mViewHolder = (ViewHolder) convertView.getTag();
+			}
+			// 添加数据
 
 
-
-
-			return super.getView(position, convertView, parent);
+			return convertView;
 		}
 	}
 	/**
 	 * 点击通知或者私信
 	 */
 	private void testButton(){
+		mNoticeButton.setOnClickListener(new View.OnClickListener() {
 
+			@Override
+			public void onClick(View v) {
+				mNoticeButton.setBackgroundColor(R.color.red);
+				mPrivateNoticeButton.setBackgroundColor(R.color.gray);
+			}
+		});
+		mPrivateNoticeButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				mNoticeButton.setBackgroundColor(R.color.gray);
+				mPrivateNoticeButton.setBackgroundColor(R.color.red);
+
+			}
+		});
 	}
 
 }

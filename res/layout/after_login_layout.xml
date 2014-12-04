@@ -12,8 +12,8 @@
 	<FrameLayout
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
-			android:id="@+id/container"
-	        android:layout_above="@+id/bottomTarBar"
+			android:id="@+id/app_index_container"
+			android:layout_above="@+id/bottomTarBar"
 			/>
 
 	<utils.view.layout.BottomTabBar
@@ -27,33 +27,52 @@
 			/>
 
 	<FrameLayout
-			android:layout_width="80dp"
-			android:layout_height="35dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
 			android:orientation="horizontal"
 			android:layout_above="@id/bottomTarBar"
-			android:layout_marginBottom="19dp"
+			android:layout_marginBottom="35dp"
 			android:visibility="gone"
 			android:id="@+id/theAnimalLayout"
 			android:layout_centerHorizontal="true"
+			android:layout_centerInParent="true"
 			>
 
-		<ImageView
-				android:id="@+id/the_camera_button"
-				android:layout_width="30dp"
-				android:layout_height="30dp"
-				android:visibility="gone"
-				android:layout_gravity="top|start"
-                android:src="@drawable/camera_button"
-				/>
+		<LinearLayout
+				android:layout_width="55dp"
+				android:layout_height="55dp"
+				android:background="@color/camera_back"
 
-		<ImageView
-				android:id="@+id/the_picture_button"
-				android:layout_width="30dp"
-				android:layout_height="30dp"
-				android:visibility="gone"
+				android:layout_gravity="top|start"
+		        android:gravity="center"
+				>
+
+			<ImageView
+					android:id="@+id/the_camera_button"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:src="@drawable/camera_button"
+					android:visibility="gone"
+					/>
+		</LinearLayout>
+
+		<LinearLayout
+				android:layout_width="55dp"
+				android:layout_height="55dp"
+				android:background="@color/picture_back"
 				android:layout_gravity="right|top"
-				android:layout_marginLeft="20dp"
-                android:src="@drawable/picture_button"
-				/>
+				android:layout_marginLeft="80dp"
+		        android:orientation="horizontal"
+		        android:gravity="center"
+				>
+
+			<ImageView
+					android:id="@+id/the_picture_button"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:src="@drawable/picture_button"
+					android:visibility="gone"
+					/>
+		</LinearLayout>
 	</FrameLayout>
 </RelativeLayout>
