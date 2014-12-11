@@ -11,7 +11,7 @@ import java.security.Timestamp;
  * Created by Administrator on 2014/12/11.
  *
  */
-public class IndexTestBean {
+public class IndexInfoBean {
 
 	private int id;
 
