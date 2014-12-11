@@ -17,6 +17,7 @@ public class ConnectionHandler {
 	public static final String URL = "http://120.24.68.64:8080/mks";
 
 	public static final int CONNECTION_TIME_OUT = 5000;
+	static final String BOUNDARY = "---------------------------7de8c1a80910";
 
 
 	/**
@@ -104,7 +105,7 @@ public class ConnectionHandler {
 			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			//这个属性将被用于大文件传输，有效的提高效率
 			if (isMultiData) {
-				connection.setRequestProperty("Content-Type","multipart/form-data");
+				connection.setRequestProperty("Content-Type","multipart/form-data; boundary=" + BOUNDARY);
 			}
 			//有相同的属性则覆盖
 			connection.setRequestProperty("user-agent", "Android 4.0.1");

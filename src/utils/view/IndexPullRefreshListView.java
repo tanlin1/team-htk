@@ -9,7 +9,19 @@ import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.*;
+import com.htk.moment.ui.LaunchActivity;
 import com.htk.moment.ui.R;
+import utils.android.sdcard.Read;
+import utils.android.sdcard.Write;
+import utils.internet.ConnectionHandler;
+import utils.internet.UrlSource;
+import utils.json.JSONObject;
+import utils.view.fragment.IndexFragment;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+
 
 /**
  * 动态首页listView
@@ -390,12 +402,14 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 
 	private void refresh(){
 		prepareForRefresh();
-		mOnRefreshListener.refresh();
+		refreshData("refresh");
+//		mOnRefreshListener.refresh();
 
 	}
 	private void loadMore(){
 		prepareForLoadMore();
-		mOnRefreshListener.loadMore();
+//		mOnRefreshListener.loadMore();
+		refreshData("load");
 	}
 
 
@@ -438,5 +452,83 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 		canLoadMore = true;
 		canRefresh = true;
 		resetFooter();
+	}
+
+
+	/**
+	 * 刷新 / 加载
+	 */
+	private void refreshData(String way){
+		new freshThread(way).start();
+	}
+
+	private class freshThread extends Thread {
+
+		private String way;
+		public freshThread(String way){
+			this.way = way;
+		}
+
+		@Override
+		public void run() {
+			if(way.equals("refresh")){
+				internetRefresh();
+			}else if(way.equals("load")) {
+				internetLoad();
+			}else {
+				System.out.println("wrong fresh way !");
+			}
+		}
+	}
+	private void internetRefresh(){
+		HttpURLConnection connection = null;
+		JSONObject object = new JSONObject();
+
+		try {
+			// 取得一个连接 多 part的 connection
+			connection = ConnectionHandler.getConnect(UrlSource.LOAD_STATUS, LaunchActivity.JSESSIONID);
+			OutputStream out = connection.getOutputStream();
+			object.append("rs_id", 1000000000);
+			object.append("before", true);
+
+			Write.writeToHttp(out, object.toString().getBytes());
+
+			System.out.println("服务器消息  ----------  " + connection.getResponseCode());
+			System.out.println(Read.read(connection.getInputStream()));
+			IndexFragment.sendMessage("fresh", "refresh_completed");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			// 写完一次，关闭连接，释放服务器资源
+			if (connection != null) {
+				connection.disconnect();
+			}
+		}
+	}
+
+	private void internetLoad(){
+		HttpURLConnection connection = null;
+		JSONObject object = new JSONObject();
+
+		try {
+			// 取得一个连接 多 part的 connection
+			connection = ConnectionHandler.getConnect(UrlSource.LOAD_STATUS, LaunchActivity.JSESSIONID);
+			OutputStream out = connection.getOutputStream();
+			object.append("rs_id", 1000000000);
+			object.append("before", false);
+
+			Write.writeToHttp(out, object.toString().getBytes());
+
+			System.out.println("服务器消息  ----------  " + connection.getResponseCode());
+			System.out.println(Read.read(connection.getInputStream()));
+			IndexFragment.sendMessage("fresh", "load_completed");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			// 写完一次，关闭连接，释放服务器资源
+			if (connection != null) {
+				connection.disconnect();
+			}
+		}
 	}
 }

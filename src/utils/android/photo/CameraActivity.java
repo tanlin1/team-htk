@@ -45,12 +45,15 @@ public class CameraActivity extends Activity {
 
 	private LinearLayout liner;
 
+	private String userId;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// 无标题
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.take_photo_layout);
+		userId = getIntent().getStringExtra("id");
 		liner = (LinearLayout) findViewById(R.id.camera_liner);
 		takeSomePhoto();
 	}
@@ -61,7 +64,7 @@ public class CameraActivity extends Activity {
 		String path;
 		Bitmap bitmap;
 		ImageView goUpload = (ImageView) findViewById(R.id.camera_button_handle_photo);
-		ImageView imageView = (ImageView) findViewById(R.id.camera_photo_scanning);
+		final ImageView imageView = (ImageView) findViewById(R.id.camera_photo_scanning);
 
 		//成功（虽然Intent为空，那是因为我们指定了保存路径，Intent返回的是一个内容提供者Content）
 		if (resultCode == Activity.RESULT_OK && requestCode == CAMERA_ASK) {
@@ -82,6 +85,8 @@ public class CameraActivity extends Activity {
 				@Override
 				public void onClick(View v) {
 					Intent intent = new Intent(CameraActivity.this, UploadPhoto.class);
+
+					intent.putExtra("id", userId);
 					intent.putExtra("photoPath", sendPath);
 					intent.putExtra("measure", "CAMERA_ASK");
 					startActivity(intent);

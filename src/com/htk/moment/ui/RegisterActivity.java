@@ -14,7 +14,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import utils.android.sdcard.Read;
 import utils.check.Check;
-import utils.internet.GetConnection;
+import utils.internet.ConnectionHandler;
+import utils.internet.UrlSource;
 import utils.json.JSONObject;
 
 import java.io.IOException;
@@ -77,10 +78,7 @@ public class RegisterActivity extends Activity {
 		emailAddressFind = ((EditText) findViewById(R.id.register_email_edit));
 
 		//checkBox = (CheckBox) findViewById(R.id.checkbox);
-		name = nameFind.getText().toString();
-		password = passwordFind.getText().toString();
-		passwordConfirm = passwordConfirmFind.getText().toString();
-		emailAddress = emailAddressFind.getText().toString();
+
 		/**
 		 * 获取注册按钮
 		 */
@@ -217,7 +215,7 @@ public class RegisterActivity extends Activity {
 		public void run () {
 
 			try {
-				connection = GetConnection.getConnect("/checkEmail");
+				connection = ConnectionHandler.getConnect(UrlSource.CHECK_EMAIL);
 				connection.connect();
 				JSONObject object = new JSONObject();
 				object.put("account", emailAddress);
@@ -258,7 +256,7 @@ public class RegisterActivity extends Activity {
 
 			HttpURLConnection connection;
 			JSONObject info = new JSONObject();
-			connection = GetConnection.getConnect(registerUrl);
+			connection = ConnectionHandler.getConnect(UrlSource.SIGN_UP);
 			info.put("name", name);
 
 			// 这点流量就不要计较了
@@ -300,14 +298,12 @@ public class RegisterActivity extends Activity {
 
 	private class LoginThread extends Thread {
 
-		String newUrl = "/login";
-
 		@Override
 		public void run () {
 
 			HttpURLConnection connection;
 			JSONObject info = new JSONObject();
-			connection = GetConnection.getConnect(newUrl);
+			connection = ConnectionHandler.getConnect(UrlSource.LOGIN);
 			// 这点流量就不要计较了
 			info.put("account", emailAddress);
 			info.put("password", password);
@@ -347,7 +343,10 @@ public class RegisterActivity extends Activity {
 
 
 	private boolean canRegister () {
-
+		name = nameFind.getText().toString();
+		password = passwordFind.getText().toString();
+		passwordConfirm = passwordConfirmFind.getText().toString();
+		emailAddress = emailAddressFind.getText().toString();
 		if (name.length() == 0 || password.length() == 0 || emailAddress.length() == 0) {
 			sendMessage("result", "null");
 			return false;

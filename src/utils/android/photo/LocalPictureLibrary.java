@@ -46,6 +46,7 @@ public class LocalPictureLibrary extends Activity {
 	// 是否点击全选
 	private boolean isSelectAll = false;
 
+	private String userId;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,7 @@ public class LocalPictureLibrary extends Activity {
 	 * 初始化控件
 	 */
 	private void init() {
+		userId = getIntent().getStringExtra("id");
 		mGridView = (GridView) findViewById(R.id.gridView);
 
 		selectAll = (Button) findViewById(R.id.photo_select_all);
@@ -117,6 +119,7 @@ public class LocalPictureLibrary extends Activity {
 						}
 					}
 					// 一定不能直接写 PICTURE_ASK 传过去
+					confirmUpload.putExtra("id", userId);
 					confirmUpload.putExtra("multiple", photoSelectFlagMap);
 					confirmUpload.putExtra("measure", "PICTURE_ASK");
 					startActivity(confirmUpload);

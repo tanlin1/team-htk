@@ -33,7 +33,7 @@
 						android:layout_height="wrap_content"
 						android:text="通知"
 				        android:id="@+id/message_index_notice_button"
-				        android:background="#3498db"
+				        android:background="#cccccc"
 						/>
 
 				<Button
@@ -41,7 +41,7 @@
 						android:layout_height="wrap_content"
 						android:text="私信"
 						android:id="@+id/message_index_private_notice_button"
-				        android:background="#cccccc"
+				        android:background="#3498db"
 						/>
 			</LinearLayout>
 		</RelativeLayout>

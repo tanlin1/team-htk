@@ -25,20 +25,25 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 
 /**
  * 主页Fragment
  *
  * @author tanlin
- * time：14/11/26
+ *         time：14/11/26
  */
 public class IndexFragment extends Fragment {
 
-	public static int name = 10;
-
 	private final static int PULL_TO_REFRESH = 3;
+
 	private final static int LOAD_MORE = 4;
+
+	public final static String TAG = "IndexFragment";
+
+	public static int name = 10;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -62,6 +67,7 @@ public class IndexFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 
 		super.onActivityCreated(savedInstanceState);
+		test();
 		addDataToListView();
 	}
 
@@ -106,6 +112,7 @@ public class IndexFragment extends Fragment {
 
 		super.onDetach();
 	}
+
 	private static IndexPullRefreshListView listView;
 
 	public void addDataToListView() {
@@ -126,7 +133,9 @@ public class IndexFragment extends Fragment {
 				new GetDataTask(getActivity(), LOAD_MORE).execute();
 			}
 		});
-		listView.setAdapter(new MyContentListViewAdapter(getActivity(), getListItems()));
+		listViewAdapter = new MyContentListViewAdapter(getActivity(), getListItems());
+		listView.setAdapter(listViewAdapter);
+		//		listView.setAdapter(new MyContentListViewAdapter(getActivity(), getListItems()));
 	}
 
 
@@ -149,6 +158,7 @@ public class IndexFragment extends Fragment {
 			public TextView userAddress;
 
 			public TextView dasyaAgo;
+
 			public ImageView clockImage;
 
 			public TextView photoDescribe;
@@ -160,14 +170,17 @@ public class IndexFragment extends Fragment {
 			 */
 
 			public TextView likeSum;
+
 			/**
 			 * “Like” 提供点击进入查看那些人喜欢
 			 */
 			public TextView likeText;
+
 			/**
 			 * 该图片被评论的数量
 			 */
 			public TextView commentSum;
+
 			/**
 			 * “Comment”
 			 */
@@ -175,8 +188,11 @@ public class IndexFragment extends Fragment {
 
 			// 喜欢等图片按钮
 			public ImageView loveHeartImage;
+
 			public ImageView commentImage;
+
 			public ImageView sharImage;
+
 			public ImageView moreMenu;
 
 		}
@@ -204,6 +220,7 @@ public class IndexFragment extends Fragment {
 
 			return position;
 		}
+
 		@Override
 		public View getView(final int position, View convertView, ViewGroup parent) {
 
@@ -243,6 +260,7 @@ public class IndexFragment extends Fragment {
 
 				@Override
 				public void onClick(View v) {
+
 					Intent intent = new Intent(getActivity(), PictureScanActivity.class);
 					intent.putExtra("position", position);
 					startActivity(intent);
@@ -251,11 +269,11 @@ public class IndexFragment extends Fragment {
 			});
 
 
-			test(listItemsView.likeSum);
-			test(listItemsView.likeText);
+			viewTheComment(listItemsView.likeSum);
+			viewTheComment(listItemsView.likeText);
 
-			test(listItemsView.commentSum);
-			test(listItemsView.commentText);
+			viewTheComment(listItemsView.commentSum);
+			viewTheComment(listItemsView.commentText);
 
 
 			return convertView;
@@ -292,12 +310,14 @@ public class IndexFragment extends Fragment {
 		items.add(map3);
 		return items;
 	}
+
 	private static ArrayList<HashMap<String, Object>> items = new ArrayList<HashMap<String, Object>>();
 
 
 	private class GetDataTask extends AsyncTask<Void, Void, HashMap<String, Object>> {
 
 		private Context context;
+
 		private int index;
 
 		public GetDataTask(Context context, int index) {
@@ -341,8 +361,9 @@ public class IndexFragment extends Fragment {
 				items.add(items.size(), result);
 				listView.onLoadMoreComplete();
 			}
-//			myContentListViewAdapter.notifyDataSetChanged();
+			//			myContentListViewAdapter.notifyDataSetChanged();
 		}
+
 		@Override
 		protected void onCancelled(HashMap<String, Object> stringObjectHashMap) {
 
@@ -351,26 +372,93 @@ public class IndexFragment extends Fragment {
 	}
 
 
-	private class MyHandler extends Handler{
+	/**
+	 * 查看评论
+	 *
+	 * @param v 屏幕上的某个可点击视图
+	 */
+	private void viewTheComment(View v) {
 
-		@Override
-		public void handleMessage(Message msg) {
-
-			super.handleMessage(msg);
-		}
-	}
-
-	private void test(){
-		MyHandler myHandler = new MyHandler();
-	}
-
-	private void test(View v){
 		v.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
+
 				startActivity(new Intent(getActivity(), ViewLikeOrComment.class));
 			}
 		});
 	}
+
+	private void test() {
+
+		System.out.println("创建 handler =====  ");
+		myHandler = new MyHandler();
+	}
+
+
+	private static MyContentListViewAdapter listViewAdapter;
+
+	public static MyHandler myHandler;
+
+
+	private class MyHandler extends Handler {
+
+		@Override
+		public void handleMessage(Message msg) {
+
+			Bundle dataBundle = msg.getData();
+			String message = dataBundle.getString("fresh");
+			if ("refresh_completed".equals(message)) {  //刷新完成
+				try {
+					for (int i = 0; i < refreshQueue.size(); i++) {
+
+						items.add(0, refreshQueue.take());
+					}
+
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm");
+					String date = format.format(new Date());
+					// Call onRefreshComplete when the list has been refreshed.
+					listView.onRefreshComplete(date);
+					listView.invalidateViews();
+					listViewAdapter.notifyDataSetChanged();
+
+
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			} else if ("load_completed".equals(message)) { // 加载完成
+				try {
+
+					items.add(items.size(), loadQueue.take());
+					listView.onLoadMoreComplete();
+
+
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			} else if ("".equals(message)) {
+
+			} else if ("".equals(message)) {
+
+			} else {
+				Log.e(TAG, "wrong message in bundle !");
+			}
+		}
+	}
+
+	public static void sendMessage(String msgKey, String msgValue) {
+
+		Bundle mBundle = new Bundle();
+		Message mMessage = new Message();
+
+		mBundle.putString(msgKey, msgValue);
+		mMessage.setData(mBundle);
+
+		myHandler.sendMessage(mMessage);
+	}
+
+	private static BlockingQueue<HashMap<String, Object>> refreshQueue = new ArrayBlockingQueue<HashMap<String, Object>>(10);
+
+	private static BlockingQueue<HashMap<String, Object>> loadQueue = new ArrayBlockingQueue<HashMap<String, Object>>(10);
+
 }

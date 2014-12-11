@@ -41,8 +41,6 @@ public class AppIndexActivity extends FragmentActivity {
 	public final static int FLING_OUT = 1;
 
     private final static int INIT_COMPLETED = 2;
-    private final static int PULL_TO_REFRESH = 3;
-    private final static int LOAD_MORE = 4;
     private static int speed = 10;
     private final String TAG = "PullToRefreshListView";
     private final static int DELAY = 10;
@@ -75,9 +73,7 @@ public class AppIndexActivity extends FragmentActivity {
 
 	private Animation addButtonOut;
 
-//	private ListView listView;
-
-//	private MyContentListViewAdapter listViewAdapter;
+	private String userId;
 
 	/**
 	 * 页面容器
@@ -203,7 +199,7 @@ public class AppIndexActivity extends FragmentActivity {
 	 * 初始化相关控件
 	 */
 	public void initAll() {
-
+		userId = getIntent().getStringExtra("id");
 		initWidgets();
 //		initViewPager();
 		initPlusButtonAnimal();
@@ -334,7 +330,9 @@ public class AppIndexActivity extends FragmentActivity {
 			public void onClick(View v) {
 
 				shutdown();
-				startActivity(new Intent(AppIndexActivity.this, CameraActivity.class));
+				Intent intent = new Intent(AppIndexActivity.this, CameraActivity.class);
+				intent.putExtra("id", userId);
+				startActivity(intent);
 				overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 			}
 		});
@@ -344,7 +342,9 @@ public class AppIndexActivity extends FragmentActivity {
 			@Override
 			public void onClick(View v) {
 				shutdown();
-				startActivity(new Intent(AppIndexActivity.this, LocalPictureLibrary.class));
+				Intent intent = new Intent(AppIndexActivity.this, LocalPictureLibrary.class);
+				intent.putExtra("id", userId);
+				startActivity(intent);
 				overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
 			}
 		});

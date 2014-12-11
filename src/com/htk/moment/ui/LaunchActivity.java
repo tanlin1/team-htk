@@ -21,7 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import utils.android.sdcard.Read;
 import utils.check.Check;
-import utils.internet.GetConnection;
+import utils.internet.ConnectionHandler;
+import utils.internet.UrlSource;
 import utils.json.JSONObject;
 
 import java.io.IOException;
@@ -62,10 +63,6 @@ public class LaunchActivity extends Activity {
 	private TextView textViewRegister;
 
 	private TextView toFindPassword;
-
-
-	// 服务器的地址
-	public static String url = "http://120.24.68.64:8080/mks";
 
 	// 为了与服务器保持长连接的，设定的cookie标识
 	public static String JSESSIONID = "";
@@ -229,7 +226,9 @@ public class LaunchActivity extends Activity {
 			Bundle data = msg.getData();
 			if ("true".equals(data.getString("password"))) {
 				//Toast.makeText(getApplicationContext(), "登录成功！", Toast.LENGTH_SHORT).show();
-				startActivity(new Intent(LaunchActivity.this, AppIndexActivity.class));
+				Intent intent = new Intent(LaunchActivity.this, AppIndexActivity.class);
+				intent.putExtra("id",emailOrPhone);
+				startActivity(intent);
 			} else if ("passwordWrong".equals(data.getString("result"))) {
 				Toast.makeText(LaunchActivity.this, R.string.login_error, Toast.LENGTH_SHORT).show();
 			} else if ("timeOut".equals(data.getString("result"))) {
@@ -249,7 +248,7 @@ public class LaunchActivity extends Activity {
 		@Override
 		public void run () {
 
-			HttpURLConnection connection = GetConnection.getConnect("/login");
+			HttpURLConnection connection = ConnectionHandler.getConnect(UrlSource.LOGIN);
 			// 构造json字符串，并发送
 			JSONObject loginInformation = new JSONObject();
 

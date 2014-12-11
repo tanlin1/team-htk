@@ -19,12 +19,11 @@ import com.htk.moment.ui.R;
 import utils.android.sdcard.Read;
 import utils.android.sdcard.Write;
 import utils.check.Check;
-import utils.internet.PartFactory;
 import utils.internet.ConnectionHandler;
+import utils.internet.PartFactory;
 import utils.internet.UrlSource;
 import utils.json.JSONArray;
 import utils.json.JSONObject;
-import utils.json.JsonTool;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -32,6 +31,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 
 /**
  * function：上传图片至服务器
@@ -69,6 +69,7 @@ public class UploadPhoto extends Activity {
 	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.upload_layout);
@@ -83,14 +84,13 @@ public class UploadPhoto extends Activity {
 	 * 得到Intent数据，初始化控件
 	 */
 	private void init() {
+
 		intent = getIntent();
 		liner = (LinearLayout) findViewById(R.id.liner);
 
 		back = (ImageButton) findViewById(R.id.back_to_camera);
 		uploadButton = (ImageButton) findViewById(R.id.goto_upload_button_img);
 		mEditText = (EditText) findViewById(R.id.describe_of_user_picture_edit_text);
-
-
 	}
 
 	/**
@@ -119,12 +119,13 @@ public class UploadPhoto extends Activity {
 	 * 得到从 本地获取到的所有图片路径
 	 * 注意：本HashMap中的key为图片在屏幕上的位置0-size，
 	 * 因此在找路径的时候可能或混淆
-	 *
+	 * <p/>
 	 * 注意：设置ImageView 高度与宽度的时候，我们不能直接得到他的LayoutParams
 	 * 因为它根本没有在布局文件中出现，所以我们要设置它的LayoutParams，这个布
 	 * 局参数是父容器的，然后再将父容器的布局参数传过去，然后设置相应宽度
 	 */
 	private void pictureConfirm() {
+
 		Bitmap bitmap;
 		ImageView image;
 		String path;
@@ -161,37 +162,45 @@ public class UploadPhoto extends Activity {
 
 	/**
 	 * 如果照相机进如这个界面
+	 *
+	 * 但是，向服务器上传的图片不应该是SD卡里面的图片，
+	 * 因为用户已经添加了，滤镜。
 	 */
 	private void cameraConfirm() {
+
 		String photoPath = intent.getStringExtra("photoPath");
 		if (photoPath == null) {
 			Log.e("error", "Intent send the wrong message here!");
-		} else {
-			ImageView latestPhoto = new ImageView(this);
-			latestPhoto.setImageBitmap(BitmapFactory.decodeFile(photoPath));
-			liner.addView(latestPhoto);
+			return;
 		}
+		ImageView latestPhoto = new ImageView(this);
+		latestPhoto.setImageBitmap(BitmapFactory.decodeFile(photoPath));
+		liner.addView(latestPhoto);
+		//
+		pathArrayList.add(photoPath);
 	}
 
-	private void listenerStart(){
+	private void listenerStart() {
+
 		buttonOnClickListening();
 
 		mEditText.setCursorVisible(true);
 
 	}
 
-
-
-
 	private void buttonOnClickListening() {
 		// 返回按钮
 		back.setOnClickListener(new View.OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
+
 				startActivity(new Intent(UploadPhoto.this, CameraActivity.class));
 			}
 		});
+		// 点击上传
 		uploadButton.setOnClickListener(new View.OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
 				//如果用户已连接上Internet，就开启上传线程，并进入主界面（返回至登录时候的界面）
@@ -209,41 +218,62 @@ public class UploadPhoto extends Activity {
 
 	//进行上传操作
 	private class UploadPhotoThread extends Thread {
+
 		private ArrayList<String> list;
 
 		public UploadPhotoThread(ArrayList<String> paths) {
+
 			list = paths;
 		}
 
 		@Override
 		public void run() {
 			//是不是可以直接加代码在这个地方
-			upLoadPhoto(list.get(0));
+			upLoadPhoto(list);
 		}
 	}
 
 	//处理拍摄好的照片
-	private void upLoadPhoto(String photoPath) {
-		Bitmap bitmap = BitmapFactory.decodeFile(photoPath);
+	private void upLoadPhoto(ArrayList<String> photoPaths) {
+
+		int length = photoPaths.size();
+		Bitmap bitmap;
 		HttpURLConnection connection = null;
 		try {
-			// 取得一个连接connection
-			connection = ConnectionHandler.getConnect(UrlSource.UPLOAD_PHOTO, LaunchActivity.JSESSIONID);
+			// 取得一个连接 多 part的 connection
+			connection = ConnectionHandler.getConnect(UrlSource.UPLOAD_PHOTO, LaunchActivity.JSESSIONID, true);
 
 			OutputStream out = connection.getOutputStream();
 
 			ByteArrayOutputStream photoByteArray = new ByteArrayOutputStream();
+//			byte[] start = PartFactory.PartBuilder("mainInfo", "test-head", "text/plain", JsonTool.createJsonString(
+//					"head", "content").getBytes());
+//			Write.writeToHttp(out, start);
+			Write.writeToHttp(out, createTheFirstPart());
 
-			if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, photoByteArray)) {
+			for(int i = 0; i < length - 1; i++) {
+				String path = photoPaths.get(i);
+				bitmap = BitmapFactory.decodeFile(path);
 
-				byte[] start = PartFactory.PartBuilder("mainInfo", "test.txt", "text/plain", JsonTool.createJsonString("head", "content_内容-数据").getBytes());
-				byte[] first = PartFactory.PartBuilder("photo", "first", "image/jpeg", photoByteArray.toByteArray());
-				byte[] end = PartFactory.PartBuilder("photo", "second", "image/jpeg", photoByteArray.toByteArray(), true);
-				Write.writeToHttp(out, start);
-				Write.writeToHttp(out, first);
-				Write.writeToHttp(out, end);
+				if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, photoByteArray)) {
+//					byte[] first = PartFactory.PartBuilder("photo", "first", "image/jpeg", photoByteArray.toByteArray());
+//					Write.writeToHttp(out, first);
+					// 一直向服务器写数据（照片数据）
+					Write.writeToHttp(out, createAfterPart(getPartName() + i + 100,
+							getFileName() + "upload-" + i + ".jpg", "image/jpeg", getContent(photoByteArray)));
+				}
 			}
-			getServerResponseMessage(connection);
+
+//			byte[] end = PartFactory.PartBuilder("photo", "second", "image/jpeg", photoByteArray.toByteArray(), true);
+//			Write.writeToHttp(out, end);
+
+			bitmap = BitmapFactory.decodeFile(photoPaths.get(length - 1));
+			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, photoByteArray);
+			Write.writeToHttp(out, createAfterPart(getPartName() + (length - 1) + 100,
+					getFileName() + "upload-" + (length - 1), "image/jpeg", getContent(photoByteArray), true));
+
+			System.out.println("xie ru wancheng ********");
+			System.out.println("最后一次读取服务器的数据为：" + getServerResponseMessage(connection));
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -270,12 +300,13 @@ public class UploadPhoto extends Activity {
 	}
 
 	/**
-	 * handler 处理子线程完成状态消息 构建post请求，此次传输，仅有一次
+	 * 构建post请求，此次传输，仅有一次
 	 */
-	private void createTheFirstPart() {
+	private byte[] createTheFirstPart() {
 
-		PartFactory.PartBuilder("0", "dataInfo", "text/explain", createTheFirstContent("", "", "", "",
-				getPhotoLocation(), "", getPhotoAtSomeOne(), getPhotoTopic()).toString().getBytes());
+		return PartFactory.PartBuilder("main_info", "dataInfo", "text/plain",
+				createTheFirstContent(intent.getStringExtra("id"), "albumName1", "olderWords", "myWords",
+						getPhotoLocation(), "class1", getPhotoAtSomeOne(), getPhotoTopic()).getBytes());
 	}
 
 	/**
@@ -290,11 +321,11 @@ public class UploadPhoto extends Activity {
 	 * @param photoAt       指定通知某个好友
 	 * @param photoTopic    此张照片表达的主题
 	 *
-	 * @return 已经构建好的JSONObject
+	 * @return 已经构建好的JSON字符串
 	 */
-	private JSONObject createTheFirstContent(String userName, String albumName, String olderWords, String myWords,
-	                                         JSONArray photoLocation, String photoClass, JSONArray photoAt, JSONArray photoTopic) {
-
+	private String createTheFirstContent(String userName, String albumName, String olderWords, String myWords,
+	                                         JSONArray photoLocation, String photoClass, JSONArray photoAt,
+	                                         JSONArray photoTopic) {
 
 		JSONObject content = new JSONObject();
 		// 用户名
@@ -307,20 +338,23 @@ public class UploadPhoto extends Activity {
 		content.put("photoClass", photoClass);
 		content.put("photoAt", photoAt);
 		content.put("photoTopic", photoTopic);
-		return content;
+		return content.toString();
 	}
 
 	private JSONArray getPhotoLocation() {
+
 		JSONArray array = new JSONArray();
 		return array;
 	}
 
 	private JSONArray getPhotoAtSomeOne() {
+
 		JSONArray array = new JSONArray();
 		return array;
 	}
 
 	private JSONArray getPhotoTopic() {
+
 		JSONArray array = new JSONArray();
 		return array;
 	}
@@ -332,27 +366,42 @@ public class UploadPhoto extends Activity {
 	 * @param fileName 文件(照片)名字
 	 * @param content  内容
 	 *
-	 * @return
+	 * @return 构建好的part字节数组
 	 */
-	private JSONObject createAfterParte(String partName, String fileName, String contentType, String content) {
-		JSONObject object = new JSONObject();
-		return object;
+	private byte[] createAfterPart(String partName, String fileName, String contentType, byte[] content) {
+
+		return PartFactory.PartBuilder(partName, fileName, contentType, content);
+	}
+
+	/**
+	 * 构建后续part
+	 *
+	 * @param partName name
+	 * @param fileName 文件(照片)名字
+	 * @param content  内容
+	 * @param end 是否是最后一个part
+	 *
+	 * @return 构建好的part字节数组
+	 */
+	private byte[] createAfterPart(String partName, String fileName, String contentType,
+	                               byte[] content, boolean end) {
+
+		return PartFactory.PartBuilder(partName, fileName, contentType, content, end);
 	}
 
 	private String getPartName() {
+
 		String name = "";
 		return name;
 	}
 
 	private String getFileName() {
+
 		String fileName = "";
 		return fileName;
 	}
 
-	private String getContent(String photoPath) {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		Bitmap bitmap = BitmapFactory.decodeFile(photoPath);
-		bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-		return outputStream.toString();
+	private byte[] getContent(ByteArrayOutputStream baos){
+		return baos.toByteArray();
 	}
 }

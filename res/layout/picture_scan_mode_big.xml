@@ -8,10 +8,10 @@
 
 	<ImageView
 			android:layout_width="fill_parent"
-			android:layout_height="200dp"
+			android:layout_height="260dp"
 			android:id="@+id/picture_scan_mode_big_image"
 			android:src="@drawable/index_another_user_picture"
-			android:scaleType="fitXY"
+			android:scaleType="centerCrop"
 			android:layout_gravity="center"
 			/>
 
@@ -30,15 +30,17 @@
 				android:orientation="horizontal"
 		        android:id="@+id/innerView"
 		        android:layout_alignParentBottom="true"
-		        android:paddingTop="10dp"
+
 				>
 			<RelativeLayout
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
+					android:paddingBottom="10dp"
+			        android:paddingTop="8dp"
 					>
 			<ImageView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
+					android:layout_width="25dp"
+					android:layout_height="25dp"
 					android:src="@drawable/like_image_button_hollow"
 					android:id="@+id/like_img_of_index_picture_scan_mode_big"
 					android:layout_alignParentLeft="true"
@@ -46,8 +48,8 @@
 					/>
 
 			<ImageView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
+					android:layout_width="25dp"
+					android:layout_height="25dp"
 					android:id="@+id/comment_img_of_index_picture_scan_mode_big"
 					android:src="@drawable/comment_image_button_hollow"
 					android:layout_toRightOf="@id/like_img_of_index_picture_scan_mode_big"
@@ -55,8 +57,8 @@
 					/>
 
 			<ImageView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
+					android:layout_width="25dp"
+					android:layout_height="25dp"
 					android:id="@+id/share_img_of_index_picture_scan_mode_big"
 					android:src="@drawable/share_image_button_hollow"
 					android:layout_toRightOf="@id/comment_img_of_index_picture_scan_mode_big"
@@ -67,43 +69,50 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:id="@+id/like_text_of_index_picture_scan_mode_big"
-					android:text="23"
 					android:layout_toLeftOf="@+id/inner"
 					android:layout_marginRight="5dp"
+					android:text="23"
+			        android:textSize="20sp"
+			        android:textStyle="bold"
+			        android:textColor="@color/white"
 					/>
 			<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:id="@+id/inner"
-					android:text="Likes"
 					android:layout_alignParentRight="true"
 					android:layout_marginRight="16dp"
+					android:text="Likes"
+			        android:textSize="20sp"
+			        android:textStyle="bold"
+			        android:textColor="@color/white"
 					/>
 			</RelativeLayout>
 		</LinearLayout>
 		<View
 				android:layout_width="fill_parent"
 				android:layout_height="1dp"
+				android:id="@+id/view"
 				android:layout_above="@id/innerView"
 				android:layout_alignParentLeft="true"
 				android:layout_alignParentRight="true"
 				android:layout_marginLeft="14dp"
 				android:layout_marginRight="14dp"
-				android:layout_marginBottom="1dp"
+				android:layout_marginBottom="5dp"
 				android:background="@color/gray"
 				/>
 		<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="30sp"
 				android:id="@+id/picture_scan_mode_big_describe"
-				android:text="原来这就是亚马逊？"
-				android:background="@color/white"
-				android:textColor="@color/dark"
+				android:text="在呼伦贝尔大草原上，呼吸着、感受着。"
+
+				android:textColor="@color/white"
 				android:gravity="center_vertical"
-				android:layout_above="@id/innerView"
+				android:layout_above="@id/view"
 				android:layout_alignParentLeft="true"
 				android:layout_marginLeft="19dp"
-				android:layout_marginBottom="8dp"
+				android:layout_marginBottom="4dp"
 				/>
 	</RelativeLayout>
 </FrameLayout>
