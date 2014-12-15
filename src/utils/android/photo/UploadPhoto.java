@@ -42,9 +42,6 @@ import java.util.HashMap;
  */
 public class UploadPhoto extends Activity {
 
-	// 分割线，构造POST请求需要的
-	public static String BOUNDARY = "---------------------------7de8c1a80910";
-
 	public static final String TAG = "UploadPhoto";
 	// 上传界面上的水平滚动条
 	private LinearLayout liner;
@@ -245,34 +242,26 @@ public class UploadPhoto extends Activity {
 
 			OutputStream out = connection.getOutputStream();
 
-			ByteArrayOutputStream photoByteArray = new ByteArrayOutputStream();
-//			byte[] start = PartFactory.PartBuilder("mainInfo", "test-head", "text/plain", JsonTool.createJsonString(
-//					"head", "content").getBytes());
-//			Write.writeToHttp(out, start);
+			ByteArrayOutputStream photoByteArray;// = new ByteArrayOutputStream();
+
 			Write.writeToHttp(out, createTheFirstPart());
 
 			for(int i = 0; i < length - 1; i++) {
 				String path = photoPaths.get(i);
 				bitmap = BitmapFactory.decodeFile(path);
-
+				photoByteArray = new ByteArrayOutputStream();
 				if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, photoByteArray)) {
-//					byte[] first = PartFactory.PartBuilder("photo", "first", "image/jpeg", photoByteArray.toByteArray());
-//					Write.writeToHttp(out, first);
 					// 一直向服务器写数据（照片数据）
-					Write.writeToHttp(out, createAfterPart(getPartName() + i + 100,
-							getFileName() + "upload-" + i + ".jpg", "image/jpeg", getContent(photoByteArray)));
+					Write.writeToHttp(out, createAfterPart(getPartName() + i + 100, getFileName() + "upload-" + i + ".jpg", "image/jpeg", getContent(photoByteArray)));
 				}
 			}
 
-//			byte[] end = PartFactory.PartBuilder("photo", "second", "image/jpeg", photoByteArray.toByteArray(), true);
-//			Write.writeToHttp(out, end);
-
 			bitmap = BitmapFactory.decodeFile(photoPaths.get(length - 1));
+			photoByteArray = new ByteArrayOutputStream();
 			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, photoByteArray);
 			Write.writeToHttp(out, createAfterPart(getPartName() + (length - 1) + 100,
 					getFileName() + "upload-" + (length - 1), "image/jpeg", getContent(photoByteArray), true));
 
-			System.out.println("xie ru wancheng ********");
 			System.out.println("最后一次读取服务器的数据为：" + getServerResponseMessage(connection));
 
 		} catch (IOException e) {
@@ -305,14 +294,14 @@ public class UploadPhoto extends Activity {
 	private byte[] createTheFirstPart() {
 
 		return PartFactory.PartBuilder("main_info", "dataInfo", "text/plain",
-				createTheFirstContent(intent.getStringExtra("id"), "albumName1", "olderWords", "myWords",
+				createTheFirstContent(10, "albumName1", "olderWords", "myWords",
 						getPhotoLocation(), "class1", getPhotoAtSomeOne(), getPhotoTopic()).getBytes());
 	}
 
 	/**
 	 * 创建第一个part 格式跟后续的不一样，必须单独创建
 	 *
-	 * @param userName      用户名
+	 * @param userId      用户名
 	 * @param albumName     专辑名
 	 * @param olderWords    原来的描述
 	 * @param myWords       现在的描述
@@ -323,21 +312,21 @@ public class UploadPhoto extends Activity {
 	 *
 	 * @return 已经构建好的JSON字符串
 	 */
-	private String createTheFirstContent(String userName, String albumName, String olderWords, String myWords,
+	private String createTheFirstContent(int userId, String albumName, String olderWords, String myWords,
 	                                         JSONArray photoLocation, String photoClass, JSONArray photoAt,
 	                                         JSONArray photoTopic) {
 
 		JSONObject content = new JSONObject();
 		// 用户名
-		content.put("ID", userName);
+		content.put("ID", userId);
 		// 专辑名字
 		content.put("albumName", albumName);
-		content.put("olderWords", olderWords);
+//		content.put("olderWords", olderWords);
 		content.put("myWords", myWords);
-		content.put("photoLocation", photoLocation);
-		content.put("photoClass", photoClass);
-		content.put("photoAt", photoAt);
-		content.put("photoTopic", photoTopic);
+//		content.put("photoLocation", photoLocation);
+//		content.put("photoClass", photoClass);
+//		content.put("photoAt", photoAt);
+//		content.put("photoTopic", photoTopic);
 		return content.toString();
 	}
 

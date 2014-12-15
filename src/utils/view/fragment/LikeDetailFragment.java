@@ -96,11 +96,6 @@ public class LikeDetailFragment extends Fragment {
 		super.onDetach();
 	}
 
-
-
-	/**
-	 * 通知页适配器
-	 */
 	private class LikeDetailAdapter extends BaseAdapter {
 
 		private ArrayList<HashMap<String, Object>> mData;
@@ -170,8 +165,4 @@ public class LikeDetailFragment extends Fragment {
 		}
 		return data;
 	}
-
-
-
-
 }

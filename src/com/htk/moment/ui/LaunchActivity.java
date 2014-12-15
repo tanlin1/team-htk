@@ -236,6 +236,8 @@ public class LaunchActivity extends Activity {
 			} else if ("formatError".equals(data.getString("result"))) {
 				Log.e("CLIENT", "格式错误！");
 				//startActivity(new Intent(LaunchActivity.this, NewIndex.class));
+			} else if("shutdown".equals(data.getString("server"))){
+				Toast.makeText(getApplication(), "网络没有打开，无法使用。", Toast.LENGTH_SHORT).show();
 			}
 		}
 	};
@@ -269,7 +271,8 @@ public class LaunchActivity extends Activity {
 			} catch (SocketTimeoutException e) {
 				sendMessage("result", "timeOut");
 			} catch (SocketException e) {
-				Toast.makeText(getApplication(), "网络没有打开，无法使用。", Toast.LENGTH_SHORT).show();
+				sendMessage("server", "shutdown");
+//				Toast.makeText(getApplication(), "网络没有打开，无法使用。", Toast.LENGTH_SHORT).show();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {

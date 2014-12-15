@@ -10,6 +10,7 @@ import com.htk.moment.ui.R;
 import java.util.HashMap;
 import java.util.Random;
 
+
 /**
  * Created by Administrator on 2014/11/21.
  */
@@ -18,8 +19,10 @@ public class LoadDataService extends Service {
 
 	MyBinder myBinder = new MyBinder();
 
-	public class MyBinder extends Binder{
-		public LoadDataService getService(){
+	public class MyBinder extends Binder {
+
+		public LoadDataService getService() {
+
 			return LoadDataService.this;
 		}
 	}
@@ -27,21 +30,25 @@ public class LoadDataService extends Service {
 
 	@Override
 	public void onCreate() {
+
 		super.onCreate();
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+
 		return super.onStartCommand(intent, flags, startId);
 	}
 
 	@Override
 	public void onDestroy() {
+
 		super.onDestroy();
 	}
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
+
 		super.onConfigurationChanged(newConfig);
 	}
 
@@ -52,8 +59,8 @@ public class LoadDataService extends Service {
 	}
 
 
+	public HashMap<String, Object> function() {
 
-	public HashMap<String, Object> function(){
 		System.out.println("what   hold   ?");
 
 		HashMap<String, Object> dataMap = new HashMap<String, Object>();

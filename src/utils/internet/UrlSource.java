@@ -32,6 +32,8 @@ public class UrlSource {
 	// 获得用户的三个数量指标
 	public static String GET_THREE_NUMBER = "/get_three_number";
 
+	public static String LIKE_STATUS = "/like_status";
 
+	public static String COMMENT_STATUS = "/comment_status";
 
 }

@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * 做一下检查操作
  * Created by Administrator on 2014/11/2.
  */
 public class Check {

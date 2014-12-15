@@ -15,7 +15,8 @@ import java.net.URL;
 public class ConnectionHandler {
 
 	public static final String URL = "http://120.24.68.64:8080/mks";
-
+//	public static final String URL = "http://10.130.153.20:8080/";
+//	public static final String URL = "http://192.168.79.1:8080";
 	public static final int CONNECTION_TIME_OUT = 5000;
 	static final String BOUNDARY = "---------------------------7de8c1a80910";
 

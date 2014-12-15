@@ -42,13 +42,13 @@
 					style="@style/user_home_detail_number_style"
 					android:text="28"
 					android:layout_gravity="center_horizontal"
-					android:id="@+id/user_home_focus_num"/>
+					android:id="@+id/user_home_follow_num"/>
 
 			<TextView
 					style="@style/user_home_detail_text_style"
 					android:text="关注"
 					android:layout_gravity="center_horizontal"
-					android:id="@+id/user_home_focus_text"/>
+					android:id="@+id/user_home_follow_text"/>
 
 		</LinearLayout>
 		<!--粉丝-->

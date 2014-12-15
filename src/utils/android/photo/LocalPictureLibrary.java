@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.*;
 import com.htk.moment.ui.R;
+import come.htk.bean.PictureLibrarySelectBean;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -242,15 +243,15 @@ public class LocalPictureLibrary extends Activity {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 
-			ImageViewHolder holder;
+			PictureLibrarySelectBean holder;
 			if (null == convertView) {
-				holder = new ImageViewHolder();
+				holder = new PictureLibrarySelectBean();
 				convertView = viewContainer.inflate(R.layout.photo_choose_layout, null);
 				holder.image = (ImageView) convertView.findViewById(R.id.image);
 				holder.isSelect = (TextView) convertView.findViewById(R.id.photo_is_select_text);
 				convertView.setTag(holder);
 			} else {
-				holder = (ImageViewHolder) convertView.getTag();
+				holder = (PictureLibrarySelectBean) convertView.getTag();
 			}
 			holder.image.setLayoutParams(new FrameLayout.LayoutParams(width, width));
 			holder.image.setMinimumHeight(width);

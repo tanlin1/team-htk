@@ -1,8 +1,10 @@
-package com.htk.moment.user;
+package come.htk.bean;
 
 /**
  * @author Administrator 谭林
  * 个人主页信息bean
+ *
+ * adapter 需要的数据跟app主页类似，故，数据
  */
 public class UserInfoBean {
 
@@ -10,12 +12,14 @@ public class UserInfoBean {
 
 	private String name;
 
+	// 个性签名
 	private String brief_intro;
 
+	//背景图片
 	private String bg_photo;
-
+	// 用户主页头像地址   浏览所关注的人的动态的页面时
 	private String main_head_photo;
-
+	// 用户个人中心，头像
 	private String home_head_photo;
 
 	public int getID() {

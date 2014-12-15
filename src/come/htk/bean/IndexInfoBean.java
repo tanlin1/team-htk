@@ -1,4 +1,4 @@
-package com.htk.moment.user;
+package come.htk.bean;
 
 import utils.json.JSONArray;
 
@@ -8,6 +8,9 @@ import java.security.Timestamp;
  *
  * @author Administrator 谭林
  * 主页上应该显示的所有信息，方便处理，将服务器得到的数据封装成一个对象
+ *
+ * 这与显示需要的数据（bitmap资源）不一样
+ *
  * Created by Administrator on 2014/12/11.
  *
  */

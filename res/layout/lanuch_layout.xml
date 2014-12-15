@@ -23,6 +23,7 @@
 		          android:layout_height="35dp"
 		          android:singleLine="true"
 		          android:hint="@string/user_name_hint"
+		          android:text="tanlin@qq.com"
 		          android:textColor="#000025"
 		          android:textCursorDrawable="@null"
 		          android:id="@+id/set_name"
@@ -37,6 +38,7 @@
 		          android:singleLine="true"
 		          android:password="true"
 		          android:hint="@string/password_edit"
+		          android:text="123"
 		          android:textColor="#000025"
 		          android:textCursorDrawable="@null"
 		          android:id="@+id/set_password"
@@ -44,7 +46,7 @@
 		          android:layout_below="@id/set_name"
 		          android:layout_marginTop="14dp"
 		          android:layout_alignLeft="@id/set_name"
-		          android:layout_alignRight="@+id/set_name"/>
+		          android:layout_alignRight="@id/set_name"/>
 
 		<TextView android:layout_width="wrap_content"
 		          android:layout_height="wrap_content"
