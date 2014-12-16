@@ -1,8 +1,7 @@
 package come.htk.bean;
 
+import android.graphics.Bitmap;
 import utils.json.JSONArray;
-
-import java.security.Timestamp;
 
 /**
  *
@@ -28,7 +27,9 @@ public class IndexInfoBean {
 
 	private String myWords;
 
-	private Timestamp time;
+//	private Timestamp time;
+
+    private String time;
 
 	private String album;
 
@@ -50,7 +51,36 @@ public class IndexInfoBean {
 
 	private String olderWords;
 
-	public int getId() {
+
+    private Bitmap photoHead;
+
+    private Bitmap pictureShow;
+
+    public void setPhotoHead(Bitmap photoHead) {
+        this.photoHead = photoHead;
+    }
+
+
+    public Bitmap getPhotoHead() {
+        return photoHead;
+    }
+
+
+    public Bitmap getPictureShow() {
+
+        return pictureShow;
+    }
+
+    public void setPictureShow(Bitmap pictureShow) {
+        this.pictureShow = pictureShow;
+    }
+
+
+
+
+
+
+    public int getId() {
 
 		return id;
 	}
@@ -110,12 +140,12 @@ public class IndexInfoBean {
 		this.myWords = myWords;
 	}
 
-	public Timestamp getTime() {
+	public String getTime() {
 
 		return time;
 	}
 
-	public void setTime(Timestamp time) {
+	public void setTime(String time) {
 
 		this.time = time;
 	}

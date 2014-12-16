@@ -3,6 +3,8 @@ package utils.view.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,9 +20,15 @@ import android.widget.TextView;
 import com.htk.moment.ui.PictureScanActivity;
 import com.htk.moment.ui.R;
 import com.htk.moment.ui.ViewLikeOrComment;
+import come.htk.bean.IndexInfoBean;
 import come.htk.bean.IndexListViewItemBean;
+import come.htk.bean.UserInfoBean;
+import utils.internet.ConnectionHandler;
 import utils.view.IndexPullRefreshListView;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -200,11 +208,23 @@ public class IndexFragment extends Fragment {
 			}
 
 			HashMap<String, Object> map = listData.get(position);
-			listItem.photoHead.setImageResource((Integer) map.get("photoHead"));
-			listItem.userName.setText((String) map.get("userName"));
-			listItem.userAddress.setText((String) map.get("userAddress"));
-			listItem.showingPicture.setImageResource((Integer) map.get("userPicture"));
-			listItem.photoDescribe.setText((String) map.get("explain"));
+
+			if (map.get("photoHead") instanceof Bitmap) {
+
+				listItem.photoHead.setImageBitmap((Bitmap) map.get("photoHead"));
+			} else {
+				listItem.photoHead.setImageResource((Integer) map.get("photoHead"));
+			}
+
+			listItem.userName.setText((CharSequence) map.get("name"));
+			listItem.userAddress.setText((CharSequence) map.get("userAddress"));
+
+			if (map.get("userPicture") instanceof Bitmap) {
+
+				listItem.showingPicture.setImageBitmap((Bitmap) map.get("userPicture"));
+			}
+
+			listItem.photoDescribe.setText((CharSequence) map.get("myWords"));
 
 			listItem.showingPicture.setOnClickListener(new View.OnClickListener() {
 
@@ -234,30 +254,32 @@ public class IndexFragment extends Fragment {
 
 		items = new ArrayList<HashMap<String, Object>>();
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("photoHead", R.drawable.head1);
-		map.put("userName", "方伦");
-		map.put("userAddress", "哥伦贝尔草原");
-		map.put("userPicture", R.drawable.index_another_user_picture);
-		map.put("explain", "在哥伦贝尔大草原上，呼吸着、感受着");
-		items.add(map);
+//		HashMap<String, Object> map = new HashMap<String, Object>();
+//		map.put("photoHead", R.drawable.head1);
+//		map.put("userName", "方伦");
+//		map.put("userAddress", "哥伦贝尔草原");
+//		map.put("userPicture", R.drawable.index_another_user_picture);
+//
+//		map.put("explain", "在哥伦贝尔大草原上，呼吸着、感受着");
+//		items.add(map);
+//
+//		HashMap<String, Object> map2 = new HashMap<String, Object>();
+//		map2.put("photoHead", R.drawable.head2);
+//		map2.put("userName", "桂杰双");
+//		map2.put("userAddress", "成都");
+//		map2.put("userPicture", R.drawable.nine);
+//		map2.put("explain", "赏金怒拿五杀，这个游戏如此的简单啊。。！");
+//		items.add(map2);
+//
+//
+//		HashMap<String, Object> map3 = new HashMap<String, Object>();
+//		map3.put("photoHead", R.drawable.images);
+//		map3.put("userName", "康乐");
+//		map3.put("userAddress", "常乐村");
+//		map3.put("userPicture", R.drawable.twleve);
+//		map3.put("explain", "成信的图书馆，最安静，最喜欢的地方");
+//		items.add(map3);
 
-		HashMap<String, Object> map2 = new HashMap<String, Object>();
-		map2.put("photoHead", R.drawable.head2);
-		map2.put("userName", "桂杰双");
-		map2.put("userAddress", "成都");
-		map2.put("userPicture", R.drawable.nine);
-		map2.put("explain", "赏金怒拿五杀，这个游戏如此的简单啊。。！");
-		items.add(map2);
-
-
-		HashMap<String, Object> map3 = new HashMap<String, Object>();
-		map3.put("photoHead", R.drawable.images);
-		map3.put("userName", "康乐");
-		map3.put("userAddress", "常乐村");
-		map3.put("userPicture", R.drawable.twleve);
-		map3.put("explain", "成信的图书馆，最安静，最喜欢的地方");
-		items.add(map3);
 		return items;
 	}
 
@@ -359,42 +381,79 @@ public class IndexFragment extends Fragment {
 			Bundle dataBundle = msg.getData();
 			String message = dataBundle.getString("fresh");
 			if ("refresh_completed".equals(message)) {  //刷新完成
-				try {
-					for (int i = 0; i < refreshQueue.size(); i++) {
+				/**
+				 * 真的可以更新界面了，
+				 * 为了界面友好，考虑放一个processBar提示
+				 */
+				System.out.println("put 数据成功 = " + putDataToList());
 
-						items.add(0, refreshQueue.take());
-					}
-
-					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm");
-					String date = format.format(new Date());
-					// Call onRefreshComplete when the list has been refreshed.
-					listView.onRefreshComplete(date);
-					listView.invalidateViews();
-					listViewAdapter.notifyDataSetChanged();
-
-
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 			} else if ("load_completed".equals(message)) { // 加载完成
 				try {
-
 					items.add(items.size(), loadQueue.take());
 					listView.onLoadMoreComplete();
-
-
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-			} else if ("".equals(message)) {
 
-			} else if ("".equals(message)) {
-
+			} else if ("data_completed".equals(message)) {
+				/**
+				 * 第一次请求数据成功，紧接着应该请求主页
+				 * 图片，头像（请求指定的用户ID的头像）
+				 *
+				 * 头像：下一个环节处理，设计多个请求
+				 */
+				new PhotoThread().start();
+				// 并立即放入放入第二个队列，后面需要，不然出队之后就找不到了
+			} else if ("viewPhotoCompleted".equals(message)) {
 			} else {
 				Log.e(TAG, "wrong message in bundle !");
 			}
 		}
 	}
+
+	IndexInfoBean indexDataDetail;
+
+	private boolean putDataToList() {
+
+		int length = refreshQueue1.size();
+
+		HashMap<String, Object> map;
+
+		for (int i = 0; i < length; i++) {
+
+			map = new HashMap<String, Object>();
+			try {
+				IndexInfoBean test = refreshQueue1.take();
+
+				if (test.getPhotoHead() != null) {
+					map.put("photoHead", test.getPhotoHead());
+				} else {
+					map.put("photoHead", R.drawable.head1);
+				}
+				map.put("userName", "name-waiting");
+				map.put("userAddress", "photo_address");
+
+				if (test.getPictureShow() != null) {
+					map.put("userPicture", test.getPictureShow());
+				}
+				map.put("myWords", test.getMyWords());
+				// 添加到listMap中
+				items.add(0, map);
+
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm");
+		String date = format.format(new Date());
+
+		listView.onRefreshComplete(date);
+		listView.invalidateViews();
+		listViewAdapter.notifyDataSetChanged();
+		return true;
+	}
+
 
 	public static void sendMessage(String msgKey, String msgValue) {
 
@@ -407,8 +466,70 @@ public class IndexFragment extends Fragment {
 		myHandler.sendMessage(mMessage);
 	}
 
-	private static BlockingQueue<HashMap<String, Object>> refreshQueue = new ArrayBlockingQueue<HashMap<String, Object>>(10);
+	public static BlockingQueue<IndexInfoBean> refreshQueue = new ArrayBlockingQueue<IndexInfoBean>(10);
 
-	private static BlockingQueue<HashMap<String, Object>> loadQueue = new ArrayBlockingQueue<HashMap<String, Object>>(10);
+	private static BlockingQueue<IndexInfoBean> refreshQueue1 = new ArrayBlockingQueue<IndexInfoBean>(10);
 
+	private static BlockingQueue<UserInfoBean> userInfoQueue = new ArrayBlockingQueue<UserInfoBean>(10);
+
+
+	public static BlockingQueue<HashMap<String, Object>> loadQueue = new ArrayBlockingQueue<HashMap<String, Object>>(10);
+
+	private class PhotoThread extends Thread {
+
+		String way;
+
+		@Override
+		public void run() {
+
+			int length = refreshQueue.size();
+			HttpURLConnection con = null;
+
+			UserInfoBean userInfo;
+
+			for (int i = 0; i < length; i++) {
+				try {
+					/**
+					 * 从队列取出数据
+					 */
+					indexDataDetail = refreshQueue.take();
+					way = indexDataDetail.getViewPhoto();
+					if (!way.contains("mks")) {
+						System.out.println("路径 似乎错了喔 ！");
+					} else {
+						String url = getUrl(way);
+						if (url.endsWith(".jpg")) {
+							userInfo = new UserInfoBean();
+							userInfo.setID(indexDataDetail.getId());
+
+
+							System.out.println(url);
+
+							con = ConnectionHandler.getGetConnect(url);
+							InputStream is = con.getInputStream();
+							indexDataDetail.setPictureShow(BitmapFactory.decodeStream(is));
+							/**
+							 * 放入有数据的新队列
+							 */
+							refreshQueue1.put(indexDataDetail);
+						}
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
+					// 必须断开连接
+					if (con != null) {
+						con.disconnect();
+					}
+				}
+			}
+			sendMessage("fresh", "refresh_completed");
+		}
+	}
+
+	private String getUrl(String path) {
+		return path.split("mks")[1];
+	}
 }
