@@ -382,10 +382,7 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 				mLoadMoreState = NORMAL_STATE_TO_READ;
 				break;
 		}
-
 	}
-
-
 	/**
 	 * 为刷新做准备*
 	 */
@@ -478,7 +475,7 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 		new freshThread(way).start();
 	}
 
-	private class freshThread extends Thread {
+	public static class freshThread extends Thread {
 
 		private String way;
 
@@ -501,8 +498,8 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 	}
 
 	public static int rs_id = 0;
-
-	private void internetRefresh() {
+	
+	private static void internetRefresh() {
 
 		HttpURLConnection connection = null;
 		JSONObject outToServer = new JSONObject();
@@ -516,7 +513,7 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 
 			Write.writeToHttp(out, outToServer.toString().getBytes());
 
-			System.out.println("更新的时候      服务器消息  -  " + connection.getResponseCode());
+			System.out.println(rs_id + "  更新的时候      服务器消息  -  " + connection.getResponseCode());
 
 			String temp = Read.read(connection.getInputStream());
 			if (temp == null) {
@@ -544,7 +541,6 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 				IndexFragment.refreshQueue.put(indexBean);
 			}
 			IndexFragment.sendMessage("fresh", "refresh_data_completed");
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -557,7 +553,7 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 		}
 	}
 
-	private void internetLoad() {
+	private static void internetLoad() {
 
 		HttpURLConnection connection = null;
 		JSONObject object = new JSONObject();
@@ -613,7 +609,7 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 		}
 	}
 
-	private void setObject(IndexInfoBean bean, JSONObject obj) {
+	private static void setObject(IndexInfoBean bean, JSONObject obj) {
 
 		if (obj.has("ID")) {
 			bean.setId(obj.getInt("ID"));

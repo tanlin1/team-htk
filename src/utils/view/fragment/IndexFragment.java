@@ -97,6 +97,7 @@ public class IndexFragment extends Fragment {
 
 		super.onActivityCreated(savedInstanceState);
 		initAll();
+		new IndexPullRefreshListView.freshThread("refresh").start();
 	}
 
 	@Override
@@ -144,8 +145,6 @@ public class IndexFragment extends Fragment {
 	private static IndexPullRefreshListView listView;
 
 	private void initAll() {
-
-		System.out.println("创建 handler =====  ");
 		myHandler = new MyHandler();
 		initListView();
 	}
@@ -246,6 +245,7 @@ public class IndexFragment extends Fragment {
 
 					intent.putExtra("userId", userId);
 					intent.putExtra("rs_id", rs_id);
+
 					intent.putExtra("detailPhoto", detail);
 
 					startActivity(intent);
@@ -321,11 +321,12 @@ public class IndexFragment extends Fragment {
 
 			Bundle dataBundle = msg.getData();
 			String message = dataBundle.getString("fresh");
-			if ("refresh_completed".equals(message)) {  //刷新完成
+			if ("upLoadOk".equals(message)) {  //刷新完成
 				/**
 				 * 真的可以更新界面了，
 				 * 为了界面友好，考虑放一个processBar提示
 				 */
+				Toast.makeText(getActivity(), "上传成功", Toast.LENGTH_SHORT).show();
 				listViewAdapter.notifyDataSetChanged();
 			} else if ("load_completed".equals(message)) { // 加载完成
 
@@ -350,6 +351,7 @@ public class IndexFragment extends Fragment {
 				if(theFirstTimeRefresh){
 					new QueueToStack().start();
 					new StackToUi().start();
+					theFirstTimeRefresh = false;
 				} else if(refreshNum == 0){
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm");
 					String date = format.format(new Date());
@@ -357,8 +359,6 @@ public class IndexFragment extends Fragment {
 //					listView.invalidateViews();
 					Toast.makeText(getActivity(), "当前数据已是最新", Toast.LENGTH_SHORT).show();
 					listViewAdapter.notifyDataSetChanged();
-				} else if(refreshNum == 1){
-
 				}
 
 			} else if ("indexPhotoOk".equals(message)) {
@@ -498,7 +498,9 @@ public class IndexFragment extends Fragment {
 				} catch (IOException e) {
 					e.printStackTrace();
 				} finally {
-					photoConnection.disconnect();
+					if(photoConnection != null){
+						photoConnection.disconnect();
+					}
 				}
 			}
 		}
@@ -532,7 +534,13 @@ public class IndexFragment extends Fragment {
 			if (indexInfo.getIsLocated().equals("true")) {
 				map.put("location", indexInfo.getLocation());
 			}
-			items.add(0, map);
+			if(items.size() == 0){
+				items.add(0, map);
+			} else if (indexInfo.getRs_id() > (Integer)items.get(items.size() - 1).get("rs_id")){
+				items.add(0, map);
+			} else {
+				items.add(items.size(), map);
+			}
 		} else {
 			for (HashMap<String, Object> item : items) {
 				map = item;
@@ -543,6 +551,4 @@ public class IndexFragment extends Fragment {
 		}
 		IndexPullRefreshListView.rs_id = (Integer) items.get(0).get("rs_id");
 	}
-
-
 }

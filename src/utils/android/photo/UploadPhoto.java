@@ -24,6 +24,7 @@ import utils.internet.PartFactory;
 import utils.internet.UrlSource;
 import utils.json.JSONArray;
 import utils.json.JSONObject;
+import utils.view.fragment.IndexFragment;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -207,17 +208,13 @@ public class UploadPhoto extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				getMyWorld();
-
-
-
 				//如果用户已连接上Internet，就开启上传线程，并进入主界面（返回至登录时候的界面）
 				if (Check.internetIsEnable(UploadPhoto.this)) {
-					System.out.println("用户在线");
+
 					new UploadPhotoThread(pathArrayList).start();
 				} else {
-					System.out.println("用户不在线");
 					//保存至本地，等到下次用户连接上internet的时候上传图片
+					Log.w(TAG, "用户， 不在线， 应该保存到本地");
 				}
 				startActivity(new Intent(UploadPhoto.this, AppIndexActivity.class));
 			}
@@ -272,7 +269,7 @@ public class UploadPhoto extends Activity {
 			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, photoByteArray);
 			Write.writeToHttp(out, createAfterPart(getPartName() + (length - 1) + 100, getFileName() + "upload-" + (length - 1), "image/jpeg", getContent(photoByteArray), true));
 
-			System.out.println("最后一次读取服务器的数据为：" + getServerResponseMessage(connection));
+			IndexFragment.sendMessage("fresh", "upLoadOk");
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -398,9 +395,7 @@ public class UploadPhoto extends Activity {
 	}
 
 	private String getMyWorld() {
-		String string = mEditText.getText().toString();
-		System.out.println(string);
-		return string;
+		return mEditText.getText().toString();
 	}
 
 
