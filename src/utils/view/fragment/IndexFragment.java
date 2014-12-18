@@ -52,7 +52,6 @@ public class IndexFragment extends Fragment {
 
 	public final static String TAG = "IndexFragment";
 
-
 	public static BlockingQueue<IndexInfoBean> refreshQueue = new ArrayBlockingQueue<IndexInfoBean>(10);
 
 	public static BlockingQueue<IndexInfoBean> loadQueue = new ArrayBlockingQueue<IndexInfoBean>(10);

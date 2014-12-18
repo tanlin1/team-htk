@@ -70,7 +70,7 @@ public class LoadDataService extends Service {
 		dataMap.put("photoHead", R.drawable.head2);
 		dataMap.put("userName", String.valueOf(new Random(100)));
 		dataMap.put("userAddress", "好莱坞----");
-		dataMap.put("userPicture", R.drawable.index_another_user_picture);
+		dataMap.put("userPicture", R.drawable.cloud_xiling);
 		dataMap.put("explain", "用户文字描述");
 
 		return dataMap;
