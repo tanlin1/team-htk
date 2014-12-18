@@ -3,15 +3,14 @@ package come.htk.bean;
 import android.graphics.Bitmap;
 import utils.json.JSONArray;
 
+
 /**
- *
  * @author Administrator 谭林
- * 主页上应该显示的所有信息，方便处理，将服务器得到的数据封装成一个对象
- *
- * 这与显示需要的数据（bitmap资源）不一样
- *
- * Created by Administrator on 2014/12/11.
- *
+ *         主页上应该显示的所有信息，方便处理，将服务器得到的数据封装成一个对象
+ *         <p/>
+ *         这与显示需要的数据（bitmap资源）不一样
+ *         <p/>
+ *         Created by Administrator on 2014/12/11.
  */
 public class IndexInfoBean {
 
@@ -27,9 +26,9 @@ public class IndexInfoBean {
 
 	private String myWords;
 
-//	private Timestamp time;
+	//	private Timestamp time;
 
-    private String time;
+	private String time;
 
 	private String album;
 
@@ -41,7 +40,9 @@ public class IndexInfoBean {
 
 	private String isLocated;
 
-	private JSONArray location;
+
+	//	private JSONArray location;
+
 
 	private String photoClass;
 
@@ -51,36 +52,45 @@ public class IndexInfoBean {
 
 	private String olderWords;
 
+	private Bitmap photoHead;
 
-    private Bitmap photoHead;
+	private Bitmap pictureShow;
 
-    private Bitmap pictureShow;
+	private String location;
 
-    public void setPhotoHead(Bitmap photoHead) {
-        this.photoHead = photoHead;
-    }
+	public String getLocation() {
 
+		return location;
+	}
 
-    public Bitmap getPhotoHead() {
-        return photoHead;
-    }
+	public void setLocation(String location) {
 
+		this.location = location;
+	}
 
-    public Bitmap getPictureShow() {
+	public void setPhotoHead(Bitmap photoHead) {
 
-        return pictureShow;
-    }
-
-    public void setPictureShow(Bitmap pictureShow) {
-        this.pictureShow = pictureShow;
-    }
+		this.photoHead = photoHead;
+	}
 
 
+	public Bitmap getPhotoHead() {
+
+		return photoHead;
+	}
 
 
+	public Bitmap getPictureShow() {
 
+		return pictureShow;
+	}
 
-    public int getId() {
+	public void setPictureShow(Bitmap pictureShow) {
+
+		this.pictureShow = pictureShow;
+	}
+
+	public int getId() {
 
 		return id;
 	}
@@ -200,15 +210,15 @@ public class IndexInfoBean {
 		this.isLocated = isLocated;
 	}
 
-	public JSONArray getLocation() {
-
-		return location;
-	}
-
-	public void setLocation(JSONArray location) {
-
-		this.location = location;
-	}
+	//	public JSONArray getLocation() {
+	//
+	//		return location;
+	//	}
+	//
+	//	public void setLocation(JSONArray location) {
+	//
+	//		this.location = location;
+	//	}
 
 	public String getPhotoClass() {
 

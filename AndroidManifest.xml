@@ -96,6 +96,12 @@
 			</intent-filter>
 		</activity>
 
+		<activity android:name=".FollowActivity">
+			<intent-filter>
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+
 
 		<service android:name="utils.services.LoadDataService">
 			<intent-filter>

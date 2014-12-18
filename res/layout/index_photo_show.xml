@@ -9,7 +9,7 @@
 			android:layout_height="280dp"
 			android:id="@+id/showingPicture"
 			android:layout_gravity="center_horizontal|center_vertical"
-			android:src="@drawable/index_another_user_picture"
+			android:src="@drawable/view_photo"
 	        android:scaleType="centerCrop"
 			/>
 </LinearLayout>

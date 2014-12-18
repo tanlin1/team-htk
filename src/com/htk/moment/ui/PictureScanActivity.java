@@ -3,6 +3,7 @@ package com.htk.moment.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,7 +20,10 @@ import java.net.HttpURLConnection;
 
 
 /**
- * Created by Administrator on 2014/12/1.
+ * 浏览大图
+ *
+ * @author 谭林
+ *         Created by Administrator on 2014/12/1.
  */
 public class PictureScanActivity extends Activity {
 
@@ -31,9 +35,6 @@ public class PictureScanActivity extends Activity {
 
 	private final int COMMENT = 2;
 
-	private Intent mIntent;
-
-	private int position;
 
 	private boolean isLike = true;
 
@@ -48,10 +49,13 @@ public class PictureScanActivity extends Activity {
 	private ImageView mShareImageView;
 
 
-	private TextView mTextView;
-
 	private RelativeLayout mRelativeLayout;
 
+	TextView mTextView;
+
+	int rs_id;
+
+	String detail;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +65,10 @@ public class PictureScanActivity extends Activity {
 
 		initImg();
 
-		mIntent = getIntent();
-		position = mIntent.getIntExtra("position", 0);
+		Intent mIntent = getIntent();
+		rs_id = mIntent.getIntExtra("rs_id", 0);
+		detail = mIntent.getStringExtra("detailPhoto");
+
 		listen();
 	}
 
@@ -125,7 +131,7 @@ public class PictureScanActivity extends Activity {
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	public boolean onKeyDown(int keyCode, @NonNull KeyEvent event) {
 
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			finish();
@@ -149,7 +155,7 @@ public class PictureScanActivity extends Activity {
 
 			switch (request) {
 				case LIKE: {
-					HttpURLConnection con = ConnectionHandler.getConnect(UrlSource.LIKE_STATUS);
+					HttpURLConnection con = ConnectionHandler.getConnect(UrlSource.LIKE_STATUS, LaunchActivity.JSESSIONID);
 					OutputStream os;
 					try {
 						os = con.getOutputStream();
@@ -169,16 +175,16 @@ public class PictureScanActivity extends Activity {
 				}
 				case COMMENT: {
 
-					HttpURLConnection con = ConnectionHandler.getConnect(UrlSource.COMMENT_STATUS);
+					HttpURLConnection con = ConnectionHandler.getConnect(UrlSource.COMMENT_STATUS, LaunchActivity.JSESSIONID);
 					OutputStream os;
 					try {
 						os = con.getOutputStream();
 						JSONObject outObject = new JSONObject();
 						outObject.put("rs_id", 10);
 						// 被评论者的ID
-						outObject.put("commented", 10);
+						outObject.put("commented", 74);
 						outObject.put("comment", "哇，这电杆，真直啊");
-						outObject.put("isLike", isLike);
+
 						os.write(outObject.toString().getBytes());
 						System.out.println(Read.read(con.getInputStream()));
 					} catch (IOException e) {

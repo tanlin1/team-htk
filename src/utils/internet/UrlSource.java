@@ -35,5 +35,7 @@ public class UrlSource {
 	public static String LIKE_STATUS = "/like_status";
 
 	public static String COMMENT_STATUS = "/comment_status";
+	// 获取缩略图信息
+	public static String GET_MORE_SMALL_PHOTO = "/get_more_small_photo";
 
 }

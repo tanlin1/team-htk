@@ -12,6 +12,8 @@ import java.util.Random;
 
 
 /**
+ *
+ * 请求数据
  * Created by Administrator on 2014/11/21.
  */
 public class LoadDataService extends Service {

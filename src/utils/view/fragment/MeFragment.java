@@ -2,9 +2,11 @@ package utils.view.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -13,8 +15,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import com.htk.moment.ui.FollowActivity;
 import com.htk.moment.ui.LaunchActivity;
 import com.htk.moment.ui.R;
+import come.htk.bean.FollowBean;
 import come.htk.bean.IndexListViewItemBean;
 import utils.android.sdcard.Read;
 import utils.internet.ConnectionHandler;
@@ -23,6 +27,7 @@ import utils.json.JSONObject;
 import utils.view.vertical.VerticalViewPager;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,13 +84,14 @@ public class MeFragment extends Fragment {
 		super.onActivityCreated(savedInstanceState);
 		init();
 		createAHandler();
+		new MyGetThreeNumThread().start();
 	}
 
 	@Override
 	public void onStart() {
 
 		super.onStart();
-		new MyGetThreeNumThread().start();
+
 	}
 
 	@Override
@@ -128,7 +134,6 @@ public class MeFragment extends Fragment {
 
 		initVerticalPager();
 	}
-
 	private void initWidgets() {
 
 		mPhotoText = (TextView) getView().findViewById(R.id.user_home_photo_text);
@@ -152,11 +157,21 @@ public class MeFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 
-				System.out.println(" ------------  点击  -----------  ");
-				new MyGetFollowBodyThread().start();
+				System.out.println(" ------------  点 击  关 注  -----------  ");
+				/**
+				 * Toast 弹出消息？
+				 *
+				 * 还是转换到Activity
+				 *
+				 */
+				Intent intent = new Intent(getActivity(), FollowActivity.class);
+				startActivity(intent);
+
 			}
 		});
 	}
+
+	public static ArrayList<FollowBean> follows;
 
 	/**
 	 * 初始化竖直pager
@@ -203,6 +218,7 @@ public class MeFragment extends Fragment {
 						goToCommentDetail();
 						break;
 					case 1:
+
 						goToPhotoDetail();
 						break;
 				}
@@ -225,6 +241,35 @@ public class MeFragment extends Fragment {
 		new MyGetThreeNumThread().start();
 	}
 
+	private class MySmallPhoto extends Thread{
+
+		@Override
+		public void run() {
+
+			HttpURLConnection smallConnection = ConnectionHandler.getConnect(UrlSource.GET_MORE_SMALL_PHOTO,
+					LaunchActivity.JSESSIONID);
+
+			try {
+				OutputStream outToServer = smallConnection.getOutputStream();
+				JSONObject outToServerDataObj = new JSONObject();
+				outToServerDataObj.put("ID", 74);
+				outToServerDataObj.put("rs_id", 10);
+				outToServer.write(outToServerDataObj.toString().getBytes());
+
+				/**
+				 * 将得到的数据通过某种形式传递 给 grid View
+				 */
+				System.out.println(Read.read(smallConnection.getInputStream()) + "-------------------------------");
+
+
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
+	}
+
 	private class MyGetThreeNumThread extends Thread {
 
 		@Override
@@ -236,16 +281,6 @@ public class MeFragment extends Fragment {
 			}
 		}
 	}
-
-	private class MyGetFollowBodyThread extends Thread {
-
-		@Override
-		public void run() {
-
-			getFollowMan();
-		}
-	}
-
 	private int photoNum;
 
 	private int followNum;
@@ -287,19 +322,18 @@ public class MeFragment extends Fragment {
 
 				return true;
 			} else if (response.equals("SQLERROR")) {
-				System.out.println("server info : sql error");
+				System.out.println("server info : get three number sql error");
 				return false;
 			} else if (response.equals("JSONFORMATERROR")) {
-				System.out.println("server info : json format error");
+				System.out.println("server info : get three number json format error");
 				return false;
 			} else {
-				System.out.println("server info : give me nothing");
+				System.out.println("server info : get three number give me nothing");
 				return false;
 			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("what ?????????");
 		} finally {
 			// 写完一次，关闭连接，释放服务器资源
 			if (connection != null) {
@@ -308,28 +342,6 @@ public class MeFragment extends Fragment {
 		}
 		return false;
 	}
-
-	private void getFollowMan() {
-
-		HttpURLConnection connection = null;
-
-		try {
-			// 取得一个连接 多 part的 connection
-			connection = ConnectionHandler.getConnect(UrlSource.GET_FOLLOWINGS_INFO, LaunchActivity.JSESSIONID);
-
-			System.out.println("服务器消息  ----------  " + connection.getResponseCode());
-			System.out.println(Read.read(connection.getInputStream()));
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			// 写完一次，关闭连接，释放服务器资源
-			if (connection != null) {
-				connection.disconnect();
-			}
-		}
-	}
-
 
 	private GridView mGridView;
 
@@ -630,6 +642,16 @@ public class MeFragment extends Fragment {
 
 			return inflater.inflate(R.layout.user_home_after, container, false);
 		}
+
+		@Override
+		public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+
+			super.onActivityCreated(savedInstanceState);
+			// 开启线程，获取缩略图
+			System.out.println("已开启线程 -------------");
+			new MySmallPhoto().start();
+
+		}
 	}
 
 	private class MyHandler extends Handler {
@@ -678,6 +700,4 @@ public class MeFragment extends Fragment {
 
 		myHandler.sendMessage(dataMessage);
 	}
-
-
 }
