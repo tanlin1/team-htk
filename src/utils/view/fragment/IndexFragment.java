@@ -52,12 +52,14 @@ public class IndexFragment extends Fragment {
 
 	public final static String TAG = "IndexFragment";
 
-	private static ArrayList<HashMap<String, Object>> items = new ArrayList<HashMap<String, Object>>();
 
 	public static BlockingQueue<IndexInfoBean> refreshQueue = new ArrayBlockingQueue<IndexInfoBean>(10);
 
 	public static BlockingQueue<IndexInfoBean> loadQueue = new ArrayBlockingQueue<IndexInfoBean>(10);
 
+	private static ArrayList<HashMap<String, Object>> items = new ArrayList<HashMap<String, Object>>();
+
+	private static boolean theFirstTimeRefresh = true;
 
 	/**
 	 * 模拟栈
@@ -69,6 +71,7 @@ public class IndexFragment extends Fragment {
 	public static MyHandler myHandler;
 
 	private int loadMoreNum = 0;
+	private int refreshNum = 0;
 
 
 	@Override
@@ -200,6 +203,7 @@ public class IndexFragment extends Fragment {
 				listItem.showingPicture = (ImageView) convertView.findViewById(R.id.showingPicture);
 				listItem.photoDescribe = (TextView) convertView.findViewById(R.id.index_photo_describe);
 
+				listItem.progressBar = (android.widget.ProgressBar) convertView.findViewById(R.id.index_processBar);
 				listItem.likeSum = (TextView) convertView.findViewById(R.id.index_photo_like_num);
 				listItem.likeText = (TextView) convertView.findViewById(R.id.index_photo_like_text);
 				listItem.commentSum = (TextView) convertView.findViewById(R.id.index_photo_comment_num);
@@ -221,6 +225,9 @@ public class IndexFragment extends Fragment {
 			listItem.userName.setText((CharSequence) map.get("userName"));
 			listItem.userAddress.setText((CharSequence) map.get("userAddress"));
 			listItem.showingPicture.setImageBitmap((Bitmap) map.get("userPicture"));
+			if(map.get("userPicture") != null){
+				listItem.progressBar.setVisibility(View.GONE);
+			}
 			listItem.photoDescribe.setText((CharSequence) map.get("myWords"));
 
 			listItem.commentSum.setText(String.valueOf(map.get("commentsNumber")));
@@ -337,8 +344,20 @@ public class IndexFragment extends Fragment {
 				 */
 				//				new PhotoThread(PULL_TO_REFRESH).start();
 				//				refreshNum = refreshQueue.size();
-				new QueueToStack().start();
-				new StackToUi().start();
+				refreshNum = refreshQueue.size();
+				if(theFirstTimeRefresh){
+					new QueueToStack().start();
+					new StackToUi().start();
+				} else if(refreshNum == 0){
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm");
+					String date = format.format(new Date());
+					listView.onRefreshComplete(date);
+//					listView.invalidateViews();
+					Toast.makeText(getActivity(), "当前数据已是最新", Toast.LENGTH_SHORT).show();
+					listViewAdapter.notifyDataSetChanged();
+				} else if(refreshNum == 1){
+
+				}
 
 			} else if ("indexPhotoOk".equals(message)) {
 
@@ -355,6 +374,11 @@ public class IndexFragment extends Fragment {
 
 			} else if ("load_data_completed".equals(message)) {
 				loadMoreNum = loadQueue.size();
+				if(loadMoreNum == 0){
+					Toast.makeText(getActivity(), "已经显示所有数据", Toast.LENGTH_SHORT).show();
+				}
+				listView.onLoadMoreComplete();
+				listViewAdapter.notifyDataSetChanged();
 			} else {
 				Log.e(TAG, "wrong message in bundle !");
 			}
@@ -506,8 +530,7 @@ public class IndexFragment extends Fragment {
 			if (indexInfo.getIsLocated().equals("true")) {
 				map.put("location", indexInfo.getLocation());
 			}
-			map.put("myWords", "在哥伦贝尔大草原上，呼吸着、感受着");
-			items.add(items.size(), map);
+			items.add(0, map);
 		} else {
 			for (HashMap<String, Object> item : items) {
 				map = item;
@@ -516,6 +539,7 @@ public class IndexFragment extends Fragment {
 				}
 			}
 		}
+		IndexPullRefreshListView.rs_id = (Integer) items.get(0).get("rs_id");
 	}
 
 	/**

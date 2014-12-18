@@ -500,6 +500,8 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 		}
 	}
 
+	public static int rs_id = 0;
+
 	private void internetRefresh() {
 
 		HttpURLConnection connection = null;
@@ -509,7 +511,7 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 			// 取得一个连接 多 part的 connection
 			connection = ConnectionHandler.getConnect(UrlSource.LOAD_STATUS, LaunchActivity.JSESSIONID);
 			OutputStream out = connection.getOutputStream();
-			outToServer.put("rs_id", 0);
+			outToServer.put("rs_id", rs_id);
 			outToServer.put("before", true);
 
 			Write.writeToHttp(out, outToServer.toString().getBytes());

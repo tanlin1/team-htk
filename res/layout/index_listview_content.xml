@@ -45,11 +45,21 @@
 				android:orientation="vertical"
 				android:background="#bdc3c7"
 				>
-
+			<FrameLayout
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					>
 			<utils.view.layout.IndexPhotoShow
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
 					/>
+				<ProgressBar
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center"
+				        android:id="@+id/index_processBar"
+						/>
+			</FrameLayout>
 		</LinearLayout>
 
 		<LinearLayout

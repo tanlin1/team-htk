@@ -1,6 +1,7 @@
 package come.htk.bean;
 
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
@@ -51,6 +52,9 @@ public final class IndexListViewItemBean {
 	 * “Comment”
 	 */
 	public TextView commentText;
+
+
+	public ProgressBar progressBar;
 
 	// 喜欢等图片按钮
 	public ImageView loveHeartImage;
