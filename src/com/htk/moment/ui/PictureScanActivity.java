@@ -2,11 +2,16 @@ package com.htk.moment.ui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import utils.android.sdcard.Read;
@@ -35,10 +40,11 @@ public class PictureScanActivity extends Activity {
 
 	private final int COMMENT = 2;
 
+	private final int GET_BIG_PHOTO = 3;
 
-	private boolean isLike = true;
+	private boolean isLike = false;
 
-
+	// 大图
 	private ImageView mImageView;
 
 	// 喜欢（赞）
@@ -48,14 +54,23 @@ public class PictureScanActivity extends Activity {
 
 	private ImageView mShareImageView;
 
+	private ProgressBar mProgressBar;
+
+	private static MyHandler myHandler;
 
 	private RelativeLayout mRelativeLayout;
 
 	TextView mTextView;
 
+	Intent mIntent;
+
+
 	int rs_id;
+	int userId;
 
 	String detail;
+
+	String detailUrl;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,13 +78,27 @@ public class PictureScanActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.picture_scan_mode_big);
 
-		initImg();
+		initAll();
+		listen();
+	}
 
-		Intent mIntent = getIntent();
+	@Override
+	protected void onPause() {
+		bitmap.recycle();
+		super.onPause();
+	}
+
+	private void initAll() {
+
+		initImg();
+		mIntent = getIntent();
+		myHandler = new MyHandler();
 		rs_id = mIntent.getIntExtra("rs_id", 0);
 		detail = mIntent.getStringExtra("detailPhoto");
+		userId = mIntent.getIntExtra("userId", 0);
+		detailUrl = UrlSource.getUrl(detail);
 
-		listen();
+		new MyLikeThread(GET_BIG_PHOTO).start();
 	}
 
 	private void initImg() {
@@ -80,7 +109,7 @@ public class PictureScanActivity extends Activity {
 		mLikeImageView = (ImageView) findViewById(R.id.like_img_of_index_picture_scan_mode_big);
 		mShareImageView = (ImageView) findViewById(R.id.share_img_of_index_picture_scan_mode_big);
 		mCommentImageView = (ImageView) findViewById(R.id.comment_img_of_index_picture_scan_mode_big);
-
+		mProgressBar = (ProgressBar) findViewById(R.id.big_photo_progress);
 	}
 
 	private void listen() {
@@ -103,8 +132,13 @@ public class PictureScanActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-
-				System.out.println("dianji zan  发送消息 --- ");
+				isLike = !isLike;
+				System.out.println("dianji zan  发送消息 --- " + isLike);
+				if(isLike){
+					mLikeImageView.setImageResource(R.drawable.like_after);
+				}else {
+					mLikeImageView.setImageResource(R.drawable.like_image_button_hollow);
+				}
 				new MyLikeThread(LIKE).start();
 			}
 		});
@@ -138,6 +172,43 @@ public class PictureScanActivity extends Activity {
 		}
 		return true;
 	}
+	Bitmap bitmap;
+
+	private class MyHandler extends Handler {
+
+		@Override
+		public void handleMessage(Message msg) {
+
+			Bundle data = msg.getData();
+
+			String message = data.getString("fresh");
+
+			if("bigPhotoOk".equals(message)){
+				if(bitmap != null){
+					mProgressBar.setVisibility(View.GONE);
+					mImageView.setImageBitmap(bitmap);
+				}
+				System.out.println("---------------------------------------");
+			}
+		}
+	}
+
+	/**
+	 * 向本消息队列中放入消息，供主线程查询
+	 *
+	 * @param msgKey   消息键
+	 * @param msgValue 消息值(数据)
+	 */
+	public static void sendMessage(String msgKey, String msgValue) {
+
+		Bundle mBundle = new Bundle();
+		Message mMessage = new Message();
+
+		mBundle.putString(msgKey, msgValue);
+		mMessage.setData(mBundle);
+
+		myHandler.sendMessage(mMessage);
+	}
 
 
 	private class MyLikeThread extends Thread {
@@ -151,23 +222,26 @@ public class PictureScanActivity extends Activity {
 
 		@Override
 		public void run() {
-
+			HttpURLConnection con;
 
 			switch (request) {
 				case LIKE: {
-					HttpURLConnection con = ConnectionHandler.getConnect(UrlSource.LIKE_STATUS, LaunchActivity.JSESSIONID);
+					con = ConnectionHandler.getConnect(UrlSource.LIKE_STATUS, LaunchActivity.JSESSIONID);
 					OutputStream os;
 					try {
 						os = con.getOutputStream();
 						JSONObject outObject = new JSONObject();
-						outObject.put("rs_id", 10);
+						outObject.put("rs_id", rs_id);
 						outObject.put("isLike", isLike);
+						outObject.put("likeder", userId);
 						os.write(outObject.toString().getBytes());
 						System.out.println(Read.read(con.getInputStream()));
-						isLike = !isLike;
 					} catch (IOException e) {
 						e.printStackTrace();
+					} finally {
+						con.disconnect();
 					}
+
 					break;
 				}
 				case SHARE: {
@@ -175,29 +249,42 @@ public class PictureScanActivity extends Activity {
 				}
 				case COMMENT: {
 
-					HttpURLConnection con = ConnectionHandler.getConnect(UrlSource.COMMENT_STATUS, LaunchActivity.JSESSIONID);
+					con = ConnectionHandler.getConnect(UrlSource.COMMENT_STATUS, LaunchActivity.JSESSIONID);
 					OutputStream os;
 					try {
 						os = con.getOutputStream();
 						JSONObject outObject = new JSONObject();
-						outObject.put("rs_id", 10);
+						outObject.put("rs_id", rs_id);
 						// 被评论者的ID
-						outObject.put("commented", 74);
+						outObject.put("commented", userId);
 						outObject.put("comment", "哇，这电杆，真直啊");
-
 						os.write(outObject.toString().getBytes());
 						System.out.println(Read.read(con.getInputStream()));
 					} catch (IOException e) {
 						e.printStackTrace();
+					} finally {
+						con.disconnect();
 					}
 
 					break;
 				}
+				case GET_BIG_PHOTO:
+					con = ConnectionHandler.getGetConnect(detailUrl);
+					try {
+						bitmap = BitmapFactory.decodeStream(con.getInputStream());
+						sendMessage("fresh", "bigPhotoOk");
+
+					} catch (IOException e) {
+						e.printStackTrace();
+					} finally {
+						con.disconnect();
+					}
 				default: {
 					System.out.println("********************* switch ********");
 					break;
 				}
 			}
+
 		}
 	}
 }

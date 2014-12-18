@@ -240,9 +240,11 @@ public class IndexFragment extends Fragment {
 
 					Intent intent = new Intent(getActivity(), PictureScanActivity.class);
 
+					Integer userId = (Integer) listData.get(position).get("id");
 					Integer rs_id = (Integer) listData.get(position).get("rs_id");
 					String detail = (String) listData.get(position).get("detailPhoto");
 
+					intent.putExtra("userId", userId);
 					intent.putExtra("rs_id", rs_id);
 					intent.putExtra("detailPhoto", detail);
 
@@ -482,7 +484,7 @@ public class IndexFragment extends Fragment {
 
 					url = indexBean.getViewPhoto();
 					if (url.contains("mks")) {
-						url = getUrl(url);
+						url = UrlSource.getUrl(url);
 					}
 					photoConnection = ConnectionHandler.getGetConnect(url);
 					InputStream is = photoConnection.getInputStream();
@@ -542,18 +544,5 @@ public class IndexFragment extends Fragment {
 		IndexPullRefreshListView.rs_id = (Integer) items.get(0).get("rs_id");
 	}
 
-	/**
-	 * 得到图片真实的URL
-	 * <p/>
-	 * 因为充服务器获取到路径是绝对路径，linux系统，路径包含“/XX/XXX”
-	 * 要得到某路径，截断此字符串
-	 *
-	 * @param path 从服务器得到的路径（url）
-	 *
-	 * @return 可供应用请求的路径（url）
-	 */
-	private String getUrl(String path) {
 
-		return path.split("mks")[1];
-	}
 }

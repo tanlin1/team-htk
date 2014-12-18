@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,10 +16,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import utils.android.sdcard.Read;
 import utils.check.Check;
 import utils.internet.ConnectionHandler;
@@ -64,6 +62,9 @@ public class LaunchActivity extends Activity {
 
 	private TextView toFindPassword;
 
+
+	private AutoCompleteTextView mName;
+
 	// 为了与服务器保持长连接的，设定的cookie标识
 	public static String JSESSIONID = "";
 
@@ -82,6 +83,7 @@ public class LaunchActivity extends Activity {
 		setContentView(R.layout.lanuch_layout);
 		initWidgets();
 		theWidgetsFunction();
+		initAutoComplete("his", mName);
 	}
 
 	/**
@@ -95,12 +97,14 @@ public class LaunchActivity extends Activity {
 		screenWidth = vm.getDefaultDisplay().getWidth();
 		screenHeight = vm.getDefaultDisplay().getHeight();
 
+		mName = (AutoCompleteTextView) findViewById(R.id.set_name);
+
 		//登录（注册）按钮
 		buttonLogin = (Button) findViewById(R.id.button_login);
 		textViewRegister = (TextView) findViewById(R.id.button_register);
 
 		//登录填写的邮箱，密码编辑框
-		emailEdit = (EditText) findViewById(R.id.set_name);
+//		emailEdit = (EditText) findViewById(R.id.set_name);
 		passwordEdit = (EditText) findViewById(R.id.set_password);
 
 		//记住密码
@@ -115,6 +119,63 @@ public class LaunchActivity extends Activity {
 			}
 		});
 	}
+
+	/**
+	 * 初始化AutoCompleteTextView，最多显示5项提示，使
+	 * AutoCompleteTextView在一开始获得焦点时自动提示
+	 *
+	 * @param field 保存在sharedPreference中的字段名
+	 * @param auto  要操作的AutoCompleteTextView
+	 */
+	private void initAutoComplete(String field, AutoCompleteTextView auto) {
+
+		SharedPreferences sp = getSharedPreferences("network_url", 0);
+		String history = sp.getString(field, "");
+
+		String[] hisArrays = history.split(",");
+
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, hisArrays);
+		//只保留最近的50条的记录
+		if (hisArrays.length > 5) {
+			String[] newArrays = new String[5];
+			System.arraycopy(hisArrays, 0, newArrays, 0, 5);
+			adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, newArrays);
+		}
+		auto.setAdapter(adapter);
+		auto.setDropDownHeight(200);
+		auto.setThreshold(1);
+		auto.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+
+				AutoCompleteTextView view = (AutoCompleteTextView) v;
+				if (hasFocus) {
+					view.showDropDown();
+				}
+			}
+		});
+	}
+
+	/**
+	 * 把指定AutoCompleteTextView中内容保存到sharedPreference中指定的字符段
+	 *
+	 * @param field 保存在sharedPreference中的字段名
+	 * @param auto  要操作的AutoCompleteTextView
+	 */
+	private void saveHistory(String field, AutoCompleteTextView auto) {
+
+		String text = auto.getText().toString();
+		SharedPreferences sp = getSharedPreferences("network_url", 0);
+		String history = sp.getString(field, "nothing");
+
+		if (!history.contains(text + ",")) {
+			StringBuilder sb = new StringBuilder(history);
+			sb.insert(0, text + ",");
+			sp.edit().putString("his", sb.toString()).apply();
+		}
+	}
+
+
 
 	/**
 	 * 控件的相应的功能
@@ -134,7 +195,7 @@ public class LaunchActivity extends Activity {
 			@Override
 			public void onClick (View v) {
 
-				emailOrPhone = emailEdit.getText().toString();
+				emailOrPhone = mName.getText().toString();
 				password = passwordEdit.getText().toString();
 				if (emailOrPhone == null || password == null || password.length() == 0 || emailOrPhone.length() == 0) {
 					Toast.makeText(getApplication(), R.string.login_warning, Toast.LENGTH_SHORT).show();
@@ -146,23 +207,58 @@ public class LaunchActivity extends Activity {
 						new LoginThread().start();
 					}
 				}
+				saveHistory("his", mName);
 			}
 		});
 		// 获取昵称编辑框的数据（通过焦点转移）
-		emailEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-			@Override
-			public void onFocusChange (View v, boolean hasFocus) {
+//		emailEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//			@Override
+//			public void onFocusChange (View v, boolean hasFocus) {
+//
+//				if (!hasFocus) {
+//					emailOrPhone = emailEdit.getText().toString();
+//					if (!Check.isEmail(emailOrPhone) && !Check.isPhoneNumber(emailOrPhone)) {
+//						Toast.makeText(getApplicationContext(), R.string.format_wrong, Toast.LENGTH_SHORT).show();
+//						emailEdit.setText("");
+//						emailOrPhone = null;
+//					}
+//				}
+//			}
+//		});
 
+
+		mName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
 				if (!hasFocus) {
-					emailOrPhone = emailEdit.getText().toString();
+					emailOrPhone = mName.getText().toString();
 					if (!Check.isEmail(emailOrPhone) && !Check.isPhoneNumber(emailOrPhone)) {
 						Toast.makeText(getApplicationContext(), R.string.format_wrong, Toast.LENGTH_SHORT).show();
-						emailEdit.setText("");
+						mName.setText("");
 						emailOrPhone = null;
 					}
 				}
 			}
 		});
+		mName.setOnKeyListener(new View.OnKeyListener() {
+
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+				if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+					emailOrPhone = mName.getText().toString();
+					//自动以藏输入键盘
+					InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+					if (imm.isActive()) {
+						imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+					}
+					return true;
+				}
+				return false;
+			}
+		});
+
 		passwordEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
 			public void onFocusChange (View v, boolean hasFocus) {

@@ -38,4 +38,19 @@ public class UrlSource {
 	// 获取缩略图信息
 	public static String GET_MORE_SMALL_PHOTO = "/get_more_small_photo";
 
+	/**
+	 * 得到图片真实的URL
+	 * <p/>
+	 * 因为充服务器获取到路径是绝对路径，linux系统，路径包含“/XX/XXX”
+	 * 要得到某路径，截断此字符串
+	 *
+	 * @param path 从服务器得到的路径（url）
+	 *
+	 * @return 可供应用请求的路径（url）
+	 */
+	public static String getUrl(String path) {
+
+		return path.split("mks")[1];
+	}
+
 }
