@@ -1,7 +1,6 @@
 package utils.view;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -57,6 +56,8 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 
 	private int endY;
 
+	private int mLastRefreshState;
+
 	// 头部视图高度
 	private int mHeadViewHeight;
 
@@ -64,8 +65,8 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 
 	public boolean canLoadMore;
 
-	private int mRefreshState;
 
+	private int mRefreshState;
 
 	private int mLoadMoreState;
 
@@ -75,8 +76,8 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 
 	private RotateAnimation releaseAnimation;                 // 恢复动画
 
-	private LayoutInflater mInflater;
 
+	private LayoutInflater mInflater;
 
 	private RelativeLayout mListHeadLayout;
 
@@ -90,15 +91,29 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 
 	private ProgressBar mRefreshBar;
 
+
 	private TextView mLoadMoreText;
 
-
 	private ProgressBar mLoadMoreBar;
+
+	private OnRefreshListener mOnRefreshListener;
+
 
 	/**
 	 * 监听器，刷新还是加载更多
 	 */
-	int mLastRefreshState;
+	public interface OnRefreshListener {
+
+		/**
+		 * 刷新
+		 */
+		public void refresh();
+
+		/**
+		 * 加载更多
+		 */
+		public void loadMore();
+	}
 
 	public IndexPullRefreshListView(Context context) {
 
@@ -167,9 +182,9 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 
 		setOnScrollListener(this);
 		// 不显示头部（动态加载的布局文件）
-		//setSelection(1);
+//		setSelection(1);
 		// 将第一项移动到屏幕顶端
-		scrollTo(0, mHeadViewHeight + getDividerHeight());
+		scrollTo(0, mHeadViewHeight + getDividerHeight() / 2);
 	}
 
 
@@ -267,19 +282,30 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 			if (firstVisibleItem == 0 && canRefresh) {
 				if ((mListHeadLayout.getBottom() > mHeadViewHeight * 4)) {
 					mRefreshState = RELEASE_TO_REFRESH;
-
+					mRefreshImageArrow.setVisibility(VISIBLE);
+					mRefreshImageArrow.clearAnimation();
+					mRefreshImageArrow.startAnimation(pullAnimation);
 					mRefreshText.setVisibility(VISIBLE);
 
 					mRefreshText.setText(R.string.pull_to_refresh_release_label);
+					if(IndexFragment.myHandler != null){
+						IndexFragment.sendMessage("fresh", "sub_thread");
+					}
 
 				} else if ((mListHeadLayout.getBottom() < mHeadViewHeight * 3) || mListHeadLayout.getTop() < 1) {
 					mRefreshState = PULL_TO_REFRESH;
 
+					mRefreshImageArrow.setVisibility(VISIBLE);
+					mRefreshImageArrow.clearAnimation();
 					mRefreshText.setVisibility(VISIBLE);
 
 					mLastRefreshState = mRefreshState;
+					mRefreshImageArrow.startAnimation(releaseAnimation);
 
 					mRefreshText.setText(R.string.pull_to_refresh_pull_label);
+					if(IndexFragment.myHandler != null){
+						IndexFragment.sendMessage("fresh", "sub_thread");
+					}
 				} else {
 					resetHeaderPadding();
 				}
@@ -288,15 +314,11 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 
 				mLoadMoreState = LOAD_MORE;
 			}
-//			if(IndexFragment.myHandler != null){
-//				IndexFragment.sendMessage("fresh", "sub_thread");
-//			}
 		}
-
 	}
 
 	@Override
-	public boolean onTouchEvent(@NonNull MotionEvent ev) {
+	public boolean onTouchEvent(MotionEvent ev) {
 
 		switch (ev.getAction()) {
 			case MotionEvent.ACTION_DOWN:
@@ -316,9 +338,14 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 	}
 
 	@Override
-	public boolean onInterceptTouchEvent(@NonNull MotionEvent ev) {
+	public boolean onInterceptTouchEvent(MotionEvent ev) {
 
 		return super.onInterceptTouchEvent(ev);
+	}
+
+	public void setOnRefreshListener(OnRefreshListener onRefreshListener) {
+
+		mOnRefreshListener = onRefreshListener;
 	}
 
 	/**
