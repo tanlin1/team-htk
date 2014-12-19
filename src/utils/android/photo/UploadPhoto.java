@@ -83,7 +83,6 @@ public class UploadPhoto extends Activity {
 		listenerStart();
 
 	}
-
 	@Override
 	protected void onResume() {
 
@@ -93,12 +92,6 @@ public class UploadPhoto extends Activity {
 		}
 	}
 
-	@Override
-	protected void onStop() {
-
-		super.onStop();
-		pathArrayList.clear();
-	}
 	/**
 	 * 初始化
 	 * <p/>
@@ -199,10 +192,17 @@ public class UploadPhoto extends Activity {
 			return;
 		}
 		ImageView latestPhoto = new ImageView(this);
+		ViewGroup.LayoutParams parent = liner.getLayoutParams();
+		latestPhoto.setLayoutParams(parent);
+		ViewGroup.LayoutParams params = latestPhoto.getLayoutParams();
+		params.width = 210;
+		params.height = 210;
+		latestPhoto.setScaleType(ImageView.ScaleType.CENTER_CROP);
+		latestPhoto.setPadding(9, 20, 5, 15);
 		latestPhoto.setImageBitmap(BitmapFactory.decodeFile(photoPath));
 		liner.addView(latestPhoto);
 		//
-		pathArrayList.add(photoPath);
+		pathArrayList.add(0, photoPath);
 	}
 
 	private void listenerStart() {
