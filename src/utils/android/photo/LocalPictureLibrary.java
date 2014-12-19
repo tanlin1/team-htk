@@ -65,16 +65,14 @@ public class LocalPictureLibrary extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.to_choose_user_photo);
 		init();
+		gridAdapter = new GridAdapter(this, imageUris);
+		selectSomePicture();
 	}
 
 	@Override
-	protected void onResume() {
+	protected void onStart() {
 
-		super.onResume();
-		if (gridAdapter == null) {
-			gridAdapter = new GridAdapter(this, imageUris);
-		}
-		selectSomePicture();
+		super.onStart();
 		gridAdapter.notifyDataSetChanged();
 	}
 
@@ -230,25 +228,14 @@ public class LocalPictureLibrary extends Activity {
 
 		private int width = ImageLoader.photoEachWidth;
 
-		private Context context;
-
 		private LayoutInflater viewContainer;
 
 		private ArrayList<String> photoPathList;
-
-		// 保证ImageView 与 TextView 配对
-		private class ImageViewHolder {
-
-			ImageView image;            // grid 内的图片
-
-			TextView isSelect;          // 未使用
-		}
 
 		public GridAdapter(Context context, ArrayList<String> list) {
 
 			photoPathList = list;
 			viewContainer = LayoutInflater.from(context);
-			this.context = context;
 		}
 
 		@Override

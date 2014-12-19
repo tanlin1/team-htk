@@ -1,6 +1,7 @@
 package utils.view;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -56,8 +57,6 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 
 	private int endY;
 
-	private int mLastRefreshState;
-
 	// 头部视图高度
 	private int mHeadViewHeight;
 
@@ -65,8 +64,8 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 
 	public boolean canLoadMore;
 
-
 	private int mRefreshState;
+
 
 	private int mLoadMoreState;
 
@@ -76,8 +75,8 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 
 	private RotateAnimation releaseAnimation;                 // 恢复动画
 
-
 	private LayoutInflater mInflater;
+
 
 	private RelativeLayout mListHeadLayout;
 
@@ -91,29 +90,15 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 
 	private ProgressBar mRefreshBar;
 
-
 	private TextView mLoadMoreText;
 
+
 	private ProgressBar mLoadMoreBar;
-
-	private OnRefreshListener mOnRefreshListener;
-
 
 	/**
 	 * 监听器，刷新还是加载更多
 	 */
-	public interface OnRefreshListener {
-
-		/**
-		 * 刷新
-		 */
-		public void refresh();
-
-		/**
-		 * 加载更多
-		 */
-		public void loadMore();
-	}
+	int mLastRefreshState;
 
 	public IndexPullRefreshListView(Context context) {
 
@@ -303,11 +288,15 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 
 				mLoadMoreState = LOAD_MORE;
 			}
+//			if(IndexFragment.myHandler != null){
+//				IndexFragment.sendMessage("fresh", "sub_thread");
+//			}
 		}
+
 	}
 
 	@Override
-	public boolean onTouchEvent(MotionEvent ev) {
+	public boolean onTouchEvent(@NonNull MotionEvent ev) {
 
 		switch (ev.getAction()) {
 			case MotionEvent.ACTION_DOWN:
@@ -327,14 +316,9 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 	}
 
 	@Override
-	public boolean onInterceptTouchEvent(MotionEvent ev) {
+	public boolean onInterceptTouchEvent(@NonNull MotionEvent ev) {
 
 		return super.onInterceptTouchEvent(ev);
-	}
-
-	public void setOnRefreshListener(OnRefreshListener onRefreshListener) {
-
-		mOnRefreshListener = onRefreshListener;
 	}
 
 	/**
@@ -488,6 +472,7 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 		public void run() {
 
 			if (way.equals("refresh")) {
+				IndexFragment.sendMessage("fresh", "sub_thread");
 				internetRefresh();
 			} else if (way.equals("load")) {
 				internetLoad();
@@ -539,6 +524,7 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 				JSONObject serverDataObj = array.getJSONObject(i);
 				setObject(indexBean, serverDataObj);
 				IndexFragment.refreshQueue.put(indexBean);
+				IndexFragment.sendMessage("fresh", "refresh_data_completed");
 			}
 			IndexFragment.sendMessage("fresh", "refresh_data_completed");
 		} catch (IOException e) {

@@ -133,7 +133,6 @@ public class PictureScanActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				isLike = !isLike;
-				System.out.println("dianji zan  发送消息 --- " + isLike);
 				if(isLike){
 					mLikeImageView.setImageResource(R.drawable.like_after);
 				}else {
@@ -148,8 +147,7 @@ public class PictureScanActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 
-				System.out.println("share clink------");
-				new MyLikeThread(SHARE).start();
+//				new MyLikeThread(SHARE).start();
 			}
 		});
 
@@ -158,8 +156,7 @@ public class PictureScanActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 
-				System.out.println("comment clink ----------");
-				new MyLikeThread(COMMENT).start();
+//				new MyLikeThread(COMMENT).start();
 			}
 		});
 	}
@@ -188,7 +185,6 @@ public class PictureScanActivity extends Activity {
 					mProgressBar.setVisibility(View.GONE);
 					mImageView.setImageBitmap(bitmap);
 				}
-				System.out.println("---------------------------------------");
 			}
 		}
 	}
@@ -280,7 +276,6 @@ public class PictureScanActivity extends Activity {
 						con.disconnect();
 					}
 				default: {
-					System.out.println("********************* switch ********");
 					break;
 				}
 			}

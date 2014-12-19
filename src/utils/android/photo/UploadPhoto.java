@@ -62,7 +62,7 @@ public class UploadPhoto extends Activity {
 	private EditText mEditText;
 
 	// 选择的图片路径集
-	private ArrayList<String> pathArrayList = new ArrayList<String>();
+	private ArrayList<String> pathArrayList;
 
 	private Intent intent;
 
@@ -77,11 +77,28 @@ public class UploadPhoto extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.upload_layout);
+		pathArrayList = new ArrayList<String>();
 		init();
 		messageAway();
 		listenerStart();
+
 	}
 
+	@Override
+	protected void onResume() {
+
+		super.onResume();
+		if(pathArrayList == null){
+			pathArrayList = new ArrayList<String>();
+		}
+	}
+
+	@Override
+	protected void onStop() {
+
+		super.onStop();
+		pathArrayList.clear();
+	}
 	/**
 	 * 初始化
 	 * <p/>
@@ -268,8 +285,17 @@ public class UploadPhoto extends Activity {
 			photoByteArray = new ByteArrayOutputStream();
 			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, photoByteArray);
 			Write.writeToHttp(out, createAfterPart(getPartName() + (length - 1) + 100, getFileName() + "upload-" + (length - 1), "image/jpeg", getContent(photoByteArray), true));
-
-			IndexFragment.sendMessage("fresh", "upLoadOk");
+			String temp = getServerResponseMessage(connection);
+			JSONObject serverHandledInfo = new JSONObject(temp);
+			if(serverHandledInfo.has("status") ){
+				if(serverHandledInfo.getString("status").equals("SUCCESS")){
+						IndexFragment.sendMessage("fresh", "upLoadOk");
+					return;
+				}
+				IndexFragment.sendMessage("fresh", "upLoadError");
+				return;
+			}
+			IndexFragment.sendMessage("fresh", "upLoadError");
 
 		} catch (IOException e) {
 			e.printStackTrace();

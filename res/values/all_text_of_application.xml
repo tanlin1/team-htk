@@ -16,7 +16,7 @@
 	<string name="password_equal">两次密码不一致！</string>
 	<string name="name_null">请为你的账户设置一个昵称</string>
 	<string name="password_null">密码不能为空！</string>
-	<string name="format_wrong">格式错误！</string>
+	<string name="format_wrong">用户名格式错误！</string>
 	<string name="login_warning">用户名和密码不能为空！</string>
 	<string name="login_error">密码错误，请注意大小写！</string>
 	<string name="register_error">错误</string>

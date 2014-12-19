@@ -46,7 +46,7 @@ public class LaunchActivity extends Activity {
 	public static int screenHeight = 0;
 
 	// 界面的编辑框
-	private EditText emailEdit;
+//	private EditText emailEdit;
 
 	private EditText passwordEdit;
 
@@ -74,7 +74,7 @@ public class LaunchActivity extends Activity {
 	 * @param savedInstanceState 切换Activity需要系统保存的一些信息
 	 */
 	@Override
-	public void onCreate (Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
 		// 显示样式：无标题栏
@@ -83,7 +83,14 @@ public class LaunchActivity extends Activity {
 		setContentView(R.layout.lanuch_layout);
 		initWidgets();
 		theWidgetsFunction();
-		initAutoComplete("his", mName);
+		initAutoComplete("name", mName);
+	}
+
+	@Override
+	protected void onStop() {
+
+		super.onStop();
+		saveHistory("name", mName);
 	}
 
 	/**
@@ -91,7 +98,7 @@ public class LaunchActivity extends Activity {
 	 * <p/>
 	 * 因为程序必须，通过这些控件进行事件处理
 	 */
-	private void initWidgets () {
+	private void initWidgets() {
 		//得到屏幕的尺寸，后续使用
 		WindowManager vm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
 		screenWidth = vm.getDefaultDisplay().getWidth();
@@ -104,18 +111,19 @@ public class LaunchActivity extends Activity {
 		textViewRegister = (TextView) findViewById(R.id.button_register);
 
 		//登录填写的邮箱，密码编辑框
-//		emailEdit = (EditText) findViewById(R.id.set_name);
+		//		emailEdit = (EditText) findViewById(R.id.set_name);
 		passwordEdit = (EditText) findViewById(R.id.set_password);
 
 		//记住密码
 		//CheckBox checkBox = (CheckBox) findViewById(R.id.checkbox);
 		toFindPassword = (TextView) findViewById(R.id.find_password);
 		toFindPassword.setOnClickListener(new View.OnClickListener() {
+
 			@Override
-			public void onClick (View v) {
+			public void onClick(View v) {
 				//连接到服务器找回密码
-				//Toast.makeText(getApplication(), "服务器暂时不能处理找回密码", Toast.LENGTH_SHORT).show();
-				startActivity(new Intent().setClass(LaunchActivity.this, AppIndexActivity.class));
+				Toast.makeText(getApplication(), "服务器暂时不能处理找回密码", Toast.LENGTH_SHORT).show();
+				//				startActivity(new Intent().setClass(LaunchActivity.this, AppIndexActivity.class));
 			}
 		});
 	}
@@ -129,7 +137,7 @@ public class LaunchActivity extends Activity {
 	 */
 	private void initAutoComplete(String field, AutoCompleteTextView auto) {
 
-		SharedPreferences sp = getSharedPreferences("network_url", 0);
+		SharedPreferences sp = getSharedPreferences("user_name", Activity.MODE_PRIVATE);
 		String history = sp.getString(field, "");
 
 		String[] hisArrays = history.split(",");
@@ -142,9 +150,10 @@ public class LaunchActivity extends Activity {
 			adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, newArrays);
 		}
 		auto.setAdapter(adapter);
-		auto.setDropDownHeight(200);
+		auto.setDropDownHeight(150);
 		auto.setThreshold(1);
 		auto.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 
@@ -165,35 +174,35 @@ public class LaunchActivity extends Activity {
 	private void saveHistory(String field, AutoCompleteTextView auto) {
 
 		String text = auto.getText().toString();
-		SharedPreferences sp = getSharedPreferences("network_url", 0);
-		String history = sp.getString(field, "nothing");
+		SharedPreferences sp = getSharedPreferences("user_name", Activity.MODE_PRIVATE);
+		String history = sp.getString(field, "");
 
 		if (!history.contains(text + ",")) {
 			StringBuilder sb = new StringBuilder(history);
 			sb.insert(0, text + ",");
-			sp.edit().putString("his", sb.toString()).apply();
+			sp.edit().putString(field, sb.toString()).apply();
 		}
 	}
-
-
 
 	/**
 	 * 控件的相应的功能
 	 */
-	private void theWidgetsFunction () {
+	private void theWidgetsFunction() {
 		//点击注册，跳转到注册页面
 		//验证用户是否存在等信息在注册页面进行
 		textViewRegister.setOnClickListener(new View.OnClickListener() {
+
 			@Override
-			public void onClick (View v) {
+			public void onClick(View v) {
 
 				startActivity(new Intent(LaunchActivity.this, RegisterActivity.class));
 			}
 		});
 		//点击登录，进行验证用户名以及密码。
 		buttonLogin.setOnClickListener(new View.OnClickListener() {
+
 			@Override
-			public void onClick (View v) {
+			public void onClick(View v) {
 
 				emailOrPhone = mName.getText().toString();
 				password = passwordEdit.getText().toString();
@@ -201,46 +210,34 @@ public class LaunchActivity extends Activity {
 					Toast.makeText(getApplication(), R.string.login_warning, Toast.LENGTH_SHORT).show();
 				} else {
 					if (!Check.internetIsEnable(LaunchActivity.this)) {
-						//Toast.makeText(getApplication(), "网络没有打开，无法使用。", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getApplication(), "网络没有打开，无法使用。", Toast.LENGTH_SHORT).show();
 						setTheInternet();
+					} else if (!Check.isEmail(emailOrPhone) && !Check.isPhoneNumber(emailOrPhone)) {
+						Toast.makeText(getApplicationContext(), R.string.format_wrong, Toast.LENGTH_SHORT).show();
+						mName.setText("");
+						emailOrPhone = null;
 					} else {
 						new LoginThread().start();
 					}
 				}
-				saveHistory("his", mName);
 			}
 		});
 		// 获取昵称编辑框的数据（通过焦点转移）
-//		emailEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//			@Override
-//			public void onFocusChange (View v, boolean hasFocus) {
-//
-//				if (!hasFocus) {
-//					emailOrPhone = emailEdit.getText().toString();
-//					if (!Check.isEmail(emailOrPhone) && !Check.isPhoneNumber(emailOrPhone)) {
-//						Toast.makeText(getApplicationContext(), R.string.format_wrong, Toast.LENGTH_SHORT).show();
-//						emailEdit.setText("");
-//						emailOrPhone = null;
-//					}
-//				}
-//			}
-//		});
+		//		emailEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+		//			@Override
+		//			public void onFocusChange (View v, boolean hasFocus) {
+		//
+		//				if (!hasFocus) {
+		//					emailOrPhone = emailEdit.getText().toString();
+		//					if (!Check.isEmail(emailOrPhone) && !Check.isPhoneNumber(emailOrPhone)) {
+		//						Toast.makeText(getApplicationContext(), R.string.format_wrong, Toast.LENGTH_SHORT).show();
+		//						emailEdit.setText("");
+		//						emailOrPhone = null;
+		//					}
+		//				}
+		//			}
+		//		});
 
-
-		mName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				if (!hasFocus) {
-					emailOrPhone = mName.getText().toString();
-					if (!Check.isEmail(emailOrPhone) && !Check.isPhoneNumber(emailOrPhone)) {
-						Toast.makeText(getApplicationContext(), R.string.format_wrong, Toast.LENGTH_SHORT).show();
-						mName.setText("");
-						emailOrPhone = null;
-					}
-				}
-			}
-		});
 		mName.setOnKeyListener(new View.OnKeyListener() {
 
 			@Override
@@ -260,8 +257,9 @@ public class LaunchActivity extends Activity {
 		});
 
 		passwordEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
 			@Override
-			public void onFocusChange (View v, boolean hasFocus) {
+			public void onFocusChange(View v, boolean hasFocus) {
 
 				if (!hasFocus) {
 					password = passwordEdit.getText().toString();
@@ -270,8 +268,9 @@ public class LaunchActivity extends Activity {
 		});
 		// 编辑框设置回车隐藏
 		passwordEdit.setOnKeyListener(new View.OnKeyListener() {
+
 			@Override
-			public boolean onKey (View v, int keyCode, KeyEvent event) {
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
 
 				if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
 					password = passwordEdit.getText().toString();
@@ -290,23 +289,25 @@ public class LaunchActivity extends Activity {
 	/**
 	 * 当用户没有连入互联网的时候，跳转至网络设置
 	 */
-	private void setTheInternet () {
+	private void setTheInternet() {
 
 		AlertDialog.Builder dialog = new AlertDialog.Builder(LaunchActivity.this);
 
 		dialog.setTitle(R.string.login_dialog_title);
 		dialog.setMessage(R.string.net_warning);
 		dialog.setPositiveButton(R.string.login_dialog_ok, new DialogInterface.OnClickListener() {
+
 			@Override
-			public void onClick (DialogInterface dialog, int which) {
+			public void onClick(DialogInterface dialog, int which) {
 
 				dialog.dismiss();
 				startActivity(new Intent(Settings.ACTION_SETTINGS));
 			}
 		});
 		dialog.setNegativeButton(R.string.login_dialog_cancel, new DialogInterface.OnClickListener() {
+
 			@Override
-			public void onClick (DialogInterface dialog, int which) {
+			public void onClick(DialogInterface dialog, int which) {
 
 				dialog.dismiss();
 			}
@@ -316,14 +317,15 @@ public class LaunchActivity extends Activity {
 
 	// 主线程与子线程的消息通道
 	private Handler handler = new Handler() {
+
 		@Override
-		public void handleMessage (Message msg) {
+		public void handleMessage(Message msg) {
 
 			Bundle data = msg.getData();
 			if ("true".equals(data.getString("password"))) {
 				//Toast.makeText(getApplicationContext(), "登录成功！", Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent(LaunchActivity.this, AppIndexActivity.class);
-				intent.putExtra("id",emailOrPhone);
+				intent.putExtra("id", emailOrPhone);
 				startActivity(intent);
 			} else if ("passwordWrong".equals(data.getString("result"))) {
 				Toast.makeText(LaunchActivity.this, R.string.login_error, Toast.LENGTH_SHORT).show();
@@ -332,7 +334,7 @@ public class LaunchActivity extends Activity {
 			} else if ("formatError".equals(data.getString("result"))) {
 				Log.e("CLIENT", "格式错误！");
 				//startActivity(new Intent(LaunchActivity.this, NewIndex.class));
-			} else if("shutdown".equals(data.getString("server"))){
+			} else if ("shutdown".equals(data.getString("server"))) {
 				Toast.makeText(getApplication(), "网络没有打开，无法使用。", Toast.LENGTH_SHORT).show();
 			}
 		}
@@ -344,7 +346,7 @@ public class LaunchActivity extends Activity {
 	private class LoginThread extends Thread {
 
 		@Override
-		public void run () {
+		public void run() {
 
 			HttpURLConnection connection = ConnectionHandler.getConnect(UrlSource.LOGIN);
 			// 构造json字符串，并发送
@@ -368,7 +370,7 @@ public class LaunchActivity extends Activity {
 				sendMessage("result", "timeOut");
 			} catch (SocketException e) {
 				sendMessage("server", "shutdown");
-//				Toast.makeText(getApplication(), "网络没有打开，无法使用。", Toast.LENGTH_SHORT).show();
+				//				Toast.makeText(getApplication(), "网络没有打开，无法使用。", Toast.LENGTH_SHORT).show();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
@@ -386,7 +388,7 @@ public class LaunchActivity extends Activity {
 	 *
 	 * @throws IOException 读服务器返回的数据发生异常
 	 */
-	private JSONObject getServerInformation (InputStream inputStream) throws IOException {
+	private JSONObject getServerInformation(InputStream inputStream) throws IOException {
 
 		return new JSONObject(Read.read(inputStream));
 	}
@@ -396,7 +398,7 @@ public class LaunchActivity extends Activity {
 	 *
 	 * @param obj 服务器返回给客户端的Json字符串
 	 */
-	private void handleTheResult (JSONObject obj) {
+	private void handleTheResult(JSONObject obj) {
 
 		String result = obj.getString("accountResult");
 		if (result.equals("success")) {
@@ -422,7 +424,7 @@ public class LaunchActivity extends Activity {
 	 * @param key   关键字，什么样的数据
 	 * @param value 关键字对应的值
 	 */
-	private void sendMessage (String key, String value) {
+	private void sendMessage(String key, String value) {
 
 		Bundle data = new Bundle();
 		Message msg = new Message();

@@ -56,6 +56,8 @@ public class IndexFragment extends Fragment {
 
 	public static BlockingQueue<IndexInfoBean> loadQueue = new ArrayBlockingQueue<IndexInfoBean>(10);
 
+	public static MyContentListViewAdapter listViewAdapter;
+
 	private static ArrayList<HashMap<String, Object>> items = new ArrayList<HashMap<String, Object>>();
 
 	private static boolean theFirstTimeRefresh = true;
@@ -65,11 +67,11 @@ public class IndexFragment extends Fragment {
 	 */
 	private BlockingQueue<HashMap<String, Object>> indexDequeStack = new ArrayBlockingQueue<HashMap<String, Object>>(1);
 
-	private static MyContentListViewAdapter listViewAdapter;
 
 	public static MyHandler myHandler;
 
 	private int loadMoreNum = 0;
+
 	private int refreshNum = 0;
 
 
@@ -97,6 +99,7 @@ public class IndexFragment extends Fragment {
 		super.onActivityCreated(savedInstanceState);
 		initAll();
 		new IndexPullRefreshListView.freshThread("refresh").start();
+		listViewAdapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -109,6 +112,7 @@ public class IndexFragment extends Fragment {
 	public void onResume() {
 
 		super.onResume();
+		listViewAdapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -144,7 +148,10 @@ public class IndexFragment extends Fragment {
 	private static IndexPullRefreshListView listView;
 
 	private void initAll() {
-		myHandler = new MyHandler();
+
+		if(myHandler == null){
+			myHandler = new MyHandler();
+		}
 		initListView();
 	}
 
@@ -214,16 +221,16 @@ public class IndexFragment extends Fragment {
 			}
 
 			HashMap<String, Object> map = listData.get(position);
-			if(map.get("photoHead") instanceof Bitmap){
+			if (map.get("photoHead") instanceof Bitmap) {
 				listItem.photoHead.setImageBitmap((Bitmap) map.get("photoHead"));
-			}else {
+			} else {
 				listItem.photoHead.setImageResource(R.drawable.head2);
 			}
 
 			listItem.userName.setText((CharSequence) map.get("userName"));
 			listItem.userAddress.setText((CharSequence) map.get("userAddress"));
 			listItem.showingPicture.setImageBitmap((Bitmap) map.get("userPicture"));
-			if(map.get("userPicture") != null){
+			if (map.get("userPicture") != null) {
 				listItem.progressBar.setVisibility(View.GONE);
 			}
 			listItem.photoDescribe.setText((CharSequence) map.get("myWords"));
@@ -320,12 +327,16 @@ public class IndexFragment extends Fragment {
 
 			Bundle dataBundle = msg.getData();
 			String message = dataBundle.getString("fresh");
-			if ("upLoadOk".equals(message)) {  //刷新完成
+			if ("upLoadOk".equals(message)) {  //上传提示
 				/**
 				 * 真的可以更新界面了，
 				 * 为了界面友好，考虑放一个processBar提示
 				 */
 				Toast.makeText(getActivity(), "上传成功", Toast.LENGTH_SHORT).show();
+				listViewAdapter.notifyDataSetChanged();
+
+			} else if ("upLoadError".equals(message)) {
+				Toast.makeText(getActivity(), "上传出错", Toast.LENGTH_SHORT).show();
 				listViewAdapter.notifyDataSetChanged();
 			} else if ("load_completed".equals(message)) { // 加载完成
 
@@ -347,19 +358,17 @@ public class IndexFragment extends Fragment {
 				//				new PhotoThread(PULL_TO_REFRESH).start();
 				//				refreshNum = refreshQueue.size();
 				refreshNum = refreshQueue.size();
-				if(theFirstTimeRefresh){
+				if (theFirstTimeRefresh) {
 					new QueueToStack().start();
 					new StackToUi().start();
 					theFirstTimeRefresh = false;
-				} else if(refreshNum == 0){
+				} else if (refreshNum == 0) {
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm");
 					String date = format.format(new Date());
 					listView.onRefreshComplete(date);
-//					listView.invalidateViews();
 					Toast.makeText(getActivity(), "当前数据已是最新", Toast.LENGTH_SHORT).show();
-					listViewAdapter.notifyDataSetChanged();
 				}
-
+				listViewAdapter.notifyDataSetChanged();
 			} else if ("indexPhotoOk".equals(message)) {
 
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm");
@@ -375,10 +384,12 @@ public class IndexFragment extends Fragment {
 
 			} else if ("load_data_completed".equals(message)) {
 				loadMoreNum = loadQueue.size();
-				if(loadMoreNum == 0){
+				if (loadMoreNum == 0) {
 					Toast.makeText(getActivity(), "已经显示所有数据", Toast.LENGTH_SHORT).show();
 				}
 				listView.onLoadMoreComplete();
+				listViewAdapter.notifyDataSetChanged();
+			} else if ("sub_thread".equals(message)) {
 				listViewAdapter.notifyDataSetChanged();
 			} else {
 				Log.e(TAG, "wrong message in bundle !");
@@ -399,7 +410,6 @@ public class IndexFragment extends Fragment {
 
 		mBundle.putString(msgKey, msgValue);
 		mMessage.setData(mBundle);
-
 		myHandler.sendMessage(mMessage);
 	}
 
@@ -490,6 +500,7 @@ public class IndexFragment extends Fragment {
 					indexBean.setPictureShow(BitmapFactory.decodeStream(is));
 
 					changeBeanToItems(bundle, true);
+					bundle = null;
 					sendMessage("fresh", "indexPhotoOk");
 
 				} catch (InterruptedException e) {
@@ -497,7 +508,7 @@ public class IndexFragment extends Fragment {
 				} catch (IOException e) {
 					e.printStackTrace();
 				} finally {
-					if(photoConnection != null){
+					if (photoConnection != null) {
 						photoConnection.disconnect();
 					}
 				}
@@ -533,9 +544,9 @@ public class IndexFragment extends Fragment {
 			if (indexInfo.getIsLocated().equals("true")) {
 				map.put("location", indexInfo.getLocation());
 			}
-			if(items.size() == 0){
+			if (items.size() == 0) {
 				items.add(0, map);
-			} else if (indexInfo.getRs_id() > (Integer)items.get(items.size() - 1).get("rs_id")){
+			} else if (indexInfo.getRs_id() > (Integer) items.get(items.size() - 1).get("rs_id")) {
 				items.add(0, map);
 			} else {
 				items.add(items.size(), map);
