@@ -531,29 +531,39 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 			if (temp == null) {
 				return;
 			}
-			// 分离子串
-			String[] serverData = temp.split("]");
-			IndexInfoBean indexBean;
-			// 第一个是数组
-			JSONArray array = new JSONArray(serverData[0] += "]");
-			JSONObject status = new JSONObject(serverData[1]);
-			if (!status.has("status")) {
-				return;
-			}
-			if (!status.getString("status").equals("SUCCESS")) {
-				Log.i(TAG, "status is not SUCCESS");
-			}
-			int length = array.length();
 
-			System.out.println("本次 刷新 共有 " + length + "条消息");
-			for (int i = 0; i < length; i++) {
-				indexBean = new IndexInfoBean();
-				JSONObject serverDataObj = array.getJSONObject(i);
-				setObject(indexBean, serverDataObj);
-				IndexFragment.refreshQueue.put(indexBean);
+			if(temp.startsWith("[")) {
+				// 分离子串
+				String[] serverData = temp.split("]");
+				IndexInfoBean indexBean;
+				// 第一个是数组
+				JSONArray array = new JSONArray(serverData[0] += "]");
+				JSONObject status = new JSONObject(serverData[1]);
+				if (!status.has("status")) {
+					return;
+				}
+
+
+				if (!status.getString("status").equals("SUCCESS")) {
+					Log.i(TAG, "status is not SUCCESS");
+				}
+				int length = array.length();
+
+				System.out.println("本次 刷新 共有 " + length + "条消息");
+				for (int i = 0; i < length; i++) {
+					indexBean = new IndexInfoBean();
+					JSONObject serverDataObj = array.getJSONObject(i);
+					setObject(indexBean, serverDataObj);
+					IndexFragment.refreshQueue.put(indexBean);
+					IndexFragment.sendMessage("fresh", "refresh_data_completed");
+				}
 				IndexFragment.sendMessage("fresh", "refresh_data_completed");
+			}else if(temp.startsWith("{")){
+				JSONObject o = new JSONObject(temp);
+				if(o.getString("status").equals("SESSIONERROR")){
+					IndexFragment.sendMessage("fresh", "SESSIONERROR");
+				}
 			}
-			IndexFragment.sendMessage("fresh", "refresh_data_completed");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -564,6 +574,7 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 				connection.disconnect();
 			}
 		}
+
 	}
 
 	private static void internetLoad() {

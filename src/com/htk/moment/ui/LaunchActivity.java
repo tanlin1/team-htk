@@ -325,7 +325,6 @@ public class LaunchActivity extends Activity {
 			if ("true".equals(data.getString("password"))) {
 				//Toast.makeText(getApplicationContext(), "登录成功！", Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent(LaunchActivity.this, AppIndexActivity.class);
-				intent.putExtra("id", emailOrPhone);
 				startActivity(intent);
 			} else if ("passwordWrong".equals(data.getString("result"))) {
 				Toast.makeText(LaunchActivity.this, R.string.login_error, Toast.LENGTH_SHORT).show();
@@ -370,7 +369,6 @@ public class LaunchActivity extends Activity {
 				sendMessage("result", "timeOut");
 			} catch (SocketException e) {
 				sendMessage("server", "shutdown");
-				//				Toast.makeText(getApplication(), "网络没有打开，无法使用。", Toast.LENGTH_SHORT).show();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {

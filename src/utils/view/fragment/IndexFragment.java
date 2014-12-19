@@ -391,6 +391,8 @@ public class IndexFragment extends Fragment {
 				listViewAdapter.notifyDataSetChanged();
 			} else if ("sub_thread".equals(message)) {
 				listViewAdapter.notifyDataSetChanged();
+			} else if("SESSIONERROR".equals(message)){
+				Toast.makeText(getActivity(), "SESSION 过期，请重新登录", Toast.LENGTH_SHORT).show();
 			} else {
 				Log.e(TAG, "wrong message in bundle !");
 			}
