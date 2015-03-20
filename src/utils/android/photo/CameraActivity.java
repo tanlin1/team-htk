@@ -78,7 +78,7 @@ public class CameraActivity extends Activity {
                 do {
                     try {
                         Thread.sleep(1000);
-                        Log.w("TAG", "请等待图片加载！");
+                        Log.i("TAG", "请等待图片加载！");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
