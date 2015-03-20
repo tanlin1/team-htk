@@ -17,10 +17,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.htk.moment.ui.LaunchActivity;
-import com.htk.moment.ui.PictureScanActivity;
-import com.htk.moment.ui.R;
-import com.htk.moment.ui.ViewLikeOrComment;
+import com.htk.moment.ui.*;
 import come.htk.bean.IndexInfoBean;
 import come.htk.bean.IndexListViewItemBean;
 import come.htk.bean.UserInfoBean;
@@ -148,6 +145,7 @@ public class IndexFragment extends Fragment {
 	private static IndexPullRefreshListView listView;
 
 	private void initAll() {
+
 
 		if(myHandler == null){
 			myHandler = new MyHandler();
@@ -366,7 +364,7 @@ public class IndexFragment extends Fragment {
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm");
 					String date = format.format(new Date());
 					listView.onRefreshComplete(date);
-					Toast.makeText(getActivity(), "当前数据已是最新", Toast.LENGTH_SHORT).show();
+					//Toast.makeText(getActivity(), "当前数据已是最新", Toast.LENGTH_SHORT).show();
 				}
 				listViewAdapter.notifyDataSetChanged();
 			} else if ("indexPhotoOk".equals(message)) {
@@ -529,7 +527,7 @@ public class IndexFragment extends Fragment {
 		if (!photoOk) {
 			map = new HashMap<String, Object>();
 			// 用户
-			map.put("id", userInfo.getID());
+            map.put("id", userInfo.getID());
 			map.put("userName", userInfo.getName());
 			map.put("userAddress", "呼伦贝尔草原");
 			// 资源

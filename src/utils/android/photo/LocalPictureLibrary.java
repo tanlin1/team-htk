@@ -55,7 +55,7 @@ public class LocalPictureLibrary extends Activity {
 
 	ArrayList<String> imageUris;
 
-	private String userId;
+	private int userId;
 
 
 	@Override
@@ -64,9 +64,9 @@ public class LocalPictureLibrary extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.to_choose_user_photo);
-		init();
-		gridAdapter = new GridAdapter(this, imageUris);
-		selectSomePicture();
+        init();
+
+        selectSomePicture();
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class LocalPictureLibrary extends Activity {
 	 */
 	private void init() {
 
-		userId = getIntent().getStringExtra("id");
+		userId = getIntent().getIntExtra("id", -1);
 		mGridView = (GridView) findViewById(R.id.gridView);
 
 		selectAll = (Button) findViewById(R.id.photo_select_all);
@@ -95,7 +95,9 @@ public class LocalPictureLibrary extends Activity {
 		imageUris = ImageLoader.photoPath;
 		if (imageUris == null) {
 			Log.e(TAG,"图片读取异常");
-		}
+		} else {
+            gridAdapter = new GridAdapter(this, imageUris);
+        }
 	}
 
 	/**
@@ -142,7 +144,7 @@ public class LocalPictureLibrary extends Activity {
 					}
 				}
 				// 一定不能直接写 PICTURE_ASK 传过去
-				confirmUpload.putExtra("id", userId);
+				confirmUpload.putExtra("user_id", userId);
 				confirmUpload.putExtra("multiple", photoSelectFlagMap);
 				confirmUpload.putExtra("measure", "PICTURE_ASK");
 				startActivity(confirmUpload);
@@ -233,7 +235,6 @@ public class LocalPictureLibrary extends Activity {
 		private ArrayList<String> photoPathList;
 
 		public GridAdapter(Context context, ArrayList<String> list) {
-
 			photoPathList = list;
 			viewContainer = LayoutInflater.from(context);
 		}

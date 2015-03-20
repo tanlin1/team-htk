@@ -531,8 +531,8 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 			if (temp == null) {
 				return;
 			}
-
-			if(temp.startsWith("[")) {
+            System.out.println("temp = " + temp);
+            if(temp.startsWith("[")) {
 				// 分离子串
 				String[] serverData = temp.split("]");
 				IndexInfoBean indexBean;
@@ -546,6 +546,7 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 
 				if (!status.getString("status").equals("SUCCESS")) {
 					Log.i(TAG, "status is not SUCCESS");
+                    return ;
 				}
 				int length = array.length();
 
@@ -608,6 +609,7 @@ public class IndexPullRefreshListView extends ListView implements AbsListView.On
 			}
 			if (!status.getString("status").equals("SUCCESS")) {
 				Log.i(TAG, "status is not SUCCESS");
+                return ;
 			} else {
 				int length = array.length();
 

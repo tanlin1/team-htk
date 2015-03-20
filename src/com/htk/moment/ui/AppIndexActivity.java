@@ -73,7 +73,7 @@ public class AppIndexActivity extends FragmentActivity {
 
 	private Animation addButtonOut;
 
-	private String userId;
+	private int userId;
 
 	/**
 	 * 页面容器
@@ -152,6 +152,14 @@ public class AppIndexActivity extends FragmentActivity {
 //		logoName.setTypeface(font);
 	}
 
+    /*
+    public interface UserIdGet{
+
+        public int getUserId();
+    }
+
+    UserIdGet u;// = new IndexFragment();
+    */
 	/**
 	 * 边缘进入的动画出现
 	 */
@@ -199,22 +207,34 @@ public class AppIndexActivity extends FragmentActivity {
 	 * 初始化相关控件
 	 */
 	public void initAll() {
-		userId = getIntent().getStringExtra("id");
-		initWidgets();
+		userId = getIntent().getIntExtra("id", -1);
+
+        initWidgets();
 //		initViewPager();
 		initPlusButtonAnimal();
 		initFlingButton();
 		initFragment();
+        //userId = String.valueOf(u.getUserId());
 	}
+
+    public int getUserId(){
+        return userId;
+    }
+
 	private void initFragment(){
 		fragments = new ArrayList<Fragment>();
+
 		fragments.add(new IndexFragment());
 		fragments.add(new MessageFragment());
 		fragments.add(new SearchFragment());
 		fragments.add(new MeFragment());
+        Bundle data = new Bundle();
+        data.putInt("user_id", userId);
+        fragments.get(3).setArguments(data);
 		FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
 		ft.add(R.id.app_index_container, fragments.get(0));
 		ft.commit();
+        //u = (UserIdGet) fragments.get(0);
 	}
 
 	int currentFragmentIndex = 0;

@@ -2,6 +2,9 @@ package come.htk.bean;
 
 /**
  * Created by Administrator on 2014/12/17.
+ *
+ * modify 2015/3/18
+ * 关注人的信息添加：头像
  */
 public class FollowBean {
 

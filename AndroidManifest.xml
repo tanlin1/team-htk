@@ -90,12 +90,19 @@
 			</intent-filter>
 		</activity>
 
-		<activity android:name=".FollowActivity">
+		<activity android:name=".FollowActivity"
+		          android:launchMode="standard"
+				>
 			<intent-filter>
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
 		</activity>
 		<activity android:name=".testEdit">
+			<intent-filter>
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+		<activity android:name=".OtherPeopleIndex">
 			<intent-filter>
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>

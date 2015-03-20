@@ -66,6 +66,8 @@ public class UploadPhoto extends Activity {
 
 	private Intent intent;
 
+    private int userId;
+
 	/**
 	 * 系统调用
 	 *
@@ -100,6 +102,7 @@ public class UploadPhoto extends Activity {
 	private void init() {
 
 		intent = getIntent();
+        userId = intent.getIntExtra("user_id", -1);
 		liner = (LinearLayout) findViewById(R.id.liner);
 
 		back = (ImageButton) findViewById(R.id.back_to_camera);
@@ -326,7 +329,7 @@ public class UploadPhoto extends Activity {
 	 */
 	private byte[] createTheFirstPart() {
 
-		return PartFactory.PartBuilder("main_info", "dataInfo", "text/plain", createTheFirstContent(74, "albumName1",
+		return PartFactory.PartBuilder("main_info", "dataInfo", "text/plain", createTheFirstContent(userId, "albumName1",
 				"olderWords", getMyWorld(), getPhotoLocation(), "class1", getPhotoAtSomeOne(), getPhotoTopic()).getBytes());
 	}
 

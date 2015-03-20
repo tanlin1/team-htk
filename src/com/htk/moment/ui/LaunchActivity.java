@@ -68,6 +68,7 @@ public class LaunchActivity extends Activity {
 	// 为了与服务器保持长连接的，设定的cookie标识
 	public static String JSESSIONID = "";
 
+    private int userId = 84;
 	/**
 	 * 启动Activity是自动调用此方法 得到客户端的屏幕尺寸，显示界面
 	 *
@@ -122,7 +123,11 @@ public class LaunchActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				//连接到服务器找回密码
-				Toast.makeText(getApplication(), "服务器暂时不能处理找回密码", Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(LaunchActivity.this, AppIndexActivity.class);
+                startActivity(intent);
+
+				//Toast.makeText(getApplication(), "服务器暂时不能处理找回密码", Toast.LENGTH_SHORT).show();
 				//				startActivity(new Intent().setClass(LaunchActivity.this, AppIndexActivity.class));
 			}
 		});
@@ -325,7 +330,8 @@ public class LaunchActivity extends Activity {
 			if ("true".equals(data.getString("password"))) {
 				//Toast.makeText(getApplicationContext(), "登录成功！", Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent(LaunchActivity.this, AppIndexActivity.class);
-				startActivity(intent);
+                intent.putExtra("id", userId);
+                startActivity(intent);
 			} else if ("passwordWrong".equals(data.getString("result"))) {
 				Toast.makeText(LaunchActivity.this, R.string.login_error, Toast.LENGTH_SHORT).show();
 			} else if ("timeOut".equals(data.getString("result"))) {
