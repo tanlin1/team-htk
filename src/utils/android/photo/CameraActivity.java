@@ -73,10 +73,18 @@ public class CameraActivity extends Activity {
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inSampleSize = 2;
 			bitmap = BitmapFactory.decodeFile(path, options);
-			while (bitmap == null || imageView == null) {
-				Log.w("TAG", "请等待图片加载！");
-				System.out.println("请等待图片加载");
-			}
+
+            if(bitmap == null){
+                do {
+                    try {
+                        Thread.sleep(1000);
+                        Log.w("TAG", "请等待图片加载！");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } while (bitmap == null || imageView == null);
+            }
+
 			imageView.setImageBitmap(bitmap);
 
 			final String sendPath = path;
